@@ -40,9 +40,15 @@ dependencies {
     // Dagger Android
     annotationProcessor "com.google.dagger:dagger-android-processor:$project.daggerVersion"
     compile "com.google.dagger:dagger-android-support:$project.daggerVersion"
-
-
+    
     // Butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //Room
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
+    //Live data & ViewModel
+    implementation "android.arch.lifecycle:extensions:1.0.0"
 }
