@@ -1,5 +1,7 @@
 package pl.droidevs.books.di;
 
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
@@ -9,6 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 import pl.droidevs.books.app.BookApplication;
 import pl.droidevs.books.app.BookDataBase;
+import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.login.LoginService;
 import pl.droidevs.books.repository.BookRepository;
 
@@ -33,6 +36,16 @@ public class AppModule {
     @Provides
     BookDataBase bookDataBase(Context context) {
         return Room.databaseBuilder(context.getApplicationContext(), BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
+    }
+
+    @Provides
+    ViewModel provideListIssuesViewModel(LibraryViewModel viewModel) {
+        return viewModel;
+    }
+
+    @Provides
+    ViewModelProvider.Factory provideListIssuesViewModelFactory(ViewModelFactory factory) {
+        return factory;
     }
 
     @Singleton

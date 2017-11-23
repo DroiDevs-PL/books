@@ -8,6 +8,7 @@ import pl.droidevs.books.login.LoginActivity;
 /**
  * Module for all sub-components within the app.
  */
+
 @Module
 public abstract class BuildersModule {
     @ContributesAndroidInjector

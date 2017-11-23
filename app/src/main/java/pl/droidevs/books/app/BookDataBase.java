@@ -9,5 +9,6 @@ import pl.droidevs.books.entity.Book;
 @Database(entities = {Book.class}, version = 1)
 public abstract class BookDataBase extends RoomDatabase{
     public static final String BOOK_DATA_BASE_NAME = "book_db";
+
     public abstract BookDao bookDao();
 }
