@@ -19,14 +19,20 @@ public class DataSourceModule {
 
     @Singleton
     @Provides
-    BookRepository bookRepository(BookDataBase bookDataBase) {
-        return new BookRepository(bookDataBase);
+    BookRepository bookRepository(BookDao bookDao) {
+        return new BookRepository(bookDao);
     }
 
     @Singleton
     @Provides
     BookDataBase bookDataBase(Context context) {
         return Room.databaseBuilder(context, BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
+    }
+
+    @Singleton
+    @Provides
+    BookDao bookDao(Context context) {
+        return bookDataBase(context).bookDao();
     }
 
     @Provides
