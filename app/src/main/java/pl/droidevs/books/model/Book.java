@@ -1,36 +1,47 @@
 package pl.droidevs.books.model;
 
-public class Book {
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-    private String title;
-    private String author;
+public final class Book {
+
+    private final String title;
+    private final String author;
+    private final Category category;
     private String description;
 
-    public Book(String title) {
+    public Book(@NonNull String title, @NonNull String author, @NonNull Category category) {
         this.title = title;
+        this.author = author;
+        this.category = category;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    @NonNull
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    @NonNull
+    public Category getCategory() {
+        return category;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    public enum Category {
+        BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, HEALTH, HISTORY, HORROR, ENTERTAINEMENT,
+        MYSTERY, ROMANCE, SCIENCE, SF, SPORT, TRAVEL
     }
 }

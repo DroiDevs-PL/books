@@ -14,10 +14,7 @@ public class BookEntity {
     private String title;
     private String author;
     private String description;
-
-    public BookEntity(String title) {
-        this.title = title;
-    }
+    private String category;
 
     public int getId() {
         return id;
@@ -49,5 +46,13 @@ public class BookEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

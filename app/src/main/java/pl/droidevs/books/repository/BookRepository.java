@@ -11,9 +11,9 @@ import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.mappers.BookMapper;
 import pl.droidevs.books.model.Book;
 
-public class BookRepository {
+public final class BookRepository {
 
-    private BookDao bookDao;
+    private final BookDao bookDao;
 
     @Inject
     public BookRepository(BookDao bookDao) {

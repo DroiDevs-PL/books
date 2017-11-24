@@ -10,23 +10,7 @@ import pl.droidevs.books.model.Book;
 
 public class BookMapper {
 
-    public static Book getBook(BookEntity bookEntity) {
-        Book book = new Book(bookEntity.getTitle());
-        book.setAuthor(book.getAuthor());
-        book.setDescription(book.getDescription());
-
-        return book;
-    }
-
-    public static BookEntity getBookEntity(Book book) {
-        BookEntity bookEntity = new BookEntity(book.getTitle());
-        book.setAuthor(book.getAuthor());
-        book.setDescription(book.getDescription());
-
-        return bookEntity;
-    }
-
-    public static Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
+    public static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
             input -> {
                 List<Book> books = new ArrayList<>(input.size());
 
@@ -36,4 +20,26 @@ public class BookMapper {
 
                 return books;
             };
+
+    private BookMapper() {
+    }
+
+    public static Book getBook(BookEntity bookEntity) {
+        final Book book = new Book(bookEntity.getTitle(),
+                bookEntity.getAuthor(),
+                Book.Category.valueOf(bookEntity.getCategory()));
+        book.setDescription(book.getDescription());
+
+        return book;
+    }
+
+    public static BookEntity getBookEntity(Book book) {
+        final BookEntity bookEntity = new BookEntity();
+        bookEntity.setAuthor(book.getAuthor());
+        bookEntity.setCategory(book.getCategory().toString());
+        bookEntity.setDescription(book.getDescription());
+        bookEntity.setTitle(book.getTitle());
+
+        return bookEntity;
+    }
 }
