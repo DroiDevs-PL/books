@@ -28,28 +28,6 @@ public class AppModule {
 
     @Singleton
     @Provides
-    BookRepository bookRepository(BookDataBase bookDataBase) {
-        return new BookRepository(bookDataBase);
-    }
-
-    @Singleton
-    @Provides
-    BookDataBase bookDataBase(Context context) {
-        return Room.databaseBuilder(context.getApplicationContext(), BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
-    }
-
-    @Provides
-    ViewModel provideListIssuesViewModel(LibraryViewModel viewModel) {
-        return viewModel;
-    }
-
-    @Provides
-    ViewModelProvider.Factory provideListIssuesViewModelFactory(ViewModelFactory factory) {
-        return factory;
-    }
-
-    @Singleton
-    @Provides
         // TODO: Remove - just for testing DI
     LoginService loginService() {
         return () -> "I'm a DI user";
