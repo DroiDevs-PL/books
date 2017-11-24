@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
+import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.repository.BookRepository;
 

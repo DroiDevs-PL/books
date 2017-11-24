@@ -15,9 +15,9 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.library.LibraryActivity;
 import pl.droidevs.books.library.LibraryViewModel;
+import pl.droidevs.books.model.Book;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
         libraryViewModel.getBooks().observe(this, books -> {
 
-            for (BookEntity book : books) {
+            for (Book book : books) {
                 textHello.append("\n\n" + book.getTitle());
             }
         });

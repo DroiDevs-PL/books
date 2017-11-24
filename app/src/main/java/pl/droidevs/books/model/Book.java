@@ -6,8 +6,8 @@ public class Book {
     private String author;
     private String description;
 
-    public Book(String name) {
-        this.title = name;
+    public Book(String title) {
+        this.title = title;
     }
 
     public String getTitle() {

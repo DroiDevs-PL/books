@@ -4,20 +4,22 @@
     package="pl.droidevs.books">
 
     <application
-        android:title=".app.BookApplication"
+        android:name=".app.BookApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:title=".login.LoginActivity">
+
+        <activity android:name=".login.LoginActivity">
             <intent-filter>
-                <action android:title="android.intent.action.MAIN"/>
-                <category android:title="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:title=".library.LibraryActivity"/>
+
+        <activity android:name=".library.LibraryActivity"/>
     </application>
 
 </manifest>

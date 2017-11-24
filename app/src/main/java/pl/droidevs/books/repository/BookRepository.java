@@ -7,28 +7,28 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import pl.droidevs.books.dao.BookDao;
+import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.mappers.BookMapper;
 import pl.droidevs.books.model.Book;
 
 public class BookRepository {
 
-    private BookDao bookDao;
+    private BookDataBase bookDataBase;
 
     @Inject
-    public BookRepository(BookDao bookDao) {
-        this.bookDao = bookDao;
+    public BookRepository(BookDataBase bookDataBase) {
+        this.bookDataBase = bookDataBase;
     }
 
     public void save(Book book) {
-        bookDao.addBook(BookMapper.getBookEntity(book));
+        bookDataBase.bookDao().addBook(BookMapper.getBookEntity(book));
     }
 
     public void remove(Book book) {
-        bookDao.removeBook(BookMapper.getBookEntity(book));
+        bookDataBase.bookDao().removeBook(BookMapper.getBookEntity(book));
     }
 
     public LiveData<List<Book>> getBooks() {
-        return Transformations.map(bookDao.getAllBooks(), BookMapper.entitiesToBooksFunction);
+        return Transformations.map(bookDataBase.bookDao().getAllBooks(), BookMapper.entitiesToBooksFunction);
     }
 }
