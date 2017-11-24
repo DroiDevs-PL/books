@@ -11,6 +11,7 @@ import dagger.android.HasActivityInjector;
 import pl.droidevs.books.di.DaggerAppComponent;
 
 public class BookApplication extends Application implements HasActivityInjector {
+
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 

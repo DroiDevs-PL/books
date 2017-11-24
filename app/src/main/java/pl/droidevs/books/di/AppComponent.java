@@ -11,7 +11,8 @@ import pl.droidevs.books.app.BookApplication;
 @Component(modules = {
         AndroidSupportInjectionModule.class,
         AppModule.class,
-        BuildersModule.class})
+        BuildersModule.class,
+        DataSourceModule.class})
 public interface AppComponent {
 
     void inject(BookApplication application);
