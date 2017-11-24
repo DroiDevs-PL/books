@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import pl.droidevs.books.entity.Book;
+import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.repository.BookRepository;
 
 public class LibraryViewModel extends ViewModel {
@@ -26,7 +26,7 @@ public class LibraryViewModel extends ViewModel {
         new PopulateDbAsyncTask().execute("");
     }
 
-    public LiveData<List<Book>> getBooks() {
+    public LiveData<List<BookEntity>> getBooks() {
         return bookRepository.getBooks();
     }
 
@@ -35,9 +35,9 @@ public class LibraryViewModel extends ViewModel {
 
         @Override
         protected Void doInBackground(String... strings) {
-            bookRepository.addBook(new Book("Pippi Pończoszanka"));
-            bookRepository.addBook(new Book("Kubuś Puchatek"));
-            bookRepository.addBook(new Book("Clean Code"));
+            bookRepository.save(new BookEntity("Pippi Pończoszanka"));
+            bookRepository.save(new BookEntity("Kubuś Puchatek"));
+            bookRepository.save(new BookEntity("Clean Code"));
 
             return null;
         }

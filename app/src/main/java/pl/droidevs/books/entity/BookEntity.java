@@ -3,10 +3,10 @@ package pl.droidevs.books.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import static pl.droidevs.books.entity.Book.TABLE_NAME;
+import static pl.droidevs.books.entity.BookEntity.TABLE_NAME;
 
 @Entity(tableName = TABLE_NAME)
-public class Book {
+public class BookEntity {
     public static final String TABLE_NAME = "books";
 
     @PrimaryKey(autoGenerate = true)
@@ -15,7 +15,7 @@ public class Book {
     private String author;
     private String description;
 
-    public Book(String title) {
+    public BookEntity(String title) {
         this.title = title;
     }
 

@@ -13,7 +13,7 @@ import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.repository.BookRepository;
 
-@Module
+@Module(includes = AppModule.class)
 public class DataSourceModule {
 
     @Singleton
@@ -25,7 +25,7 @@ public class DataSourceModule {
     @Singleton
     @Provides
     BookDataBase bookDataBase(Context context) {
-        return Room.databaseBuilder(context.getApplicationContext(), BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
+        return Room.databaseBuilder(context, BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
     }
 
     @Provides

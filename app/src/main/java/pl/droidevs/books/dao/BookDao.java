@@ -9,22 +9,22 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import pl.droidevs.books.entity.Book;
+import pl.droidevs.books.entity.BookEntity;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface BookDao {
 
-    @Query("SELECT * FROM " + Book.TABLE_NAME)
-    LiveData<List<Book>> getAllBooks();
+    @Query("SELECT * FROM " + BookEntity.TABLE_NAME)
+    LiveData<List<BookEntity>> getAllBooks();
 
     @Insert(onConflict = REPLACE)
-    void addBook(Book book);
+    void addBook(BookEntity book);
 
     @Delete
-    void removeBook(Book book);
+    void removeBook(BookEntity book);
 
     @Update(onConflict = REPLACE)
-    void updateBook(Book book);
+    void updateBook(BookEntity book);
 }
