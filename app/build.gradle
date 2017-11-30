@@ -51,4 +51,8 @@ dependencies {
 
     //Live data & ViewModel
     implementation "android.arch.lifecycle:extensions:1.0.0"
+
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:palette-v7:26.1.0'
+    compile 'com.github.bumptech.glide:glide:4.0.0'
 }

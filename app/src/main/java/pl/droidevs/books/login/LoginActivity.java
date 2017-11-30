@@ -15,6 +15,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.library.BookActivity;
 import pl.droidevs.books.library.LibraryActivity;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.model.Book;
@@ -43,20 +44,20 @@ public class LoginActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         this.unbinder = ButterKnife.bind(this);
 
-        textHello.setText(loginService.getUserName());
+        //textHello.setText(loginService.getUserName());
 
         libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
-        libraryViewModel.getBooks().observe(this, books -> {
+        /*libraryViewModel.getBooks().observe(this, books -> {
 
             for (Book book : books) {
                 textHello.append("\n\n" + book.getTitle());
             }
-        });
+        });*/
     }
 
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
-        startActivity(new Intent(this, LibraryActivity.class));
+        startActivity(new Intent(this, BookActivity.class));
     }
 
     @Override
