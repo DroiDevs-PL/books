@@ -3,6 +3,8 @@
     <dimen name="primary_text_size">16sp</dimen>
     <dimen name="secondary_text_size">14sp</dimen>
 
+    <dimen name="fab_button_spacing">16dp</dimen>
     <dimen name="list_item_padding_horizontal">16dp</dimen>
     <dimen name="list_item_padding_vertical">10dp</dimen>
+    <dimen name="list_thumbnail_size">48dp</dimen>
 </resources>
