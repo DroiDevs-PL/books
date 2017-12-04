@@ -46,12 +46,13 @@ public class LibraryActivity extends AppCompatActivity {
         this.unbinder = ButterKnife.bind(this);
 
         final LibraryAdapter adapter = new LibraryAdapter();
+        adapter.setItemClickListener(bookId -> {
+            // TODO: Start details activity and pass the book id
+        });
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        progressBar.setVisibility(VISIBLE);
 
         floatingActionButton.setOnClickListener(view -> {
             // TODO: Start Add book activity
@@ -63,6 +64,8 @@ public class LibraryActivity extends AppCompatActivity {
             if (books != null)
                 adapter.setItems(books);
         });
+
+        progressBar.setVisibility(VISIBLE);
     }
 
     @Override

@@ -11,7 +11,6 @@ import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.model.Book;
 
 public final class BookRepository {
-
     private final BookDao bookDao;
 
     @Inject

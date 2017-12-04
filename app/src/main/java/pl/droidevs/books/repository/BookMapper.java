@@ -7,6 +7,7 @@ import java.util.List;
 
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 
 class BookMapper {
 
@@ -25,7 +26,9 @@ class BookMapper {
     }
 
     public static Book getBook(BookEntity entity) {
-        final Book book = new Book(entity.getTitle(),
+        final Book book = new Book(
+                new BookId(String.valueOf(entity.getId())),
+                entity.getTitle(),
                 entity.getAuthor(),
                 Book.Category.valueOf(entity.getCategory()));
         book.setDescription(book.getDescription());
