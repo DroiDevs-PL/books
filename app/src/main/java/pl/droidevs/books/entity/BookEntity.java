@@ -15,6 +15,7 @@ public class BookEntity {
     private String author;
     private String description;
     private String category;
+    private String imageUrl;
 
     public int getId() {
         return id;
@@ -54,5 +55,13 @@ public class BookEntity {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

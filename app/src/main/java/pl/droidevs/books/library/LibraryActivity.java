@@ -3,6 +3,7 @@ package pl.droidevs.books.library;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,10 +29,11 @@ public class LibraryActivity extends AppCompatActivity {
     @BindView(R.id.progress_books)
     ProgressBar progressBar;
 
+    @BindView(R.id.button_add_book)
+    FloatingActionButton floatingActionButton;
+
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-    private LibraryViewModel libraryViewModel;
 
     private Unbinder unbinder;
 
@@ -51,10 +53,15 @@ public class LibraryActivity extends AppCompatActivity {
 
         progressBar.setVisibility(VISIBLE);
 
-        libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
+        floatingActionButton.setOnClickListener(view -> {
+            // TODO: Start Add book activity
+        });
+
+        final LibraryViewModel libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
-            adapter.setItems(books);
+            if (books != null)
+                adapter.setItems(books);
         });
     }
 

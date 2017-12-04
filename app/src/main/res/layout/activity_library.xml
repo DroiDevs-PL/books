@@ -12,8 +12,26 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/layout_books"
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/layout_books"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_add_book"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@drawable/selector_button"
+            app:layout_anchor="@id/layout_books"
+            app:layout_anchorGravity="bottom|end" />
+    </android.support.design.widget.CoordinatorLayout>
 </FrameLayout>

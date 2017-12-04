@@ -1,4 +1,4 @@
-package pl.droidevs.books.mappers;
+package pl.droidevs.books.repository;
 
 import android.arch.core.util.Function;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
 
-public class BookMapper {
+class BookMapper {
 
     public static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
             input -> {
@@ -24,22 +24,24 @@ public class BookMapper {
     private BookMapper() {
     }
 
-    public static Book getBook(BookEntity bookEntity) {
-        final Book book = new Book(bookEntity.getTitle(),
-                bookEntity.getAuthor(),
-                Book.Category.valueOf(bookEntity.getCategory()));
+    public static Book getBook(BookEntity entity) {
+        final Book book = new Book(entity.getTitle(),
+                entity.getAuthor(),
+                Book.Category.valueOf(entity.getCategory()));
         book.setDescription(book.getDescription());
+        book.setImageUrl(entity.getImageUrl());
 
         return book;
     }
 
     public static BookEntity getBookEntity(Book book) {
-        final BookEntity bookEntity = new BookEntity();
-        bookEntity.setAuthor(book.getAuthor());
-        bookEntity.setCategory(book.getCategory().toString());
-        bookEntity.setDescription(book.getDescription());
-        bookEntity.setTitle(book.getTitle());
+        final BookEntity entity = new BookEntity();
+        entity.setAuthor(book.getAuthor());
+        entity.setCategory(book.getCategory().toString());
+        entity.setDescription(book.getDescription());
+        entity.setTitle(book.getTitle());
+        entity.setImageUrl(book.getImageUrl());
 
-        return bookEntity;
+        return entity;
     }
 }

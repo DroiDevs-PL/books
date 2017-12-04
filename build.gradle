@@ -3,6 +3,7 @@
 project.ext {
     daggerVersion = "2.11"
     supportVersion = "26.1.0"
+    glideVersion = "4.3.1"
 }
 
 buildscript {

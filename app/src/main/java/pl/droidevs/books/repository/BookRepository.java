@@ -8,7 +8,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.mappers.BookMapper;
 import pl.droidevs.books.model.Book;
 
 public final class BookRepository {

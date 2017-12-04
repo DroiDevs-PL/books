@@ -4,11 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public final class Book {
-
     private final String title;
     private final String author;
     private final Category category;
     private String description;
+    private String imageUrl;
 
     public Book(@NonNull String title, @NonNull String author, @NonNull Category category) {
         this.title = title;
@@ -40,8 +40,17 @@ public final class Book {
         this.description = description;
     }
 
+    @Nullable
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(@Nullable String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public enum Category {
-        BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, HEALTH, HISTORY, HORROR, ENTERTAINEMENT,
-        MYSTERY, ROMANCE, SCIENCE, SF, SPORT, TRAVEL
+        BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, FANTASY, HEALTH, HISTORY, HORROR, ENTERTAINEMENT,
+        MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, TRAVEL
     }
 }
