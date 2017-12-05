@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Books</string>
 
+    <string name="murder_on_the_orient_express">Murder on the Orient Express</string>
     <string name="lorem_ipsum_001">Lorem ipsum</string>
     <string name="lorem_ipsum_011">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="lorem_ipsum_111">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum justo vel auctor hendrerit. Ut ut nulla risus. Vestibulum ut suscipit nisi. Aliquam elit tellus, ornare ac volutpat sed, cursus a justo. Curabitur a elit non quam imperdiet aliquam. Etiam sodales risus quis molestie placerat. Pellentesque nec nisl felis. Aliquam tincidunt consequat odio.</string>

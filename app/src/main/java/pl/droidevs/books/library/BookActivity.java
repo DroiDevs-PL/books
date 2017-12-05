@@ -1,32 +1,34 @@
 package pl.droidevs.books.library;
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
+import android.content.Loader;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
+
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
+
+
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
+
+import java.security.PKCS12Attribute;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import pl.droidevs.books.R;
 
@@ -39,36 +41,39 @@ public class BookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book);
 
         ImageView imageView = (ImageView) findViewById(R.id.albumImageView);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        Glide.with(this).load(R.drawable.orient_express).into(imageView);
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
 
-//        ColorStateList list = imageView.getImageTintList();
-//        int color = list.getDefaultColor();
-//        s
+        Resources reso = this.getResources();
+        Bitmap image = BitmapFactory.decodeResource(reso, R.drawable.orient_express);
 
-//        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-//        /*Bitmap*/Drawable drawable = /*(BitmapDrawable)*/ imageView.getDrawable();
-//        Bitmap bitmap = drawable.getBitmap();
-        /*Palette palette = Palette.from(bitmap).generate();
-        Palette.Swatch swatch = palette.getVibrantSwatch();
+        Palette.Swatch swatch = getDominantColor(image);
+        if (swatch != null) {
+            float[] hsl = swatch.getHsl();
+            float light = hsl[2];
+            float light2 = light > 0.075f ? light - 0.075f : 0f;
+            float[] hsl2 = {hsl[0], hsl[1], light2};
+            int color = ColorUtils.HSLToColor(hsl2);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);*/
-        collapsingToolbarLayout.setContentScrimColor(Color.rgb(85, 119, 120));
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.rgb(42, 75, 76));
+            collapsingToolbarLayout.setContentScrimColor(swatch.getRgb());
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
+    }
 
-//        AverageRGBLoader rgbLoader = new AverageRGBLoader(this);
-//        rgbLoader.execute(bitmap);
+    public Palette.Swatch getDominantColor(Bitmap bitmap) {
+        List<Palette.Swatch> swatchesTemp = Palette.from(bitmap).generate().getSwatches();
+        List<Palette.Swatch> swatches = new ArrayList<Palette.Swatch>(swatchesTemp);
+        Collections.sort(swatches, new Comparator<Palette.Swatch>() {
+            @Override
+            public int compare(Palette.Swatch swatch1, Palette.Swatch swatch2) {
+                return swatch2.getPopulation() - swatch1.getPopulation();
+            }
+        });
 
-        /*Bitmap bitmap =*/
-        Glide.with(this).load(R.drawable.orient_express).into(imageView);
 
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.orient_express);
-        int i = 0;
-
-
+        return swatches.size() > 0 ? swatches.get(0) : null;
     }
 
     public class AverageRGBLoader extends AsyncTask<Bitmap, Void, Integer> {
@@ -103,7 +108,6 @@ public class BookActivity extends AppCompatActivity {
             int blue = (blueColors / pixelCount);
 
             int color = Color.rgb(red, green, blue);
-
             return color;
         }
     }
