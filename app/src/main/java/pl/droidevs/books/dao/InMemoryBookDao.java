@@ -57,6 +57,7 @@ public final class InMemoryBookDao implements BookDao {
         final ArrayList<BookEntity> sortedBooks = new ArrayList<>(this.books.values());
         Collections.sort(sortedBooks, (t1, t2) -> t1.getTitle().compareTo(t2.getTitle()));
         booksLiveData.setValue(sortedBooks);
+
         return booksLiveData;
     }
 

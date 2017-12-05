@@ -10,4 +10,23 @@ public class BookId implements Serializable {
     public BookId(@NonNull final String id) {
         this.id = id;
     }
+
+    String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BookId bookId = (BookId) o;
+
+        return id.equals(bookId.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

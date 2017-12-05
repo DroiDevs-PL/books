@@ -31,6 +31,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_book, parent, false);
+
         return new BookViewHolder(itemView, bookItemClickListener);
     }
 

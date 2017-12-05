@@ -35,6 +35,8 @@ public class LibraryActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    private LibraryAdapter adapter;
+
     private Unbinder unbinder;
 
     @Override
@@ -45,27 +47,39 @@ public class LibraryActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         this.unbinder = ButterKnife.bind(this);
 
-        final LibraryAdapter adapter = new LibraryAdapter();
-        adapter.setItemClickListener(bookId -> {
-            // TODO: Start details activity and pass the book id
-        });
-        recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        setupAdapter();
+        setupRecyclerView();
+        setupViewModel();
 
         floatingActionButton.setOnClickListener(view -> {
             // TODO: Start Add book activity
         });
 
+        progressBar.setVisibility(VISIBLE);
+    }
+
+    private void setupAdapter() {
+        adapter = new LibraryAdapter();
+        adapter.setItemClickListener(bookId -> {
+            // TODO: Start details activity and pass the book id
+        });
+    }
+
+    private void setupRecyclerView() {
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void setupViewModel() {
         final LibraryViewModel libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
-            if (books != null)
+            if (books != null) {
                 adapter.setItems(books);
+            }
         });
-
-        progressBar.setVisibility(VISIBLE);
     }
 
     @Override
