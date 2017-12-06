@@ -1,13 +1,9 @@
 package pl.droidevs.books.login;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,24 +12,13 @@ import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.library.LibraryActivity;
-import pl.droidevs.books.library.LibraryViewModel;
-import pl.droidevs.books.model.Book;
 
 public class LoginActivity extends AppCompatActivity {
-
-    @Inject
-    LoginService loginService;
-
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
 
     @BindView(R.id.textHello)
     TextView textHello;
 
     private Unbinder unbinder;
-
-    //TODO Remove (just for testing)
-    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +27,6 @@ public class LoginActivity extends AppCompatActivity {
 
         AndroidInjection.inject(this);
         this.unbinder = ButterKnife.bind(this);
-
-        textHello.setText(loginService.getUserName());
-
-        libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
-        libraryViewModel.getBooks().observe(this, books -> {
-
-            for (Book book : books) {
-                textHello.append("\n\n" + book.getTitle());
-            }
-        });
     }
 
     @OnClick(R.id.login_button)

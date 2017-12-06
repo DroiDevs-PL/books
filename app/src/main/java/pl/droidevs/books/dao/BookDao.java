@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -20,11 +21,11 @@ public interface BookDao {
     LiveData<List<BookEntity>> getAllBooks();
 
     @Insert(onConflict = REPLACE)
-    void addBook(BookEntity book);
+    void addBook(@NonNull BookEntity book);
 
     @Delete
-    void removeBook(BookEntity book);
+    void removeBook(@NonNull BookEntity book);
 
     @Update(onConflict = REPLACE)
-    void updateBook(BookEntity book);
+    void updateBook(@NonNull BookEntity book);
 }
