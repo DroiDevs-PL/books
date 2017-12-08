@@ -8,12 +8,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.mappers.BookMapper;
 import pl.droidevs.books.model.Book;
 
-public class BookRepository {
-
-    private BookDao bookDao;
+public final class BookRepository {
+    private final BookDao bookDao;
 
     @Inject
     public BookRepository(BookDao bookDao) {
