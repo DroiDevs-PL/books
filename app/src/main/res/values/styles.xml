@@ -8,4 +8,21 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="TextInputEditTextTheme">
+        <item name="android:textSize">@dimen/input_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="LoginButtonTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="colorButtonNormal">@android:color/white</item>
+        <item name="android:layout_margin">@dimen/login_screen_margin</item>
+    </style>
 </resources>
