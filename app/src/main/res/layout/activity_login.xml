@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="pl.droidevs.books.login.LoginActivity">
 
     <android.support.design.widget.TextInputLayout
@@ -17,11 +19,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/textHello"
+            android:id="@+id/login_edit_text"
             style="@style/TextInputEditTextTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login_hint"/>
+            android:hint="@string/login_hint"
+            android:nextFocusLeft="@id/login_edit_text"
+            android:nextFocusUp="@id/login_edit_text"/>
 
     </android.support.design.widget.TextInputLayout>
 

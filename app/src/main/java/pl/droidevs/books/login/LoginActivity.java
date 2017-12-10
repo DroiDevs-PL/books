@@ -3,7 +3,7 @@ package pl.droidevs.books.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,8 +15,8 @@ import pl.droidevs.books.library.LibraryActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    @BindView(R.id.textHello)
-    TextView textHello;
+    @BindView(R.id.login_edit_text)
+    EditText loginEditText;
 
     private Unbinder unbinder;
 
