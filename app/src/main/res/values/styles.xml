@@ -14,6 +14,11 @@
         <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
 
+    <style name="TextInputLayoutTheme">
+        <item name="colorAccent">@android:color/white</item>
+        <item name="android:layout_margin">@dimen/login_screen_margin</item>
+    </style>
+
     <style name="TextInputEditTextTheme">
         <item name="android:textSize">@dimen/input_text_size</item>
         <item name="android:textColor">@android:color/white</item>
