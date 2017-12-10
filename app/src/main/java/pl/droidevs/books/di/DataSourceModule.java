@@ -12,7 +12,6 @@ import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.dao.InMemoryBookDao;
-import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.repository.BookRepository;
 
 @Module(includes = AppModule.class)
@@ -35,15 +34,5 @@ public class DataSourceModule {
     BookDao bookDao(Context context) {
         return new InMemoryBookDao();
 //        return bookDataBase(context).bookDao();
-    }
-
-    @Provides
-    ViewModel libraryViewModel(LibraryViewModel viewModel) {
-        return viewModel;
-    }
-
-    @Provides
-    ViewModelProvider.Factory libraryViewModelFactory(ViewModelFactory factory) {
-        return factory;
     }
 }
