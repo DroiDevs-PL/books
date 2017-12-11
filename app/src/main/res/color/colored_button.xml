@@ -1,12 +1,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Disabled state. -->
     <item
         android:alpha="?android:attr/disabledAlpha"
         android:color="?attr/colorButtonNormal"
         android:state_enabled="false"/>
 
-    <!-- Enabled state. -->
     <item android:color="@android:color/white"/>
 
 </selector>
