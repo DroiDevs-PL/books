@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -44,6 +43,11 @@ public class LoginActivity extends AppCompatActivity {
         this.unbinder = ButterKnife.bind(this);
 
         setupViewModel();
+
+        if (this.loginViewModel.isLoggedIn()) {
+            showLibraryActivity();
+        }
+
         manageLoginButton();
     }
 
@@ -51,6 +55,11 @@ public class LoginActivity extends AppCompatActivity {
         this.loginViewModel = ViewModelProviders
                 .of(this, this.viewModelFactory)
                 .get(LoginViewModel.class);
+    }
+
+    private void showLibraryActivity() {
+        startActivity(new Intent(this, LibraryActivity.class));
+        finish();
     }
 
     private void manageLoginButton() {
@@ -72,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
         this.loginViewModel.saveLogin(this.loginEditText.getText().toString());
-        startActivity(new Intent(this, LibraryActivity.class));
+        showLibraryActivity();
     }
 
     @Override
