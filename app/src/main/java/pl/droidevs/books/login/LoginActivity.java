@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void manageLoginButton() {
 
-        if (this.loginViewModel.isInputValid(this.loginEditText.getText())) {
+        if (this.loginViewModel.isInputValid(this.loginEditText.getText().toString())) {
             this.loginButton.setEnabled(true);
 
             return;
