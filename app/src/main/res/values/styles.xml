@@ -18,7 +18,7 @@
         <item name="colorAccent">@android:color/white</item>
         <item name="colorControlNormal">@android:color/white</item>
         <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:layout_margin">@dimen/login_screen_margin</item>
+        <item name="android:layout_margin">@dimen/spacing_normal</item>
     </style>
 
     <style name="TextInputEditTextTheme">
@@ -29,7 +29,7 @@
     <style name="LoginButtonTheme" parent="ThemeOverlay.AppCompat.Dark">
         <item name="android:textColorPrimary">@color/colorPrimary</item>
         <item name="colorButtonNormal">@android:color/white</item>
-        <item name="android:layout_margin">@dimen/login_screen_margin</item>
+        <item name="android:layout_margin">@dimen/spacing_normal</item>
         <item name="android:backgroundTint">@color/colored_button</item>
     </style>
 </resources>
