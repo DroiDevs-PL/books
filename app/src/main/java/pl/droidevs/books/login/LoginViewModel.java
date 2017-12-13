@@ -11,11 +11,11 @@ public class LoginViewModel extends ViewModel {
 
     private static final String SHARED_PREFERENCES_LOGIN_KEY = "login";
 
-    @Inject
     SharedPreferences sharedPreferences;
 
     @Inject
-    public LoginViewModel() {
+    public LoginViewModel(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 
     //TODO in future should check if user is logged in

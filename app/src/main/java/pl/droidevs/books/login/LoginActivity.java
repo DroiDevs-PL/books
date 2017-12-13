@@ -14,7 +14,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.library.LibraryActivity;
@@ -27,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.login_button)
     Button loginButton;
 
-    private Unbinder unbinder;
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
@@ -40,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         AndroidInjection.inject(this);
-        this.unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         setupViewModel();
 
@@ -48,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             showLibraryActivity();
         }
 
-        manageLoginButton();
+        manageLoginButtonState();
     }
 
     private void setupViewModel() {
@@ -62,32 +59,21 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void manageLoginButton() {
+    private void manageLoginButtonState() {
+        String login = this.loginEditText.getText().toString();
+        boolean shouldBeEnabled = this.loginViewModel.isInputValid(login);
 
-        if (this.loginViewModel.isInputValid(this.loginEditText.getText().toString())) {
-            this.loginButton.setEnabled(true);
-
-            return;
-        }
-
-        this.loginButton.setEnabled(false);
+        this.loginButton.setEnabled(shouldBeEnabled);
     }
 
     @OnTextChanged(R.id.login_edit_text)
     public void onInputChanged() {
-        manageLoginButton();
+        manageLoginButtonState();
     }
 
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
         this.loginViewModel.saveLogin(this.loginEditText.getText().toString());
         showLibraryActivity();
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.unbinder.unbind();
-
-        super.onDestroy();
     }
 }

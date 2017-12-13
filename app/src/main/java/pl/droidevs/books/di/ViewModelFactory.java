@@ -26,15 +26,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             creator = getCreatorFromCreatorSet(modelClass);
         }
 
-        if (creator == null) {
-            throw new IllegalArgumentException("unknown model class " + modelClass);
-        }
-
-        try {
-            return (T) creator.get();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return (T) creator.get();
     }
 
     private Provider<? extends ViewModel> getCreatorFromCreatorSet(Class<?> modelClass) {
@@ -46,6 +38,6 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("unknown model class " + modelClass);
     }
 }
