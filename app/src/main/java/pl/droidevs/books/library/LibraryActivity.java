@@ -43,6 +43,7 @@ public class LibraryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_library);
 
         AndroidInjection.inject(this);
+        ButterKnife.bind(this);
 
         setupAdapter();
         setupRecyclerView();
