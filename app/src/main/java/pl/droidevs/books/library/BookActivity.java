@@ -1,47 +1,93 @@
 package pl.droidevs.books.library;
 
-import android.app.Activity;
-import android.content.Loader;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
-import java.security.PKCS12Attribute;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import pl.droidevs.books.R;
 
 public class BookActivity extends AppCompatActivity {
+    private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
+    private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
+    private BookViewModel viewModel;
+
+    private String bookId;
+
+    //region Butter binding
+    @BindView(R.id.album_image_view)
+    ImageView mImageView;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.shadow_view)
+    View mShadowView;
+
+    @BindView(R.id.author_tv)
+    TextView authorTextView;
+
+    @BindView(R.id.category_tv)
+    TextView categoryTextView;
+
+    @BindView(R.id.description_tv)
+    TextView descryptionTextView;
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_book);
+        ButterKnife.bind(this);
+        viewModel = ViewModelProviders.of(this).get(BookViewModel.class);
 
-        ImageView imageView = (ImageView) findViewById(R.id.albumImageView);
-        Glide.with(this).load(R.drawable.orient_express).into(imageView);
+        /*viewModel.getBook().observe(this, book -> {
+            if (book == null) {
+                mImageView.setImageDrawable(null);
+                authorTextView.setText("");
+                categoryTextView.setText("");
+                descryptionTextView.setText("");
+            } else {
+                Glide.with(this).load(book.getImageUrl()).into(mImageView);
+                authorTextView.setText(book.getAuthor());
+                categoryTextView.setText(book.getDescription());
+                descryptionTextView.setText(book.getDescription());
+            }
+        });*/
+
+        TextView titleText = getTitleTextView(mToolbar);
+        if (titleText != null)
+            titleText.setText("Hello");
+
+        final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
+        bookId = extras.getString(EXTRAS_BOOK_ID);
+
+
+        Glide.with(this).load(R.drawable.orient_express).into(mImageView);
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
 
         Resources reso = this.getResources();
@@ -65,51 +111,24 @@ public class BookActivity extends AppCompatActivity {
     public Palette.Swatch getDominantColor(Bitmap bitmap) {
         List<Palette.Swatch> swatchesTemp = Palette.from(bitmap).generate().getSwatches();
         List<Palette.Swatch> swatches = new ArrayList<Palette.Swatch>(swatchesTemp);
-        Collections.sort(swatches, new Comparator<Palette.Swatch>() {
-            @Override
-            public int compare(Palette.Swatch swatch1, Palette.Swatch swatch2) {
-                return swatch2.getPopulation() - swatch1.getPopulation();
-            }
-        });
-
+        Collections.sort(swatches, (swatch1, swatch2) -> swatch2.getPopulation() - swatch1.getPopulation());
 
         return swatches.size() > 0 ? swatches.get(0) : null;
     }
 
-    public class AverageRGBLoader extends AsyncTask<Bitmap, Void, Integer> {
+    private TextView getTitleTextView(Toolbar toolbar) {
+        try {
+            Class<?> toolbarClass = Toolbar.class;
+            Field titleTextViewField = toolbarClass.getDeclaredField("mTitleTextView");
+            titleTextViewField.setAccessible(true);
+            TextView titleTextView = (TextView) titleTextViewField.get(toolbar);
 
-        private Activity mActivity;
-
-        public AverageRGBLoader(Activity activity) {
-            mActivity = activity;
+            return titleTextView;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
         }
 
-        @Override
-        protected Integer doInBackground(Bitmap... bitmaps) {
-            Bitmap bitmap = bitmaps.clone()[0];
-
-            int redColors = 0;
-            int greenColors = 0;
-            int blueColors = 0;
-            int pixelCount = 0;
-
-            for (int y = 0; y < bitmap.getHeight(); y++) {
-                for (int x = 0; x < bitmap.getWidth(); x++) {
-                    int c = bitmap.getPixel(x, y);
-                    pixelCount++;
-                    redColors += Color.red(c);
-                    greenColors += Color.green(c);
-                    blueColors += Color.blue(c);
-                }
-            }
-            // calculate average of bitmap r,g,b values
-            int red = (redColors / pixelCount);
-            int green = (greenColors / pixelCount);
-            int blue = (blueColors / pixelCount);
-
-            int color = Color.rgb(red, green, blue);
-            return color;
-        }
+        return null;
     }
 }
 

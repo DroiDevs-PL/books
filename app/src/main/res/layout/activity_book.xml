@@ -22,20 +22,22 @@
             app:expandedTitleMarginStart="16dp"
             app:expandedTitleTextAppearance="@style/ExpandedAppBar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:title="@string/lorem_ipsum_111">
+            tools:title="@string/lorem_ipsum_111">
 
             <ImageView
-                android:id="@+id/albumImageView"
+                android:id="@+id/album_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/orient_express"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseMode="parallax"
+                android:transitionName="@string/transition_image"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <View
+                    android:id="@+id/shadow_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#7f000000"
@@ -44,6 +46,7 @@
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -135,33 +138,29 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/author_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Agatha Christie"
+                tools:text="Agatha Christie"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:transitionName="@string/transition_author"/>
 
             <TextView
+                android:id="@+id/category_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Category"
+                tools:text="Category"
                 android:textAllCaps="true" />
 
             <TextView
+                android:id="@+id/description_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16sp"
-                android:text="@string/lorem_ipsum_511" />
+                tools:text="@string/lorem_ipsum_511" />
 
         </LinearLayout>
-        <!--<TextView
-        android:layout_marginTop="16dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
-        android:text="@string/lorem_ipsum_511"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />-->
     </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

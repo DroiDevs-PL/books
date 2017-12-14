@@ -11,7 +11,8 @@ public class BookId implements Serializable {
         this.id = id;
     }
 
-    String getId() {
+    // ToDo: private/public???
+    public String getId() {
         return id;
     }
 

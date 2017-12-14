@@ -2,12 +2,19 @@ package pl.droidevs.books.library;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Fade;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import javax.inject.Inject;
@@ -22,6 +29,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public class LibraryActivity extends AppCompatActivity {
+    private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
+    private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
@@ -60,8 +69,26 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         adapter = new LibraryAdapter();
-        adapter.setItemClickListener(bookId -> {
+        adapter.setItemClickListener((view, bookId) -> {
             // TODO: Start details activity and pass the book id
+//            ImageView imageView=(ImageView)view.findViewById(R.id.iv_book);
+//            int imageId = imageView.getTag();
+            Intent intent = new Intent(this, BookActivity.class);
+            Bundle extras = new Bundle();
+            extras.putString(EXTRAS_BOOK_ID, bookId.getId());
+            intent.putExtra(BUNDLE_EXTRAS, extras);
+
+            /*getWindow().setEnterTransition(new Fade(Fade.IN));
+            getWindow().setExitTransition(new Fade(Fade.OUT));*/
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this,
+                    new Pair<>(view.findViewById(R.id.iv_book), getString(R.string.transition_image)),
+                    new Pair<>(view.findViewById(R.id.tv_book_title), getString(R.string.transition_title)),
+                    new Pair<>(view.findViewById(R.id.tv_book_author), getString(R.string.transition_author))
+            );
+
+            ActivityCompat.startActivity(this, intent, options.toBundle());
         });
     }
 

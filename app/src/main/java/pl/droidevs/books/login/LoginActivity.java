@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
-        startActivity(new Intent(this, BookActivity.class));
+        startActivity(new Intent(this, LibraryActivity.class));
     }
 
     @Override

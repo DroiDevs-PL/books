@@ -73,7 +73,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null)
-                    onClickListener.onBookClicked(bookId);
+                    onClickListener.onBookClicked(itemView, bookId);
             });
         }
 
@@ -95,6 +95,6 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull BookId bookId);
+        void onBookClicked(@NonNull View view, @NonNull BookId bookId);
     }
 }
