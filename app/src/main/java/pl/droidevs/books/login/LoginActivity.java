@@ -1,14 +1,19 @@
 package pl.droidevs.books.login;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.library.BookActivity;
@@ -16,10 +21,16 @@ import pl.droidevs.books.library.LibraryActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    @BindView(R.id.textHello)
-    TextView textHello;
+    @BindView(R.id.login_edit_text)
+    EditText loginEditText;
 
-    private Unbinder unbinder;
+    @BindView(R.id.login_button)
+    Button loginButton;
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
+    private LoginViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +38,43 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         AndroidInjection.inject(this);
-        this.unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
+
+        setupViewModel();
+
+        if (this.loginViewModel.isLoggedIn()) {
+            showLibraryActivity();
+        }
+
+        manageLoginButtonState();
+    }
+
+    private void setupViewModel() {
+        this.loginViewModel = ViewModelProviders
+                .of(this, this.viewModelFactory)
+                .get(LoginViewModel.class);
+    }
+
+    private void showLibraryActivity() {
+        startActivity(new Intent(this, LibraryActivity.class));
+        finish();
+    }
+
+    private void manageLoginButtonState() {
+        String login = this.loginEditText.getText().toString();
+        boolean shouldBeEnabled = this.loginViewModel.isInputValid(login);
+
+        this.loginButton.setEnabled(shouldBeEnabled);
+    }
+
+    @OnTextChanged(R.id.login_edit_text)
+    public void onInputChanged() {
+        manageLoginButtonState();
     }
 
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
-        startActivity(new Intent(this, LibraryActivity.class));
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.unbinder.unbind();
-
-        super.onDestroy();
+        this.loginViewModel.saveLogin(this.loginEditText.getText().toString());
+        showLibraryActivity();
     }
 }

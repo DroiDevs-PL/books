@@ -12,4 +12,7 @@
     <string name="transition_title">title</string>
     <string name="transition_author">author</string>
     <string name="transition_image">image</string>
+
+    <string name="login_hint">Your login</string>
+    <string name="login_button">Login</string>
 </resources>

@@ -46,15 +46,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private LibraryAdapter adapter;
 
-    private Unbinder unbinder;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
 
         AndroidInjection.inject(this);
-        this.unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         setupAdapter();
         setupRecyclerView();
@@ -107,12 +105,5 @@ public class LibraryActivity extends AppCompatActivity {
                 adapter.setItems(books);
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.unbinder.unbind();
-
-        super.onDestroy();
     }
 }

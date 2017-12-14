@@ -2,29 +2,42 @@ package pl.droidevs.books.di;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
+
+import java.util.Map;
 
 import javax.inject.Inject;
-
-import pl.droidevs.books.library.LibraryViewModel;
+import javax.inject.Provider;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 
-    private LibraryViewModel viewModel;
+    private final Map<Class<? extends ViewModel>, Provider<ViewModel>> creators;
 
     @Inject
-    public ViewModelFactory(LibraryViewModel libraryViewModel) {
-        this.viewModel = libraryViewModel;
+    public ViewModelFactory(Map<Class<? extends ViewModel>, Provider<ViewModel>> creators) {
+        this.creators = creators;
     }
 
-    @NonNull
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+    public <T extends ViewModel> T create(Class<T> modelClass) {
+        Provider<? extends ViewModel> creator = this.creators.get(modelClass);
 
-        if (modelClass.isAssignableFrom(LibraryViewModel.class)) {
-            return (T) viewModel;
+        if (creator == null) {
+            creator = getCreatorFromCreatorSet(modelClass);
         }
 
-        throw new IllegalArgumentException("Unknown class name");
+        return (T) creator.get();
+    }
+
+    private Provider<? extends ViewModel> getCreatorFromCreatorSet(Class<?> modelClass) {
+
+        for (Map.Entry<Class<? extends ViewModel>, Provider<ViewModel>> entry : creators.entrySet()) {
+
+            if (modelClass.isAssignableFrom(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+
+        throw new IllegalArgumentException("unknown model class " + modelClass);
     }
 }
