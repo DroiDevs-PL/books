@@ -16,6 +16,17 @@
         android:src="@drawable/ic_book"
         android:transitionName="@string/transition_image"/>
 
+    <View
+        android:id="@+id/shadow_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"
+        android:transitionName="@string/transition_shadow"
+        android:layout_alignLeft="@id/iv_book"
+        android:layout_alignRight="@id/iv_book"
+        android:layout_alignTop="@id/iv_book"
+        android:layout_alignBottom="@id/iv_book"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

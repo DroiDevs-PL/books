@@ -89,7 +89,8 @@ public class LibraryActivity extends AppCompatActivity {
                     this,
                     new Pair<>(view.findViewById(R.id.iv_book), getString(R.string.transition_image)),
                     new Pair<>(view.findViewById(R.id.tv_book_title), getString(R.string.transition_title)),
-                    new Pair<>(view.findViewById(R.id.tv_book_author), getString(R.string.transition_author))
+                    new Pair<>(view.findViewById(R.id.tv_book_author), getString(R.string.transition_author)),
+                    new Pair<>(view.findViewById(R.id.shadow_view), getString(R.string.transition_shadow))
             );
 
             ActivityCompat.startActivity(this, intent, options.toBundle());

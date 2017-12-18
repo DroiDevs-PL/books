@@ -40,9 +40,10 @@
                     android:id="@+id/shadow_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#7f000000"
+                    android:background="#3f000000"
                     app:layout_collapseMode="pin"
-                    android:layout_alignParentBottom="true"/>
+                    android:layout_alignParentBottom="true"
+                    android:transitionName="@string/transition_shadow"/>
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
