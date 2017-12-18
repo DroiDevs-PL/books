@@ -78,12 +78,13 @@ public class LibraryActivity extends AppCompatActivity {
 //            int imageId = imageView.getTag();
             Intent intent = new Intent(this, BookActivity.class);
             Bundle extras = new Bundle();
-            extras.putString(EXTRAS_BOOK_ID, bookId.getId());
+            extras.putString(EXTRAS_BOOK_ID, bookId);
             intent.putExtra(BUNDLE_EXTRAS, extras);
 
             /*getWindow().setEnterTransition(new Fade(Fade.IN));
             getWindow().setExitTransition(new Fade(Fade.OUT));*/
 
+            //ToDo: Chek whats wrong with positioning back items
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     this,
                     new Pair<>(view.findViewById(R.id.iv_book), getString(R.string.transition_image)),
@@ -104,12 +105,6 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         final LibraryViewModel libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
-        libraryViewModel.getBooks().observe(this, new Observer<List<Book>>() {
-            @Override
-            public void onChanged(@Nullable List<Book> books) {
-
-            }
-        });
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
             if (books != null) {

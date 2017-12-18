@@ -1,10 +1,15 @@
 package pl.droidevs.books.library;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
@@ -26,10 +33,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.model.Book;
 
 public class BookActivity extends AppCompatActivity {
     private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
@@ -45,6 +55,9 @@ public class BookActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
+    @BindView(R.id.collapsingToolbarLayout)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+
     @BindView(R.id.shadow_view)
     View mShadowView;
 
@@ -58,6 +71,9 @@ public class BookActivity extends AppCompatActivity {
     TextView descryptionTextView;
     //endregion
 
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,52 +83,17 @@ public class BookActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
 
-        viewModel = ViewModelProviders.of(this).get(BookViewModel.class);
 
-        /*viewModel.getBook().observe(this, book -> {
-            if (book == null) {
-                mImageView.setImageDrawable(null);
-                authorTextView.setText("");
-                categoryTextView.setText("");
-                descryptionTextView.setText("");
-            } else {
-                Glide.with(this).load(book.getImageUrl()).into(mImageView);
-                authorTextView.setText(book.getAuthor());
-                categoryTextView.setText(book.getDescription());
-                descryptionTextView.setText(book.getDescription());
-            }
-        });*/
-
-        TextView titleText = getTitleTextView(mToolbar);
-        if (titleText != null)
-            titleText.setText("Hello");
-
-        final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
-        bookId = extras.getString(EXTRAS_BOOK_ID);
-
-
-        Glide.with(this).load(R.drawable.orient_express).into(mImageView);
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
-
-        Resources reso = this.getResources();
-        Bitmap image = BitmapFactory.decodeResource(reso, R.drawable.orient_express);
-
-        Palette.Swatch swatch = getDominantColor(image);
-        if (swatch != null) {
-            float[] hsl = swatch.getHsl();
-            float light = hsl[2];
-            float light2 = light > 0.075f ? light - 0.075f : 0f;
-            float[] hsl2 = {hsl[0], hsl[1], light2};
-            int color = ColorUtils.HSLToColor(hsl2);
-
-            collapsingToolbarLayout.setContentScrimColor(swatch.getRgb());
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
+        if (savedInstanceState != null) {
+            bookId = savedInstanceState.getString(EXTRAS_BOOK_ID);
+        } else {
+            final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
+            bookId = extras.getString(EXTRAS_BOOK_ID);
         }
+        setupViewModel();
     }
 
-    public Palette.Swatch getDominantColor(Bitmap bitmap) {
+    private Palette.Swatch getDominantColor(Bitmap bitmap) {
         List<Palette.Swatch> swatchesTemp = Palette.from(bitmap).generate().getSwatches();
         List<Palette.Swatch> swatches = new ArrayList<Palette.Swatch>(swatchesTemp);
         Collections.sort(swatches, (swatch1, swatch2) -> swatch2.getPopulation() - swatch1.getPopulation());
@@ -120,19 +101,66 @@ public class BookActivity extends AppCompatActivity {
         return swatches.size() > 0 ? swatches.get(0) : null;
     }
 
-    private TextView getTitleTextView(Toolbar toolbar) {
-        try {
-            Class<?> toolbarClass = Toolbar.class;
-            Field titleTextViewField = toolbarClass.getDeclaredField("mTitleTextView");
-            titleTextViewField.setAccessible(true);
-            TextView titleTextView = (TextView) titleTextViewField.get(toolbar);
+    private void setupViewModel() {
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookViewModel.class);
+        viewModel.getBooks().observe(this, books -> {
+            Book selectedBook = null;
+            if (books != null) {
+                for (Book book : books) {
+                    String thisId = book.getId().getId();
+                    if (thisId.equals(bookId)) {
+                        selectedBook = book;
+                        break;
+                    }
+                }
+            }
 
-            return titleTextView;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+            if (selectedBook != null) {
+                collapsingToolbarLayout.setTitle(selectedBook.getTitle());
+                authorTextView.setText(selectedBook.getAuthor());
+                categoryTextView.setText(selectedBook.getCategory().toString());
+                descryptionTextView.setText(selectedBook.getDescription());
 
-        return null;
+                BitmapImageViewTarget target =Glide.with(BookActivity.this).asBitmap().load(selectedBook.getImageUrl()).into(new BitmapImageViewTarget(mImageView){
+                    @Override
+                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        super.onResourceReady(resource, transition);
+
+                        Palette.Swatch swatch = getDominantColor(resource);
+                        if (swatch != null) {
+                            float[] hsl = swatch.getHsl();
+                            float actionBarLight = hsl[2];
+                            float statusBarLight;
+                            if(actionBarLight > 0.7f){
+                                actionBarLight = 0.7f;
+                            }
+                            if(actionBarLight > 0.075f){
+                                statusBarLight =actionBarLight - 0.075f;
+                            }else{
+                                statusBarLight  = actionBarLight;
+                                actionBarLight += 0.075f;
+                            }
+
+                            float[] actionBarHsl = {hsl[0], hsl[1], actionBarLight};
+                            int actionBarColor = ColorUtils.HSLToColor(actionBarHsl);
+                            collapsingToolbarLayout.setContentScrimColor(actionBarColor);
+
+                            float[] statusBarHsl = {hsl[0], hsl[1], statusBarLight};
+                            int statusBarColor = ColorUtils.HSLToColor(statusBarHsl);
+                            Window window = getWindow();
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            window.setStatusBarColor(statusBarColor);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EXTRAS_BOOK_ID, bookId);
     }
 }
 

@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import pl.droidevs.books.model.Book;
@@ -27,5 +29,22 @@ public class BookViewModel extends ViewModel {
     /*public LiveData<Book> getBook() {
         return book;
     }*/
+    public Book getBook(String bookId) {
+        LiveData<List<Book>> liveBooks = bookRepository.getBooks();
+        List<Book> books = liveBooks.getValue();
+        if(books !=null){
+            for (Book book : books) {
+                if (book.getId().getId() == bookId) {
+                    return book;
+                }
+            }
+        }
+        Book testBook =new Book("Oient Express", "Agatka", Book.Category.TRAVEL);
+        testBook.setImageUrl("");
+        return null;
+    }
 
+    public LiveData<List<Book>> getBooks() {
+        return bookRepository.getBooks();
+    }
 }
