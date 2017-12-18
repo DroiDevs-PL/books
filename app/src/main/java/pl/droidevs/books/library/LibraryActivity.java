@@ -1,9 +1,11 @@
 package pl.droidevs.books.library;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -17,6 +19,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -24,6 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.model.Book;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -99,6 +104,12 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         final LibraryViewModel libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
+        libraryViewModel.getBooks().observe(this, new Observer<List<Book>>() {
+            @Override
+            public void onChanged(@Nullable List<Book> books) {
+
+            }
+        });
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
             if (books != null) {

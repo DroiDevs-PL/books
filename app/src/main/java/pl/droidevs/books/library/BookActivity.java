@@ -28,6 +28,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 
 public class BookActivity extends AppCompatActivity {
@@ -62,7 +63,10 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_book);
+
+        AndroidInjection.inject(this);
         ButterKnife.bind(this);
+
         viewModel = ViewModelProviders.of(this).get(BookViewModel.class);
 
         /*viewModel.getBook().observe(this, book -> {
