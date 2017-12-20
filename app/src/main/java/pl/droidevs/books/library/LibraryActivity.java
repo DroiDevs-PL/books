@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 
@@ -71,6 +70,8 @@ public class LibraryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.export_item) {
+            final ExportImportViewModel exportImportViewModel = ViewModelProviders.of(this, viewModelFactory).get(ExportImportViewModel.class);
+            exportImportViewModel.exportBooks();
 
             return true;
         }
