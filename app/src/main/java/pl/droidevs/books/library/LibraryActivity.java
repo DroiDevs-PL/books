@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.ProgressBar;
 
 import javax.inject.Inject;
@@ -56,6 +58,14 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         progressBar.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        
+        return true;
     }
 
     private void setupAdapter() {
