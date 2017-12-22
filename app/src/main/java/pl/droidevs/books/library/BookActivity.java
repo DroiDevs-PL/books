@@ -2,6 +2,7 @@ package pl.droidevs.books.library;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,10 +31,20 @@ import static pl.droidevs.books.AppHelper.getColorsForBarsFromBitmap;
 
 public class BookActivity extends AppCompatActivity {
     private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
+    private static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
+    private static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
+    private static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
+    private static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
+    private static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
     private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
     private BookViewModel viewModel;
 
     private String bookId;
+    private String imageTransitionName;
+    private String titleTransitionName;
+    private String authorTransitionName;
+    private String shadowTransitionName;
+    private int lastSelectedIndex;
 
     //region Butter binding
     @BindView(R.id.album_image_view)
@@ -69,11 +80,26 @@ public class BookActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             bookId = savedInstanceState.getString(EXTRAS_BOOK_ID);
+            imageTransitionName = savedInstanceState.getString(EXTRAS_IMAGE_TRANSITION_NAME);
+            titleTransitionName = savedInstanceState.getString(EXTRAS_TITLE_TRANSITION_NAME);
+            authorTransitionName = savedInstanceState.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
+            shadowTransitionName = savedInstanceState.getString(EXTRAS_SHADOW_TRANSITION_NAME);
+            lastSelectedIndex = savedInstanceState.getInt(EXTRAS_LAST_SELECTED_INDEX);
         } else {
             final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
             bookId = extras.getString(EXTRAS_BOOK_ID);
+            imageTransitionName = extras.getString(EXTRAS_IMAGE_TRANSITION_NAME);
+            titleTransitionName = extras.getString(EXTRAS_TITLE_TRANSITION_NAME);
+            authorTransitionName = extras.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
+            shadowTransitionName = extras.getString(EXTRAS_SHADOW_TRANSITION_NAME);
+            lastSelectedIndex = extras.getInt(EXTRAS_LAST_SELECTED_INDEX);
         }
         setupViewModel();
+
+        imageView.setTransitionName(imageTransitionName);
+        //ToDo: title transitionName
+        authorTextView.setTransitionName(authorTransitionName);
+        shadowView.setTransitionName(shadowTransitionName);
     }
 
     private void setupViewModel() {
@@ -102,7 +128,7 @@ public class BookActivity extends AppCompatActivity {
                         super.onResourceReady(resource, transition);
 
                         int[] colors = getColorsForBarsFromBitmap(resource);
-                        if(colors != null){
+                        if (colors != null) {
                             collapsingToolbarLayout.setContentScrimColor(colors[0]);
                             Window window = getWindow();
                             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -118,6 +144,23 @@ public class BookActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRAS_BOOK_ID, bookId);
+        outState.putString(EXTRAS_IMAGE_TRANSITION_NAME, imageTransitionName);
+        outState.putString(EXTRAS_TITLE_TRANSITION_NAME, titleTransitionName);
+        outState.putString(EXTRAS_AUTHOR_TRANSITION_NAME, authorTransitionName);
+        outState.putString(EXTRAS_SHADOW_TRANSITION_NAME, shadowTransitionName);
+        outState.putInt(EXTRAS_LAST_SELECTED_INDEX, lastSelectedIndex);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRAS_IMAGE_TRANSITION_NAME, imageTransitionName);
+        intent.putExtra(EXTRAS_TITLE_TRANSITION_NAME, titleTransitionName);
+        intent.putExtra(EXTRAS_AUTHOR_TRANSITION_NAME, authorTransitionName);
+        intent.putExtra(EXTRAS_SHADOW_TRANSITION_NAME, shadowTransitionName);
+        intent.putExtra(EXTRAS_LAST_SELECTED_INDEX, lastSelectedIndex);
+        setResult(RESULT_OK, intent);
+        super.onBackPressed();
     }
 }
 

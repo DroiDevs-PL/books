@@ -31,7 +31,7 @@
                 android:scaleType="centerCrop"
                 tools:src="@drawable/orient_express"
                 app:layout_collapseMode="parallax"
-                android:transitionName="@string/transition_image"/>
+                />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -42,8 +42,7 @@
                     android:layout_height="match_parent"
                     android:background="#3f000000"
                     app:layout_collapseMode="pin"
-                    android:layout_alignParentBottom="true"
-                    android:transitionName="@string/transition_shadow"/>
+                    android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
@@ -144,8 +143,7 @@
                 android:layout_height="wrap_content"
                 tools:text="Agatha Christie"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:transitionName="@string/transition_author"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/category_tv"
