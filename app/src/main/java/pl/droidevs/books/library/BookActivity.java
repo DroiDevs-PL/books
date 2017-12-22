@@ -47,10 +47,10 @@ public class BookActivity extends AppCompatActivity {
     private int lastSelectedIndex;
 
     //region Butter binding
-    @BindView(R.id.album_image_view)
+    @BindView(R.id.album_iv)
     ImageView imageView;
 
-    @BindView(R.id.collapsingToolbarLayout)
+    @BindView(R.id.collapsing_toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
     @BindView(R.id.shadow_view)

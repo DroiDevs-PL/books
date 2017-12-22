@@ -79,9 +79,6 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         progressBar.setVisibility(VISIBLE);
-        /*if (lastSelectedIndex >= 0) {
-            recyclerView.scrollToPosition(lastSelectedIndex);
-        }*/
     }
 
     @Override
@@ -100,7 +97,7 @@ public class LibraryActivity extends AppCompatActivity {
                 public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                     LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(lastSelectedIndex);
                     sharedElements.put(imageTransitionName, viewHolder.ivBook);
-//                    sharedElements.put(titleTransitionName, viewHolder.tvBookTitle);
+                    sharedElements.put(titleTransitionName, viewHolder.tvBookTitle);
                     sharedElements.put(authorTransitionName, viewHolder.tvBookAuthor);
                     sharedElements.put(shadowTransitionName, viewHolder.shadowView);
                 }

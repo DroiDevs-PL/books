@@ -7,14 +7,14 @@
     tools:context="pl.droidevs.books.library.BookActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/app_barLayout"
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true">
 
         <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbarLayout"
+            android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
@@ -25,7 +25,7 @@
             tools:title="@string/lorem_ipsum_111">
 
             <ImageView
-                android:id="@+id/album_image_view"
+                android:id="@+id/album_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
