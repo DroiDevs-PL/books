@@ -9,7 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_barLayout"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="@dimen/collapsing_app_bar_layout_height"
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true">
 
@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             app:collapsedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:contentScrim="@color/colorPrimary"
-            app:expandedTitleMarginStart="16dp"
+            app:expandedTitleMarginStart="@dimen/spacing_normal"
             app:expandedTitleTextAppearance="@style/ExpandedAppBar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             tools:title="@string/lorem_ipsum_111">
@@ -40,7 +40,7 @@
                     android:id="@+id/shadow_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#3f000000"
+                    android:background="@color/image_shadow"
                     app:layout_collapseMode="pin"
                     android:layout_alignParentBottom="true"/>
             </RelativeLayout>
@@ -70,70 +70,70 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/spacing_normal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="@dimen/vote_star_size"
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="6dp"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"/>
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/vote_star_size"
+                    android:layout_height="@dimen/vote_star_size"
                     android:src="@drawable/ic_close_book"/>
             </LinearLayout>
 
@@ -142,7 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Agatha Christie"
-                android:textSize="24sp"
+                android:textSize="@dimen/author_label_text_size"
                 android:textStyle="bold"/>
 
             <TextView
@@ -156,7 +156,7 @@
                 android:id="@+id/description_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16sp"
+                android:layout_marginTop="@dimen/spacing_normal"
                 tools:text="@string/lorem_ipsum_511" />
 
         </LinearLayout>
