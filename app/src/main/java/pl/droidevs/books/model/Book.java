@@ -3,7 +3,7 @@ package pl.droidevs.books.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public final class Book {
+public final class Book  {
     private final BookId id;
     private final String title;
     private final String author;
