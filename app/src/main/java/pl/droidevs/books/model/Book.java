@@ -64,4 +64,11 @@ public final class Book  {
         BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, FANTASY, HEALTH, HISTORY, HORROR, ENTERTAINEMENT,
         MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, TRAVEL
     }
+
+    @Override
+    public String toString() {
+        getId().getId();
+        return super.toString();
+
+    }
 }

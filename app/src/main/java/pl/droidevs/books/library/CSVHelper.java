@@ -4,6 +4,7 @@ package pl.droidevs.books.library;
 import java.util.List;
 
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 
 public class CSVHelper {
 
@@ -22,7 +23,8 @@ public class CSVHelper {
 
     private static String getBookCSVString(Book book) {
         StringBuilder builder = new StringBuilder("");
-        builder.append(book.getId()).append(SEPARATOR)
+
+        builder.append(book.getId().getId()).append(SEPARATOR)
                 .append(book.getTitle()).append(SEPARATOR)
                 .append(book.getAuthor()).append(SEPARATOR)
                 .append(book.getCategory()).append(SEPARATOR)
@@ -31,4 +33,5 @@ public class CSVHelper {
 
         return builder.toString();
     }
+
 }
