@@ -56,6 +56,9 @@ dependencies {
     //Live data & ViewModel
     implementation "android.arch.lifecycle:extensions:1.0.0"
 
+    //CSV
+    compile group: 'com.opencsv', name: 'opencsv', version: '4.1'
+
     // TEST dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
