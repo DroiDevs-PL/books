@@ -118,7 +118,9 @@ public class LibraryActivity extends AppCompatActivity {
                     .of(this, viewModelFactory)
                     .get(ExportImportViewModel.class);
 
-            if (exportImportViewModel.exportBooks() == false) {
+            if (exportImportViewModel.exportBooks()) {
+                //TODO display message
+            } else {
                 //TODO display message
             }
         } else {
