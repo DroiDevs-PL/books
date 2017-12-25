@@ -57,7 +57,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.0.0"
 
     //CSV
-    compile group: 'com.opencsv', name: 'opencsv', version: '4.1'
+    compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
 
     // TEST dependencies
     testImplementation 'junit:junit:4.12'
