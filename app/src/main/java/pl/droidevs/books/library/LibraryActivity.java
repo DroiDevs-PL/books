@@ -139,15 +139,12 @@ public class LibraryActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        switch (requestCode) {
+        if(requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
 
-            case REQUEST_PERMISSION_SAVE_FILE_CODE: {
-
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    exportOptionSelected();
-                } else {
-                    //TODO display message
-                }
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportOptionSelected();
+            } else {
+                //TODO display message
             }
         }
     }
