@@ -83,8 +83,6 @@ public class ExportImportViewModel extends ViewModel {
             FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
             csvBeanWriter = new CsvBeanWriter(fileWriter, CsvPreference.STANDARD_PREFERENCE);
 
-            csvBeanWriter.write(CSVHelper.getBookEntityCsvHeaders());
-
             for (BookEntity bookEntity : books) {
                 csvBeanWriter.write(bookEntity, CSVHelper.getBookEntityCsvHeaders());
             }
