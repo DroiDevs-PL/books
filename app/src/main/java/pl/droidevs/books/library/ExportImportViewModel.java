@@ -88,13 +88,6 @@ public class ExportImportViewModel extends ViewModel {
 //            bufferedWriter.write(CSVHelper.getCSVContentFromBooksList(books));
 //            bufferedWriter.close();
 
-            FileReader fileReader = new FileReader(file.getAbsoluteFile());
-            CsvBeanReader reader = new CsvBeanReader(fileReader, CsvPreference.STANDARD_PREFERENCE);
-
-            BookEntity bookEntity;
-            while ((bookEntity = reader.read(BookEntity.class, CSVHelper.getBookEntityCsvHeaders(), CSVHelper.getProcessors())) != null) {
-                Log.d("Natalia", bookEntity.getAuthor());
-            }
         } catch (IOException e) {
 
         }
