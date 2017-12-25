@@ -5,36 +5,42 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import java.io.BufferedWriter;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.io.CsvBeanReader;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.entity.BookEntity;
+import pl.droidevs.books.repository.BookCsvRepository;
 
 public class ExportImportViewModel extends ViewModel {
 
     private static final String FILE_NAME = "Books.csv";
-    private BookRepository bookRepository;
+    private BookCsvRepository bookCsvRepository;
 
     @Inject
-    public ExportImportViewModel(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public ExportImportViewModel(BookCsvRepository bookRepository) {
+        this.bookCsvRepository = bookRepository;
     }
 
     public void exportBooks() {
         File file = getFile();
-        LiveData<List<Book>> booksLiveData = this.bookRepository.getBooks();
+        LiveData<List<BookEntity>> booksLiveData = this.bookCsvRepository.getBookEntities();
 
-        booksLiveData.observeForever(new Observer<List<Book>>() {
+        booksLiveData.observeForever(new Observer<List<BookEntity>>() {
 
             @Override
-            public void onChanged(@Nullable List<Book> books) {
+            public void onChanged(@Nullable List<BookEntity> books) {
                 writeToFile(file, books);
                 booksLiveData.removeObserver(this);
             }});
@@ -64,14 +70,46 @@ public class ExportImportViewModel extends ViewModel {
         }
     }
 
-    private void writeToFile(File file, List<Book> books) {
+    private void writeToFile(File file, List<BookEntity> books) {
 
         try {
             FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(CSVHelper.getCSVContentFromBooksList(books));
-            bufferedWriter.close();
+            CsvBeanWriter csvBeanWriter = new CsvBeanWriter(fileWriter, CsvPreference.STANDARD_PREFERENCE);
+
+            CellProcessor[] cellProcessor = CSVHelper.getProcessors();
+//            csvBeanWriter.write(CSVHelper.getBookEntityCsvHeaders());
+
+            for (BookEntity bookEntity : books) {
+                csvBeanWriter.write(bookEntity, CSVHelper.getBookEntityCsvHeaders());
+            }
+
+            csvBeanWriter.close();
+//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//            bufferedWriter.write(CSVHelper.getCSVContentFromBooksList(books));
+//            bufferedWriter.close();
+
+            FileReader fileReader = new FileReader(file.getAbsoluteFile());
+            CsvBeanReader reader = new CsvBeanReader(fileReader, CsvPreference.STANDARD_PREFERENCE);
+
+            BookEntity bookEntity;
+            while ((bookEntity = reader.read(BookEntity.class, CSVHelper.getBookEntityCsvHeaders(), CSVHelper.getProcessors())) != null) {
+                Log.d("Natalia", bookEntity.getAuthor());
+            }
         } catch (IOException e) {
+
+        }
+
+        try {
+            FileReader fileReader = new FileReader(file.getAbsoluteFile());
+            CsvBeanReader reader = new CsvBeanReader(fileReader, CsvPreference.STANDARD_PREFERENCE);
+
+            BookEntity bookEntity;
+            while ((bookEntity = reader.read(BookEntity.class, CSVHelper.getBookEntityCsvHeaders())) != null) {
+                Log.d("Natalia", bookEntity.getAuthor());
+            }
+
+        }
+        catch (Exception e){
 
         }
     }

@@ -12,6 +12,7 @@ import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.dao.InMemoryBookDao;
+import pl.droidevs.books.repository.BookCsvRepository;
 import pl.droidevs.books.repository.BookRepository;
 
 @Module(includes = AppModule.class)
@@ -21,6 +22,12 @@ public class DataSourceModule {
     @Provides
     BookRepository bookRepository(BookDao bookDao) {
         return new BookRepository(bookDao);
+    }
+
+    @Singleton
+    @Provides
+    BookCsvRepository bookCsvRepository(BookDao bookDao) {
+        return new BookCsvRepository(bookDao);
     }
 
     @Singleton
