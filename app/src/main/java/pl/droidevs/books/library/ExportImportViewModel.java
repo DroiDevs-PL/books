@@ -5,15 +5,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +39,6 @@ public class ExportImportViewModel extends ViewModel {
                 writeToFile(file, books);
                 booksLiveData.removeObserver(this);
             }});
-
     }
 
     private File getFile() {
@@ -86,6 +80,5 @@ public class ExportImportViewModel extends ViewModel {
         } catch (IOException e) {
 
         }
-
     }
 }
