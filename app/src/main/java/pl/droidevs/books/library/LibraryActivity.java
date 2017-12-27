@@ -6,7 +6,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.Binds;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 
@@ -31,6 +34,9 @@ import static android.view.View.VISIBLE;
 public class LibraryActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
+
+    @BindView(R.id.layout_library_content)
+    CoordinatorLayout coordinatorLayout;
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
@@ -113,15 +119,7 @@ public class LibraryActivity extends AppCompatActivity {
     private void exportOptionSelected() {
 
         if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            final ExportImportViewModel exportImportViewModel = ViewModelProviders
-                    .of(this, viewModelFactory)
-                    .get(ExportImportViewModel.class);
-
-            if (exportImportViewModel.exportBooks()) {
-                //TODO display message
-            } else {
-                //TODO display message
-            }
+            exportLibrary();
         } else {
             requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_SAVE_FILE_CODE);
         }
@@ -129,6 +127,24 @@ public class LibraryActivity extends AppCompatActivity {
 
     private boolean hasPermission(String permission) {
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void exportLibrary() {
+        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(ExportImportViewModel.class);
+
+        if (exportImportViewModel.exportBooks()) {
+            displayMessage(R.string.message_export_successful);
+        } else {
+            displayMessage(R.string.message_export_not_successful);
+        }
+    }
+
+    private void displayMessage(int messageResourceId) {
+        Snackbar.make(coordinatorLayout,
+                messageResourceId,
+                Snackbar.LENGTH_SHORT);
     }
 
     private void requestPermissions(String permission, int code) {
@@ -143,7 +159,7 @@ public class LibraryActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportOptionSelected();
             } else {
-                //TODO display message
+                displayMessage(R.string.message_permission_denied_cant_export);
             }
         }
     }
