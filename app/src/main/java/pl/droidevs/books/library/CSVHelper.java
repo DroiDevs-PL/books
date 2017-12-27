@@ -23,7 +23,6 @@ public class CSVHelper {
     }
 
     public static CellProcessor[] getProcessors() {
-
         final CellProcessor[] processors = new CellProcessor[] {
                 null,
                 null,

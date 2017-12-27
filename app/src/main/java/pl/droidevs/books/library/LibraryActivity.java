@@ -142,9 +142,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void displayMessage(int messageResourceId) {
-        Snackbar.make(coordinatorLayout,
-                messageResourceId,
-                Snackbar.LENGTH_SHORT)
+        Snackbar.make(coordinatorLayout, messageResourceId, Snackbar.LENGTH_SHORT)
                 .show();
     }
 
