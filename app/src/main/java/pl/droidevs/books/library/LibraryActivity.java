@@ -144,7 +144,8 @@ public class LibraryActivity extends AppCompatActivity {
     private void displayMessage(int messageResourceId) {
         Snackbar.make(coordinatorLayout,
                 messageResourceId,
-                Snackbar.LENGTH_SHORT);
+                Snackbar.LENGTH_SHORT)
+                .show();
     }
 
     private void requestPermissions(String permission, int code) {
@@ -154,7 +155,7 @@ public class LibraryActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if(requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
+        if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportOptionSelected();
