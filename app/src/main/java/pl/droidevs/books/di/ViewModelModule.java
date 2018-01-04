@@ -13,7 +13,7 @@ import dagger.Binds;
 import dagger.MapKey;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
-import pl.droidevs.books.library.ExportImportViewModel;
+import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.login.LoginViewModel;
 

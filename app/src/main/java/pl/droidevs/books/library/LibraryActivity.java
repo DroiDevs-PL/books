@@ -24,9 +24,10 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dagger.Binds;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.exportimport.ExportFailedException;
+import pl.droidevs.books.exportimport.ExportImportViewModel;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -118,15 +119,15 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void exportOptionSelected() {
 
-        if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (hasWriteStoragePermission()) {
             exportLibrary();
         } else {
-            requestPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_SAVE_FILE_CODE);
+            requestWriteStoragePermissions();
         }
     }
 
-    private boolean hasPermission(String permission) {
-        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    private boolean hasWriteStoragePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void exportLibrary() {
@@ -134,9 +135,10 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(ExportImportViewModel.class);
 
-        if (exportImportViewModel.exportBooks()) {
+        try{
+            exportImportViewModel.exportBooks();
             displayMessage(R.string.message_export_successful);
-        } else {
+        } catch (ExportFailedException e){
             displayMessage(R.string.message_export_not_successful);
         }
     }
@@ -146,8 +148,10 @@ public class LibraryActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void requestPermissions(String permission, int code) {
-        ActivityCompat.requestPermissions(this, new String[] {permission}, code);
+    private void requestWriteStoragePermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     @Override

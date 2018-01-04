@@ -1,4 +1,4 @@
-package pl.droidevs.books.library;
+package pl.droidevs.books.exportimport;
 
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseInt;
@@ -8,11 +8,10 @@ import java.lang.reflect.Field;
 
 import pl.droidevs.books.entity.BookEntity;
 
-public class CSVHelper {
+class CSVHelper {
 
     public static String[] getBookEntityCsvHeaders() {
-        Class bookEntityClass = BookEntity.class;
-        Field[] fields = bookEntityClass.getDeclaredFields();
+        Field[] fields = BookEntity.class.getDeclaredFields();
         String[] fieldNames = new String[fields.length - 1];
 
         for (int i = 0; i < fields.length - 1; i++) {

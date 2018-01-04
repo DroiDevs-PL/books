@@ -1,4 +1,4 @@
-package pl.droidevs.books.library;
+package pl.droidevs.books.exportimport;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -29,17 +29,16 @@ public class ExportImportViewModel extends ViewModel {
         this.bookCsvRepository = bookRepository;
     }
 
-    public boolean exportBooks() {
+    public void exportBooks() throws ExportFailedException {
         File file;
 
         try {
-            file = getFile();
+            file = createFile();
         } catch (IOException e) {
-            return false;
+            throw new ExportFailedException(e.getCause());
         }
 
         LiveData<List<BookEntity>> booksLiveData = this.bookCsvRepository.getBookEntities();
-        final boolean[] wasSavingSuccessful = {true};
         booksLiveData.observeForever(new Observer<List<BookEntity>>() {
 
             @Override
@@ -48,17 +47,15 @@ public class ExportImportViewModel extends ViewModel {
                 try {
                     writeToFile(file, books);
                 } catch (IOException e) {
-                    wasSavingSuccessful[0] = false;
+                    throw new ExportFailedException(e.getCause());
                 } finally {
                     booksLiveData.removeObserver(this);
                 }
             }
         });
-
-        return wasSavingSuccessful[0];
     }
 
-    private File getFile() throws IOException {
+    private File createFile() throws IOException {
         String baseDirectoryPath = Environment
                 .getExternalStorageDirectory()
                 .getAbsolutePath();
@@ -66,10 +63,10 @@ public class ExportImportViewModel extends ViewModel {
 
         File file = new File(filePath);
 
-        if (!file.exists()) {
+        if (file.exists()) {
+            file.delete();
             file.createNewFile();
         } else {
-            file.delete();
             file.createNewFile();
         }
 
