@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,8 @@ import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.validators.BookInputValidator;
+
+import static com.bumptech.glide.Priority.HIGH;
 
 public class AddBookActivity extends AppCompatActivity {
 
@@ -52,6 +55,9 @@ public class AddBookActivity extends AppCompatActivity {
         if (BookInputValidator.isCoverUrlValid(imageUrl)) {
             Glide.with(this)
                     .load(imageUrl)
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.ic_book)
+                            .priority(HIGH))
                     .into(coverImageView);
         }
     }
