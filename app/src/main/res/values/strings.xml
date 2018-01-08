@@ -11,4 +11,6 @@
     <string name="message_export_successful">Your library were exported successfully.</string>
     <string name="message_export_not_successful">Due to an error we weren\'t able to export your library.</string>
 
+    <string name="cover_imageUrl_hint">Paste cover image url here</string>
+
 </resources>

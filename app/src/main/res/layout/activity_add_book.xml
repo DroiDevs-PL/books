@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/coverImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineCover"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toTopOf="@+id/guidelineTop"
+        app:layout_constraintVertical_bias="0.0" app:srcCompat="@mipmap/ic_launcher"/>
+
+    <EditText
+        android:id="@+id/coverImageUrlEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/spacing_normal"
+        android:hint="@string/cover_imageUrl_hint"
+        app:layout_constraintBottom_toBottomOf="@+id/coverImageView"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/coverImageView"
+        app:layout_constraintTop_toTopOf="@+id/coverImageView"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/spacing_normal"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/spacing_normal"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/spacing_normal"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/spacing_normal"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineCover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3"/>
 </android.support.constraint.ConstraintLayout>
