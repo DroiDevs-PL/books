@@ -6,12 +6,12 @@ import javax.inject.Inject;
 
 import pl.droidevs.books.repository.BookRepository;
 
-public final class AddViewModel extends ViewModel {
+public final class AddBookViewModel extends ViewModel {
 
     private final BookRepository bookRepository;
 
     @Inject
-    public AddViewModel(BookRepository bookRepository) {
+    public AddBookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
