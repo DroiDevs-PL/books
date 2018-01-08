@@ -3,6 +3,7 @@ package pl.droidevs.books.library;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.addBook.AddBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 
@@ -66,7 +68,7 @@ public class LibraryActivity extends AppCompatActivity {
         setupViewModel();
 
         floatingActionButton.setOnClickListener(view -> {
-            // TODO: Start Add book activity
+            startActivity(new Intent(this, AddBookActivity.class));
         });
 
         progressBar.setVisibility(VISIBLE);
