@@ -76,7 +76,6 @@ public class AddBookActivity extends AppCompatActivity {
         return categoryNames;
     }
 
-
     @OnTextChanged(R.id.coverImageUrlEditText)
     void onCoverUrlChanged() {
         String imageUrl = coverUrlEditText.getText().toString();
