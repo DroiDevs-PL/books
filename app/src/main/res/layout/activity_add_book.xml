@@ -14,7 +14,6 @@
         app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
         app:layout_constraintEnd_toStartOf="@+id/guidelineCover"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         app:layout_constraintVertical_bias="0.0"
@@ -25,12 +24,62 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginLeft="@dimen/spacing_normal"
+        android:background="@android:color/transparent"
         android:hint="@string/cover_imageUrl_hint"
+        android:inputType="textUri"
         app:layout_constraintBottom_toBottomOf="@+id/coverImageView"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/coverImageView"
         app:layout_constraintTop_toTopOf="@+id/coverImageView"/>
+
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:background="@android:color/transparent"
+        android:inputType="text"
+        android:hint="@string/book_title_hint"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/coverImageView"/>
+
+    <EditText
+        android:id="@+id/authorEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:background="@android:color/transparent"
+        android:inputType="text"
+        android:hint="@string/book_author_hint"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/titleEditText"/>
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/authorEditText"/>
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:inputType="text"
+        android:hint="@string/book_description_hint"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@+id/categorySpinner"/>
+
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
