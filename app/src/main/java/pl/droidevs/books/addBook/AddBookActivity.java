@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.validators.BookInputValidator;
 
 public class AddBookActivity extends AppCompatActivity {
 
@@ -46,8 +47,12 @@ public class AddBookActivity extends AppCompatActivity {
 
     @OnTextChanged(R.id.coverImageUrlEditText)
     void onCoverUrlChanged() {
-        Glide.with(this)
-                .load(coverUrlEditText.getText().toString())
-                .into(coverImageView);
+        String imageUrl = coverUrlEditText.getText().toString();
+
+        if (BookInputValidator.isCoverUrlValid(imageUrl)) {
+            Glide.with(this)
+                    .load(imageUrl)
+                    .into(coverImageView);
+        }
     }
 }
