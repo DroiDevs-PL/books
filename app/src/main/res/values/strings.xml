@@ -17,5 +17,6 @@
     <string name="book_author_hint">Author</string>
     <string name="book_category_hint">Category</string>
     <string name="book_description_hint">Description</string>
+    <string name="add_book">Add book</string>
 
 </resources>
