@@ -3,11 +3,12 @@ package pl.droidevs.books.addBook;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import javax.inject.Inject;
 
@@ -29,8 +30,8 @@ public class AddBookActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book);
 
         AndroidInjection.inject(this);
@@ -45,6 +46,8 @@ public class AddBookActivity extends AppCompatActivity {
 
     @OnTextChanged(R.id.coverImageUrlEditText)
     void onCoverUrlChanged() {
-        
+        Glide.with(this)
+                .load(coverUrlEditText.getText().toString())
+                .into(coverImageView);
     }
 }
