@@ -20,11 +20,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
-import pl.droidevs.books.validators.BookInputValidator;
 
 import static com.bumptech.glide.Priority.HIGH;
 
@@ -39,8 +39,19 @@ public class AddBookActivity extends AppCompatActivity {
     @BindView(R.id.categorySpinner)
     Spinner categorySpinner;
 
+    @BindView(R.id.titleEditText)
+    EditText titleEditText;
+
+    @BindView(R.id.authorEditText)
+    EditText authorEditText;
+
+    @BindView(R.id.descriptionEditText)
+    EditText descriptionEditText;
+
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+
+    AddBookViewModel addBookViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +66,7 @@ public class AddBookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        final AddBookViewModel addBookViewModel = ViewModelProviders.of(this, viewModelFactory).get(AddBookViewModel.class);
+        this.addBookViewModel = ViewModelProviders.of(this, viewModelFactory).get(AddBookViewModel.class);
     }
 
     private void setupSpinner() {
@@ -80,13 +91,34 @@ public class AddBookActivity extends AppCompatActivity {
     void onCoverUrlChanged() {
         String imageUrl = coverUrlEditText.getText().toString();
 
-        if (BookInputValidator.isCoverUrlValid(imageUrl)) {
-            Glide.with(this)
-                    .load(imageUrl)
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.ic_book)
-                            .priority(HIGH))
-                    .into(coverImageView);
+        if (this.addBookViewModel.isCoverUrlValid(imageUrl)) {
+            loadCoverImage(imageUrl);
+            addBookViewModel.setImageUrl(imageUrl);
         }
+    }
+
+    void loadCoverImage(String imageUrl) {
+        Glide.with(this)
+                .load(imageUrl)
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.ic_book)
+                        .priority(HIGH))
+                .into(coverImageView);
+    }
+
+    @OnClick(R.id.addButton)
+    void onAddButtonClicked() {
+        setDataToViewModel();
+
+        if (this.addBookViewModel.isDataValid()) {
+           this.addBookViewModel.saveBook();
+        }
+    }
+
+    void setDataToViewModel() {
+        this.addBookViewModel.setTitle(this.titleEditText.getText().toString());
+        this.addBookViewModel.setAuthor(this.authorEditText.getText().toString());
+        this.addBookViewModel.setDescription(this.descriptionEditText.getText().toString());
+        this.addBookViewModel.setCategory(this.categorySpinner.getSelectedItem().toString());
     }
 }
