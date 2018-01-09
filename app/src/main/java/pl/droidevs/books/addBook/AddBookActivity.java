@@ -129,6 +129,9 @@ public class AddBookActivity extends AppCompatActivity {
 
         if (this.addBookViewModel.isDataValid()) {
            this.addBookViewModel.saveBook();
+        } else {
+            //TODO would be nice to provide more detailed feedback ex. author should have at least 3 chars
+            displaySnackBar(R.string.saving_book_validation_error);
         }
     }
 

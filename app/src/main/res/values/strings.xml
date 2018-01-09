@@ -19,5 +19,6 @@
     <string name="book_description_hint">Description</string>
     <string name="add_book">Add book</string>
     <string name="saving_book_error">We were not able to save your book.</string>
+    <string name="saving_book_validation_error">Provided data are not valid.</string>
 
 </resources>
