@@ -67,6 +67,12 @@ public class AddBookActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         this.addBookViewModel = ViewModelProviders.of(this, viewModelFactory).get(AddBookViewModel.class);
+        this.addBookViewModel.wasAddingSuccessful()
+                .observe(this, wasAddingSuccessful -> {
+                    if (wasAddingSuccessful) {
+                        finish();
+                    }
+        });
     }
 
     private void setupSpinner() {

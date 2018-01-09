@@ -1,5 +1,7 @@
 package pl.droidevs.books.addBook;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import javax.inject.Inject;
@@ -22,9 +24,15 @@ public final class AddBookViewModel extends ViewModel {
     private String description;
     private String category;
 
+    private MutableLiveData<Boolean> successWithAdding = new MutableLiveData<>();
+
     @Inject
     public AddBookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
+    }
+
+    public LiveData<Boolean> wasAddingSuccessful() {
+        return successWithAdding;
     }
 
     public void setImageUrl(String imageUrl) {
@@ -67,12 +75,12 @@ public final class AddBookViewModel extends ViewModel {
 
                     @Override
                     public void onComplete() {
-                        //TODO done
+                        successWithAdding.postValue(true);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        //TODO error
+                        successWithAdding.postValue(false);
                     }
                 });
     }
