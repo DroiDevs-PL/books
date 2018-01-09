@@ -11,4 +11,11 @@
 
     <string name="login_hint">Your login</string>
     <string name="login_button">Login</string>
+
+    <string name="action_export">Export</string>
+
+    <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
+    <string name="message_export_successful">Your library were exported successfully.</string>
+    <string name="message_export_not_successful">Due to an error we weren\'t able to export your library.</string>
+
 </resources>

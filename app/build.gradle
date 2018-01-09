@@ -56,6 +56,9 @@ dependencies {
     //Live data & ViewModel
     implementation "android.arch.lifecycle:extensions:1.0.0"
 
+    //CSV
+    compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
+
     // TEST dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
