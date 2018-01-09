@@ -8,12 +8,11 @@
 
     <ImageView
         android:id="@+id/coverImageView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-        app:layout_constraintEnd_toStartOf="@+id/guidelineCover"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineCover"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
@@ -23,12 +22,11 @@
     <EditText
         android:id="@+id/coverImageUrlEditText"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/spacing_normal"
         android:background="@android:color/transparent"
         android:hint="@string/cover_imageUrl_hint"
         android:inputType="textUri|textMultiLine"
-        app:layout_constraintBottom_toBottomOf="@+id/coverImageView"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/coverImageView"
@@ -39,12 +37,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_normal"
         android:background="@android:color/transparent"
         android:hint="@string/book_title_hint"
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@+id/coverImageView"/>
+        app:layout_constraintStart_toEndOf="@+id/coverImageView"
+        app:layout_constraintTop_toBottomOf="@+id/coverImageUrlEditText"/>
 
     <EditText
         android:id="@+id/authorEditText"
@@ -55,7 +54,7 @@
         android:hint="@string/book_author_hint"
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-        app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+        app:layout_constraintStart_toEndOf="@+id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/titleEditText"/>
 
     <Spinner
@@ -124,6 +123,6 @@
         android:id="@+id/guidelineCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.3"/>
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.35"/>
 </android.support.constraint.ConstraintLayout>
