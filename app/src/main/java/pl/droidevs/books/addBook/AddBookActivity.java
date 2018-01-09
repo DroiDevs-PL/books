@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -29,6 +31,9 @@ import pl.droidevs.books.model.Book;
 import static com.bumptech.glide.Priority.HIGH;
 
 public class AddBookActivity extends AppCompatActivity {
+
+    @BindView(R.id.addBookConstraintLayout)
+    ConstraintLayout container;
 
     @BindView(R.id.coverImageUrlEditText)
     EditText coverUrlEditText;
@@ -71,8 +76,14 @@ public class AddBookActivity extends AppCompatActivity {
                 .observe(this, wasAddingSuccessful -> {
                     if (wasAddingSuccessful) {
                         finish();
+                    } else {
+                        displaySnackBar(R.string.saving_book_error);
                     }
         });
+    }
+
+    private void displaySnackBar(int messageResource) {
+        Snackbar.make(container, getString(messageResource), Snackbar.LENGTH_SHORT).show();
     }
 
     private void setupSpinner() {

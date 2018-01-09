@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/addBookConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,8 +40,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_normal"
         android:background="@android:color/transparent"
-        android:inputType="text"
         android:hint="@string/book_title_hint"
+        android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/coverImageView"/>
@@ -51,8 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_normal"
         android:background="@android:color/transparent"
-        android:inputType="text"
         android:hint="@string/book_author_hint"
+        android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/titleEditText"/>
@@ -73,8 +74,8 @@
         android:layout_marginTop="@dimen/spacing_normal"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:inputType="text"
         android:hint="@string/book_description_hint"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/addButton"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
