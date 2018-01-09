@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.model.Book;
 
@@ -18,8 +19,8 @@ public final class BookRepository {
         this.bookDao = bookDao;
     }
 
-    public void save(Book book) {
-        bookDao.addBook(BookMapper.getBookEntity(book));
+    public Completable save(Book book) {
+        return Completable.fromAction(() -> bookDao.addBook(BookMapper.getBookEntity(book)));
     }
 
     public void remove(Book book) {
