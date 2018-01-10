@@ -29,4 +29,12 @@ public final class BookRepository {
     public LiveData<List<Book>> getBooks() {
         return Transformations.map(bookDao.getAllBooks(), BookMapper.entitiesToBooksFunction);
     }
+
+    public LiveData<Book> getBookById(String id) {
+        int iId = Integer.parseInt(id);
+        LiveData<Book> transformation = Transformations.map(bookDao.getBookById(iId), BookMapper.entityToBookFunction);
+        Book book = transformation.getValue();
+
+        return transformation;
+    }
 }

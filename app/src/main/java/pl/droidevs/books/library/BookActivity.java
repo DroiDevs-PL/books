@@ -104,7 +104,7 @@ public class BookActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookViewModel.class);
-        viewModel.getBooks().observe(this, books -> {
+        /*viewModel.getBooks().observe(this, books -> {
             Book selectedBook = null;
             if (books != null) {
                 for (Book book : books) {
@@ -137,6 +137,27 @@ public class BookActivity extends AppCompatActivity {
                     }
                 });
             }
+        });*/
+        viewModel.getBookById(bookId).observe(this,book -> {
+            collapsingToolbarLayout.setTitle(book.getTitle());
+            authorTextView.setText(book.getAuthor());
+            categoryTextView.setText(book.getCategory().toString());
+            descryptionTextView.setText(book.getDescription());
+
+            Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
+                @Override
+                public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    super.onResourceReady(resource, transition);
+
+                    int[] colors = getColorsForBarsFromBitmap(resource);
+                    if (colors != null) {
+                        collapsingToolbarLayout.setContentScrimColor(colors[0]);
+                        Window window = getWindow();
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.setStatusBarColor(colors[1]);
+                    }
+                }
+            });
         });
     }
 
