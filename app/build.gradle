@@ -31,7 +31,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$project.supportVersion"
     implementation "com.android.support:recyclerview-v7:$project.supportVersion"
     implementation "com.android.support:design:$project.supportVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
 
     // Dagger core
     compile "com.google.dagger:dagger:$project.daggerVersion"
