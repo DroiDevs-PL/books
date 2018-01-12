@@ -60,7 +60,25 @@ Option of filtering books is available in **Library Screen** by using dropdown m
 ### Importing books & Exporting books
 App allows users to export whole library to CSV file and import library from CSV. It's needed mostly while app doesnt store anything in cloud.
 
+## Planned features
+* Adding Firebase
+* Registering users
+* Login&Logout users
+* Storing user informations
+* Using Google Api Books
+* Scanning books bar codes
+* Adding posibility of preview user libraries created by other users
 
+## Contribution Guide
+### Found a bug?
+If you want to repoort a bug or share suggestion feel free to **Create an Issue**.
 
+### Have a feature idea?
+If you have an idea for a fetaure and you'd like to see it in our app, you're welcome to **Create an Issue** as well.
 
-
+### Do you want to code?
+That's awesome! Everyone is welcome to contribute! 
+* Browse issue list and claim chosen one in comments. *(If you can't find anything but have an idea, create an issue first and there you are.)*
+* Fork [books](https://github.com/DroiDevs-PL/books) repository.
+* Code your changes.
+* When you finished create PR to **develop** branch.
