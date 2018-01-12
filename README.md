@@ -1,5 +1,30 @@
 # Books (working name)
 
+## Table of content
+* [Books](#books)  
+  * [Table of content](#table-of-content)  
+  * [About Project](#about-project)
+  * [For Who](#for-who) 
+  * [About us](#about-us)  
+    * [Team](#team)  
+  * [Our goal](#our-goal)  
+  * [MVP (Minimum Viable Product)](#mvp-minimum-viable-product)  
+    * [Create Library](#create-library)  
+    * [Add book](#add-book)  
+    * [Display list of books (Library Screen)](#display-list-of-books-library-screen) 
+    * [Edit Book](#edit-book) 
+    * [Remove Book](#remove-book) 
+    * [Searching Book](#searching-book) 
+    * [Filtering Books](#filtering-books) 
+    * [Importing books & Exporting books](#importing-books-and-exporting-books) 
+  * [Planned Features](#planned-features)  
+  * [What do we use?](#what-do-we-use)  
+  * [Contribution Guide](#contribution-guide) 
+    * [Found a bug?](#found-a-bug)  
+    * [Have a feature idea?](#have-a-feature-idea)  
+    * [Do you want to code?](#do-you-want-to-code) 
+    
+
 ## About Project
 Books is an android application that allow user to store information about books they owe or they've read. 
 It will allow to save basic book data like title, authors, category along with description or summary 
@@ -9,7 +34,7 @@ In the future it will allow users to share their libraries with friends and peop
 and read reviews of book that would like to buy or read or even to borrow book from friends.
 
 ## For who
-This application is for all of you that read a lot of books and want to easily store key thoughts about yout readings.
+This application is for all of you that read a lot of books and want to easily store key thoughts about your readings.
 The idea of this application belongs to @MichaelB-pl whose wife loves to read.
 
 ## About us
@@ -51,16 +76,16 @@ In this screen user can preview more details of book such as: category, descript
 ### Edit book
 This screen allows user to edit book data.
 
-### Remove
+### Remove book
 Option of removing book is available in **Libarary Screen** by swiping book and in **Edit screen**.
 
 ### Searching book
 Option of searching book is available in **Library Screen** in toolbar.
 
-### Filtering
+### Filtering books
 Option of filtering books is available in **Library Screen** by using dropdown menu.
 
-### Importing books & Exporting books
+### Importing books and Exporting books
 App allows users to export whole library to CSV file and import library from CSV. It's needed mostly while app doesnt store anything in cloud.
 
 <img src="https://github.com/nani92/books/blob/gh-pages/Screen%20Shot%202018-01-12%20at%2021.48.30.png" width="266"/>
