@@ -69,6 +69,16 @@ App allows users to export whole library to CSV file and import library from CSV
 * Scanning books bar codes
 * Adding posibility of preview user libraries created by other users
 
+## What do we use?
+* [ButterKnife](http://jakewharton.github.io/butterknife/)
+* [Glide](https://github.com/bumptech/glide)
+* [Dagger](https://google.github.io/dagger/)
+* [SuperCSV](https://github.com/super-csv/super-csv)
+* [RxJava, RxAndroid](https://github.com/ReactiveX/RxAndroid)
+* [Room](https://developer.android.com/topic/libraries/architecture/room.html)
+* [LiveData](https://developer.android.com/topic/libraries/architecture/livedata.html)
+* [ViewModel](https://developer.android.com/topic/libraries/architecture/livedata.html)
+
 ## Contribution Guide
 ### Found a bug?
 If you want to repoort a bug or share suggestion feel free to **Create an Issue**.
