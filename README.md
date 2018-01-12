@@ -35,12 +35,15 @@ We decided that our MVP will be *offline*(without backend) app containing follow
 
 ### Create Library
 This screen allows user to create his library by providing a name. In future it will be transformed to Login Screen.
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screen%20Shot%202018-01-12%20at%2021.49.50.png" width="266" height="500"/>
 
 ### Add book
 This screen allows user to add new book by providing link to cover image, title, authors, category and description.
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screen%20Shot%202018-01-12%20at%2021.48.00.png" width="266" height="500"/>
 
 ### Display list of books (Library Screen)
 It's main screen of app where whole library is displayed: book cover along with title and authors.
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screen%20Shot%202018-01-12%20at%2021.40.44.png" width="266" height="500"/>
 
 ### Display book details
 In this screen user can preview more details of book such as: category, description.
@@ -59,6 +62,8 @@ Option of filtering books is available in **Library Screen** by using dropdown m
 
 ### Importing books & Exporting books
 App allows users to export whole library to CSV file and import library from CSV. It's needed mostly while app doesnt store anything in cloud.
+
+<img src="https://github.com/nani92/books/blob/gh-pages/Screen%20Shot%202018-01-12%20at%2021.48.30.png" width="266"/>
 
 ## Planned features
 * Adding Firebase
