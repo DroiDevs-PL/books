@@ -24,7 +24,7 @@ public abstract class SwipeCallback extends ItemTouchHelper.SimpleCallback {
         onSwiped(viewHolder.getAdapterPosition());
     }
 
-    abstract void onSwiped(int position);
+    public abstract void onSwiped(int position);
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView,
