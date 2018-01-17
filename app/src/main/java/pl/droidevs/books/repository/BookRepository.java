@@ -23,8 +23,8 @@ public final class BookRepository {
         return Completable.fromAction(() -> bookDao.addBook(BookMapper.getBookEntity(book)));
     }
 
-    public void remove(Book book) {
-        bookDao.removeBook(BookMapper.getBookEntity(book));
+    public Completable remove(Book book) {
+        return Completable.fromAction(() -> bookDao.removeBook(BookMapper.getBookEntity(book)));
     }
 
     public LiveData<List<Book>> getBooks() {
