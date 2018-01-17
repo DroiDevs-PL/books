@@ -31,14 +31,16 @@ public class DataSourceModule {
     @Singleton
     @Provides
     BookDataBase bookDataBase(Context context) {
-        return Room.databaseBuilder(context, BookDataBase.class,
-                BookDataBase.BOOK_DATA_BASE_NAME).build();
+        return Room
+                .databaseBuilder(context, BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     @Singleton
     @Provides
     BookDao bookDao(Context context) {
-        return new InMemoryBookDao();
-//        return bookDataBase(context).bookDao();
+        //return new InMemoryBookDao();
+        return bookDataBase(context).bookDao();
     }
 }

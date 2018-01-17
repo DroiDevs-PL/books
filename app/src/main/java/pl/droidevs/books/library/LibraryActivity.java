@@ -6,6 +6,7 @@ import static android.view.View.VISIBLE;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.addbook.AddBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -71,7 +73,7 @@ public class LibraryActivity extends AppCompatActivity {
         setupViewModel();
 
         floatingActionButton.setOnClickListener(view -> {
-            // TODO: Start Add book activity
+            startActivity(new Intent(this, AddBookActivity.class));
         });
 
         progressBar.setVisibility(VISIBLE);
@@ -120,14 +122,21 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(
-                LibraryViewModel.class);
+        libraryViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(LibraryViewModel.class);
+
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
+
             if (books != null) {
                 adapter.setItems(books);
             }
         });
+
+        libraryViewModel.wasAnError().observe(this, error ->
+                Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
+                        .show());
     }
 
 
@@ -185,13 +194,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
 
