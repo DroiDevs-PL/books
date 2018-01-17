@@ -45,6 +45,10 @@ class BookMapper {
         entity.setTitle(book.getTitle());
         entity.setImageUrl(book.getImageUrl());
 
+        if (book.getId() != null) {
+            entity.setId(Integer.parseInt(book.getId().getId()));
+        }
+
         return entity;
     }
 }
