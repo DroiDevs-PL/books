@@ -1,7 +1,5 @@
 package pl.droidevs.books.di;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
@@ -33,7 +31,8 @@ public class DataSourceModule {
     @Singleton
     @Provides
     BookDataBase bookDataBase(Context context) {
-        return Room.databaseBuilder(context, BookDataBase.class, BookDataBase.BOOK_DATA_BASE_NAME).build();
+        return Room.databaseBuilder(context, BookDataBase.class,
+                BookDataBase.BOOK_DATA_BASE_NAME).build();
     }
 
     @Singleton

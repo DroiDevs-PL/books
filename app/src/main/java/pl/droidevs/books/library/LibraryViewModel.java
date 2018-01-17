@@ -22,4 +22,8 @@ public final class LibraryViewModel extends ViewModel {
     public LiveData<List<Book>> getBooks() {
         return bookRepository.getBooks();
     }
+
+    public void removeBook(Book book) {
+        bookRepository.remove(book);
+    }
 }
