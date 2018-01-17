@@ -1,5 +1,8 @@
 package pl.droidevs.books.library;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -7,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,9 +35,8 @@ import pl.droidevs.books.R;
 import pl.droidevs.books.addbook.AddBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import pl.droidevs.books.model.Book;
+import pl.droidevs.books.ui.SwipeCallback;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -54,6 +58,7 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
+    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +91,39 @@ public class LibraryActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        setItemSwipe();
+    }
+
+    private void setItemSwipe() {
+        SwipeCallback swipeCallback = new SwipeCallback() {
+            @Override
+            public void onSwiped(int position) {
+                adapter.removeItem(position,
+                        book -> showRemoveBookSnackbar(book, position));
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void showRemoveBookSnackbar(@NonNull Book book, int position) {
+        Snackbar.make(floatingActionButton, R.string.book_delete_snackbar, Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo, v -> adapter.addItem(book, position))
+                .addCallback(
+                        new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, int event) {
+                                super.onDismissed(transientBottomBar, event);
+                                libraryViewModel.removeBook(book);
+                            }
+                        })
+                .show();
     }
 
     private void setupViewModel() {
-        final LibraryViewModel libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel.class);
+        libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(
+                LibraryViewModel.class);
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
             if (books != null) {
@@ -129,7 +163,8 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private boolean hasWriteStoragePermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     private void exportLibrary() {
@@ -137,10 +172,10 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(ExportImportViewModel.class);
 
-        try{
+        try {
             exportImportViewModel.exportBooks();
             displayMessage(R.string.message_export_successful);
-        } catch (ExportFailedException e){
+        } catch (ExportFailedException e) {
             displayMessage(R.string.message_export_not_successful);
         }
     }
@@ -152,12 +187,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
 
