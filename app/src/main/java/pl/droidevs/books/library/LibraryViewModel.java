@@ -1,6 +1,7 @@
 package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
@@ -12,12 +13,14 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.repository.BookRepository;
 
 public final class LibraryViewModel extends ViewModel {
 
     private final BookRepository bookRepository;
+    private MutableLiveData<Integer> errorMessageResource = new MutableLiveData<>();
 
     @Inject
     public LibraryViewModel(BookRepository bookRepository) {
@@ -42,8 +45,12 @@ public final class LibraryViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        //TODO display error
+                        errorMessageResource.postValue(R.string.remove_book_error);
                     }
                 });
+    }
+
+    public LiveData<Integer> wasAnError() {
+        return errorMessageResource;
     }
 }

@@ -122,14 +122,21 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        libraryViewModel = ViewModelProviders.of(this, viewModelFactory).get(
-                LibraryViewModel.class);
+        libraryViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(LibraryViewModel.class);
+
         libraryViewModel.getBooks().observe(this, books -> {
             progressBar.setVisibility(GONE);
+
             if (books != null) {
                 adapter.setItems(books);
             }
         });
+
+        libraryViewModel.wasAnError().observe(this, error ->
+                Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
+                        .show());
     }
 
 
@@ -187,13 +194,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
 

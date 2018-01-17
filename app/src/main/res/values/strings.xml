@@ -23,4 +23,7 @@
     <string name="saving_book_error">We were not able to save your book.</string>
     <string name="saving_book_validation_error">Provided data are not valid.</string>
 
+    <!--Removing book-->
+    <string name="remove_book_error">We encountered problem with removing book.</string>
+
 </resources>
