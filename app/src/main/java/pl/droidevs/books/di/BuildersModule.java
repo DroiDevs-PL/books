@@ -2,7 +2,7 @@ package pl.droidevs.books.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
-import pl.droidevs.books.addBook.AddBookActivity;
+import pl.droidevs.books.addbook.AddBookActivity;
 import pl.droidevs.books.library.LibraryActivity;
 import pl.droidevs.books.login.LoginActivity;
 

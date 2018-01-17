@@ -1,4 +1,4 @@
-package pl.droidevs.books.addBook;
+package pl.droidevs.books.addbook;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -83,7 +83,7 @@ public class AddBookActivity extends AppCompatActivity {
     }
 
     private void displaySnackBar(int messageResource) {
-        Snackbar.make(container, getString(messageResource), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(container, messageResource, Snackbar.LENGTH_SHORT).show();
     }
 
     private void setupSpinner() {
