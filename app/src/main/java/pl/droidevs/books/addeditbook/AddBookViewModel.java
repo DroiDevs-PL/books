@@ -1,4 +1,4 @@
-package pl.droidevs.books.addbook;
+package pl.droidevs.books.addeditbook;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

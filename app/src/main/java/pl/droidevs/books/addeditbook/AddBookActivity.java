@@ -1,4 +1,4 @@
-package pl.droidevs.books.addbook;
+package pl.droidevs.books.addeditbook;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
