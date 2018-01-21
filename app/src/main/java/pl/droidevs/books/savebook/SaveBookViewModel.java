@@ -1,4 +1,5 @@
-package pl.droidevs.books.addeditbook;
+package pl.droidevs.books.savebook;
+
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -11,12 +12,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.repository.BookRepository;
 import pl.droidevs.books.validators.BookInputValidator;
 
-public final class AddBookViewModel extends ViewModel {
+public class SaveBookViewModel extends ViewModel {
 
-    private final BookRepository bookRepository;
+    private BookId bookId;
 
     private String imageUrl;
     private String title;
@@ -24,15 +26,25 @@ public final class AddBookViewModel extends ViewModel {
     private String description;
     private String category;
 
-    private MutableLiveData<Boolean> successWithAdding = new MutableLiveData<>();
+    private final BookRepository bookRepository;
+
+    private MutableLiveData<Boolean> successWithSaving = new MutableLiveData<>();
 
     @Inject
-    public AddBookViewModel(BookRepository bookRepository) {
+    public SaveBookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
     public LiveData<Boolean> wasAddingSuccessful() {
-        return successWithAdding;
+        return successWithSaving;
+    }
+
+    public void setBookId(BookId bookId) {
+        this.bookId = bookId;
+    }
+
+    public boolean isCoverUrlValid(String imageUrl) {
+        return BookInputValidator.isCoverUrlValid(imageUrl);
     }
 
     public void setImageUrl(String imageUrl) {
@@ -55,10 +67,6 @@ public final class AddBookViewModel extends ViewModel {
         this.category = category;
     }
 
-    public boolean isCoverUrlValid(String imageUrl) {
-        return BookInputValidator.isCoverUrlValid(imageUrl);
-    }
-
     public boolean isDataValid() {
         return BookInputValidator.isAuthorValid(author) &&
                 BookInputValidator.isTitleValid(title);
@@ -75,18 +83,18 @@ public final class AddBookViewModel extends ViewModel {
 
                     @Override
                     public void onComplete() {
-                        successWithAdding.postValue(true);
+                        successWithSaving.postValue(true);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        successWithAdding.postValue(false);
+                        successWithSaving.postValue(false);
                     }
                 });
     }
 
     public Book createBook() {
-        Book book = new Book(null,
+        Book book = new Book(bookId,
                 this.title,
                 this.author,
                 Book.Category.valueOf(this.category));

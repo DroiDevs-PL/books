@@ -1,4 +1,4 @@
-package pl.droidevs.books.addeditbook;
+package pl.droidevs.books.savebook;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -27,10 +27,13 @@ import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 
 import static com.bumptech.glide.Priority.HIGH;
 
-public class AddBookActivity extends AppCompatActivity {
+public class SaveBookActivity extends AppCompatActivity {
+
+    private static final String BOOK_ID_EXTRA = "book id";
 
     @BindView(R.id.addBookConstraintLayout)
     ConstraintLayout container;
@@ -56,12 +59,12 @@ public class AddBookActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    AddBookViewModel addBookViewModel;
+    SaveBookViewModel addBookViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_book);
+        setContentView(R.layout.activity_save_book);
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
@@ -71,15 +74,22 @@ public class AddBookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        this.addBookViewModel = ViewModelProviders.of(this, viewModelFactory).get(AddBookViewModel.class);
-        this.addBookViewModel.wasAddingSuccessful()
+        this.addBookViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(SaveBookViewModel.class);
+
+        addBookViewModel.wasAddingSuccessful()
                 .observe(this, wasAddingSuccessful -> {
                     if (wasAddingSuccessful) {
                         finish();
                     } else {
                         displaySnackBar(R.string.saving_book_error);
                     }
-        });
+                });
+
+        if (getIntent().hasExtra(BOOK_ID_EXTRA)) {
+            addBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
+        }
     }
 
     private void displaySnackBar(int messageResource) {
@@ -123,15 +133,12 @@ public class AddBookActivity extends AppCompatActivity {
                 .into(coverImageView);
     }
 
-    @OnClick(R.id.addButton)
-    void onAddButtonClicked() {
+    @OnClick(R.id.saveButton)
+    void onSaveButtonClicked() {
         setDataToViewModel();
 
         if (this.addBookViewModel.isDataValid()) {
-           this.addBookViewModel.saveBook();
-        } else {
-            //TODO would be nice to provide more detailed feedback ex. author should have at least 3 chars
-            displaySnackBar(R.string.saving_book_validation_error);
+            this.addBookViewModel.saveBook();
         }
     }
 

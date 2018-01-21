@@ -30,7 +30,7 @@
 
         <activity android:name=".library.LibraryActivity"/>
 
-        <activity android:name=".addeditbook.AddBookActivity"/>
+        <activity android:name=".savebook.SaveBookActivity"/>
     </application>
 
 </manifest>

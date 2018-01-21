@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.addeditbook.AddBookActivity;
+import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -73,7 +73,7 @@ public class LibraryActivity extends AppCompatActivity {
         setupViewModel();
 
         floatingActionButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, AddBookActivity.class));
+            startActivity(new Intent(this, SaveBookActivity.class));
         });
 
         progressBar.setVisibility(VISIBLE);
