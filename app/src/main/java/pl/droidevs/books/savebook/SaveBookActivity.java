@@ -33,7 +33,7 @@ import static com.bumptech.glide.Priority.HIGH;
 
 public class SaveBookActivity extends AppCompatActivity {
 
-    private static final String BOOK_ID_EXTRA = "book id";
+    public static final String BOOK_ID_EXTRA = "book id";
 
     @BindView(R.id.addBookConstraintLayout)
     ConstraintLayout container;
@@ -69,31 +69,8 @@ public class SaveBookActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
 
-        setupViewModel();
         setupSpinner();
-    }
-
-    private void setupViewModel() {
-        this.addBookViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(SaveBookViewModel.class);
-
-        addBookViewModel.wasAddingSuccessful()
-                .observe(this, wasAddingSuccessful -> {
-                    if (wasAddingSuccessful) {
-                        finish();
-                    } else {
-                        displaySnackBar(R.string.saving_book_error);
-                    }
-                });
-
-        if (getIntent().hasExtra(BOOK_ID_EXTRA)) {
-            addBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
-        }
-    }
-
-    private void displaySnackBar(int messageResource) {
-        Snackbar.make(container, messageResource, Snackbar.LENGTH_SHORT).show();
+        setupViewModel();
     }
 
     private void setupSpinner() {
@@ -112,6 +89,44 @@ public class SaveBookActivity extends AppCompatActivity {
         }
 
         return categoryNames;
+    }
+
+    private void setupViewModel() {
+        this.addBookViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(SaveBookViewModel.class);
+
+        addBookViewModel.wasSavingSuccessful()
+                .observe(this, wasSavingSuccessful -> {
+                    if (wasSavingSuccessful) {
+                        finish();
+                    } else {
+                        displaySnackBar(R.string.saving_book_error);
+                    }
+                });
+
+        if (shouldDisplayEdit()) {
+            setupForEdit();
+        }
+    }
+
+    private void displaySnackBar(int messageResource) {
+        Snackbar.make(container, messageResource, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private boolean shouldDisplayEdit() {
+        return getIntent().hasExtra(BOOK_ID_EXTRA);
+    }
+
+    private void setupForEdit() {
+        addBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
+        addBookViewModel.getBook().observe(this, book -> {
+            this.titleEditText.setText(book.getTitle());
+            this.authorEditText.setText(book.getAuthor());
+            this.coverUrlEditText.setText(book.getImageUrl());
+            this.descriptionEditText.setText(book.getDescription());
+            this.categorySpinner.setSelection(getCategoryNames().indexOf(book.getCategory()));
+        });
     }
 
     @OnTextChanged(R.id.coverImageUrlEditText)

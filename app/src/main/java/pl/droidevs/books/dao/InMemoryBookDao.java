@@ -77,4 +77,9 @@ public final class InMemoryBookDao implements BookDao {
     public void updateBook(@NonNull BookEntity book) {
         books.put(book.getId(), book);
     }
+
+    @Override
+    public LiveData<BookEntity> getBookById(int bookId) {
+        return null;
+    }
 }

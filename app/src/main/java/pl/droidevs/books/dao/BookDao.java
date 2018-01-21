@@ -28,4 +28,7 @@ public interface BookDao {
 
     @Update(onConflict = REPLACE)
     void updateBook(@NonNull BookEntity book);
+
+    @Query("SELECT * FROM " + BookEntity.TABLE_NAME + " WHERE id = :bookId")
+    LiveData<BookEntity> getBookById(int bookId);
 }

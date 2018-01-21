@@ -83,6 +83,12 @@ public class LibraryActivity extends AppCompatActivity {
         adapter = new LibraryAdapter();
         adapter.setItemClickListener(bookId -> {
             // TODO: Start details activity and pass the book id
+
+            //TODO: remove temporary start edit
+            Intent intent = new Intent(this, SaveBookActivity.class);
+            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, bookId);
+
+            startActivity(intent);
         });
     }
 

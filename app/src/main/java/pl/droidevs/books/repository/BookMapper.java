@@ -51,4 +51,8 @@ class BookMapper {
 
         return entity;
     }
+
+    public static int getBookEntityIdFromBookId(BookId bookId) {
+        return Integer.parseInt(bookId.getId());
+    }
 }

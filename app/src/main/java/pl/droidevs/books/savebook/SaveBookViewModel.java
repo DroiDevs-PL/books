@@ -35,7 +35,11 @@ public class SaveBookViewModel extends ViewModel {
         this.bookRepository = bookRepository;
     }
 
-    public LiveData<Boolean> wasAddingSuccessful() {
+    public LiveData<Book> getBook() {
+        return bookRepository.getBookById(this.bookId);
+    }
+
+    public LiveData<Boolean> wasSavingSuccessful() {
         return successWithSaving;
     }
 
