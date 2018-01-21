@@ -31,7 +31,7 @@ class BookMapper {
                 entity.getTitle(),
                 entity.getAuthor(),
                 Book.Category.valueOf(entity.getCategory()));
-        book.setDescription(book.getDescription());
+        book.setDescription(entity.getDescription());
         book.setImageUrl(entity.getImageUrl());
 
         return book;

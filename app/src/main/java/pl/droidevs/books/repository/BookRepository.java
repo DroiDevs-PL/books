@@ -34,6 +34,7 @@ public final class BookRepository {
 
     public LiveData<Book> getBookById(BookId bookId) {
         int bookEntityId = BookMapper.getBookEntityIdFromBookId(bookId);
+        
         return Transformations.map(bookDao.getBookById(bookEntityId),
                 bookEntity -> BookMapper.getBook(bookEntity));
     }
