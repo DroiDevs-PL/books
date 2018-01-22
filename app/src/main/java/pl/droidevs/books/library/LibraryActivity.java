@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.removebook.RemoveBookViewModel;
 import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
@@ -58,7 +60,6 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
-    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,14 +122,29 @@ public class LibraryActivity extends AppCompatActivity {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
-                                libraryViewModel.removeBook(book);
+
+                                removeBook(book);
                             }
                         })
                 .show();
     }
 
+    private void removeBook(Book book) {
+        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(RemoveBookViewModel.class);
+
+        removeBookViewModel.wasAnError()
+                .observe(this, error ->
+                        Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
+                                .show());
+
+        removeBookViewModel.removeBook(book);
+    }
+
+
     private void setupViewModel() {
-        libraryViewModel = ViewModelProviders
+        LibraryViewModel libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
@@ -139,12 +155,7 @@ public class LibraryActivity extends AppCompatActivity {
                 adapter.setItems(books);
             }
         });
-
-        libraryViewModel.wasAnError().observe(this, error ->
-                Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
-                        .show());
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
