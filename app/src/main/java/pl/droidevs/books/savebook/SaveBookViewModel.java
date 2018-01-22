@@ -97,7 +97,7 @@ public class SaveBookViewModel extends ViewModel {
                 });
     }
 
-    public Book createBook() {
+    private Book createBook() {
         Book book = new Book(bookId,
                 this.title,
                 this.author,

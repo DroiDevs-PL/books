@@ -25,6 +25,7 @@
 
     <!--Removing book-->
     <string name="remove_book_error">We encountered problem with removing book.</string>
+    <string name="remove_book">Remove book</string>
 
     <!--Editing book-->
     <string name="edit_book">Edit book</string>

@@ -88,6 +88,7 @@
 
         <Button
             android:id="@+id/saveButton"
+            style="@style/AccentColoredButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_normal"

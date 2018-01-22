@@ -32,4 +32,6 @@
         <item name="android:layout_margin">@dimen/spacing_normal</item>
         <item name="android:backgroundTint">@color/colored_button</item>
     </style>
+
+    <style name="AccentColoredButton" parent="Base.Widget.AppCompat.Button.Colored"/>
 </resources>
