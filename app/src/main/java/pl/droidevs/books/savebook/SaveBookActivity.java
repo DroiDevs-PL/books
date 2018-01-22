@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -56,10 +57,13 @@ public class SaveBookActivity extends AppCompatActivity {
     @BindView(R.id.descriptionEditText)
     EditText descriptionEditText;
 
+    @BindView(R.id.saveButton)
+    Button saveButton;
+
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    SaveBookViewModel addBookViewModel;
+    SaveBookViewModel saveBookViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,11 +96,11 @@ public class SaveBookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        this.addBookViewModel = ViewModelProviders
+        this.saveBookViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(SaveBookViewModel.class);
 
-        addBookViewModel.wasSavingSuccessful()
+        saveBookViewModel.wasSavingSuccessful()
                 .observe(this, wasSavingSuccessful -> {
                     if (wasSavingSuccessful) {
                         finish();
@@ -119,23 +123,25 @@ public class SaveBookActivity extends AppCompatActivity {
     }
 
     private void setupForEdit() {
-        addBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
-        addBookViewModel.getBook().observe(this, book -> {
+        saveBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
+        saveBookViewModel.getBook().observe(this, book -> {
             this.titleEditText.setText(book.getTitle());
             this.authorEditText.setText(book.getAuthor());
             this.coverUrlEditText.setText(book.getImageUrl());
             this.descriptionEditText.setText(book.getDescription());
             this.categorySpinner.setSelection(getCategoryNames().indexOf(book.getCategory()));
         });
+
+        saveButton.setText(R.string.edit_book);
     }
 
     @OnTextChanged(R.id.coverImageUrlEditText)
     void onCoverUrlChanged() {
         String imageUrl = coverUrlEditText.getText().toString();
 
-        if (this.addBookViewModel.isCoverUrlValid(imageUrl)) {
+        if (this.saveBookViewModel.isCoverUrlValid(imageUrl)) {
             loadCoverImage(imageUrl);
-            addBookViewModel.setImageUrl(imageUrl);
+            saveBookViewModel.setImageUrl(imageUrl);
         }
     }
 
@@ -152,15 +158,15 @@ public class SaveBookActivity extends AppCompatActivity {
     void onSaveButtonClicked() {
         setDataToViewModel();
 
-        if (this.addBookViewModel.isDataValid()) {
-            this.addBookViewModel.saveBook();
+        if (this.saveBookViewModel.isDataValid()) {
+            this.saveBookViewModel.saveBook();
         }
     }
 
     void setDataToViewModel() {
-        this.addBookViewModel.setTitle(this.titleEditText.getText().toString());
-        this.addBookViewModel.setAuthor(this.authorEditText.getText().toString());
-        this.addBookViewModel.setDescription(this.descriptionEditText.getText().toString());
-        this.addBookViewModel.setCategory(this.categorySpinner.getSelectedItem().toString());
+        this.saveBookViewModel.setTitle(this.titleEditText.getText().toString());
+        this.saveBookViewModel.setAuthor(this.authorEditText.getText().toString());
+        this.saveBookViewModel.setDescription(this.descriptionEditText.getText().toString());
+        this.saveBookViewModel.setCategory(this.categorySpinner.getSelectedItem().toString());
     }
 }

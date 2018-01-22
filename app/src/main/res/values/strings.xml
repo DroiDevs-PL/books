@@ -26,4 +26,7 @@
     <!--Removing book-->
     <string name="remove_book_error">We encountered problem with removing book.</string>
 
+    <!--Editing book-->
+    <string name="edit_book">Edit book</string>
+
 </resources>
