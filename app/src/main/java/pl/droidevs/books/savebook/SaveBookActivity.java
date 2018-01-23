@@ -1,5 +1,6 @@
 package pl.droidevs.books.savebook;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -31,10 +33,12 @@ import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.removebook.RemoveBookDialogFragment;
+import pl.droidevs.books.removebook.RemoveBookViewModel;
 
 import static com.bumptech.glide.Priority.HIGH;
 
-public class SaveBookActivity extends AppCompatActivity {
+public class SaveBookActivity extends AppCompatActivity implements RemoveBookDialogFragment.OnRemoveListener {
 
     public static final String BOOK_ID_EXTRA = "book id";
 
@@ -116,25 +120,6 @@ public class SaveBookActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit_book_menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.remove_book_item) {
-            //TODO removeBook();
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void displaySnackBar(int messageResource) {
         Snackbar.make(container, messageResource, Snackbar.LENGTH_SHORT).show();
     }
@@ -145,15 +130,59 @@ public class SaveBookActivity extends AppCompatActivity {
 
     private void setupForEdit() {
         saveBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
-        saveBookViewModel.getBook().observe(this, book -> {
-            this.titleEditText.setText(book.getTitle());
-            this.authorEditText.setText(book.getAuthor());
-            this.coverUrlEditText.setText(book.getImageUrl());
-            this.descriptionEditText.setText(book.getDescription());
-            this.categorySpinner.setSelection(getCategoryNames().indexOf(book.getCategory()));
-        });
+        saveBookViewModel.getBook().observe(this, bookObserver);
 
         saveButton.setText(R.string.edit_book);
+    }
+
+    private Observer<Book> bookObserver = book -> {
+
+        if (book == null) {
+            return;
+        }
+
+        this.titleEditText.setText(book.getTitle());
+        this.authorEditText.setText(book.getAuthor());
+        this.coverUrlEditText.setText(book.getImageUrl());
+        this.descriptionEditText.setText(book.getDescription());
+        this.categorySpinner.setSelection(getPositionInCategories(book.getCategory().toString()));
+
+        setDataToViewModel();
+    };
+
+    private int getPositionInCategories(String category) {
+        List<String> categories = getCategoryNames();
+
+        for (int i = 0; i < categories.size(); i++) {
+
+            if (categories.get(i).equals(category)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (shouldDisplayEdit()) {
+            getMenuInflater().inflate(R.menu.edit_book_menu, menu);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.remove_book_item) {
+            RemoveBookDialogFragment removeBookDialogFragment = RemoveBookDialogFragment.newInstance((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
+            removeBookDialogFragment.show(getSupportFragmentManager(), "");
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @OnTextChanged(R.id.coverImageUrlEditText)
@@ -189,5 +218,15 @@ public class SaveBookActivity extends AppCompatActivity {
         this.saveBookViewModel.setAuthor(this.authorEditText.getText().toString());
         this.saveBookViewModel.setDescription(this.descriptionEditText.getText().toString());
         this.saveBookViewModel.setCategory(this.categorySpinner.getSelectedItem().toString());
+    }
+
+    @Override
+    public void removeChosen() {
+        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(RemoveBookViewModel.class);
+        removeBookViewModel.removeBook(saveBookViewModel.createBook());
+
+        finish();
     }
 }

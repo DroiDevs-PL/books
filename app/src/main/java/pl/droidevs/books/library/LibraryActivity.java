@@ -4,7 +4,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -115,7 +114,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void showRemoveBookSnackbar(@NonNull Book book, int position) {
-        Snackbar.make(floatingActionButton, R.string.book_delete_snackbar, Snackbar.LENGTH_LONG)
+        Snackbar.make(floatingActionButton, R.string.removing_book_snackbar, Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, v -> adapter.addItem(book, position))
                 .addCallback(
                         new BaseTransientBottomBar.BaseCallback<Snackbar>() {
