@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
@@ -199,7 +200,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         Glide.with(this)
                 .load(imageUrl)
                 .apply(new RequestOptions()
-                        .placeholder(R.drawable.ic_book)
+                        .placeholder(R.mipmap.ic_launcher)
                         .priority(HIGH))
                 .into(coverImageView);
     }
@@ -211,6 +212,13 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         if (this.saveBookViewModel.isDataValid()) {
             this.saveBookViewModel.saveBook();
         }
+    }
+
+    @OnEditorAction(R.id.descriptionEditText)
+    boolean onDescriptionDone() {
+        onSaveButtonClicked();
+
+        return true;
     }
 
     void setDataToViewModel() {

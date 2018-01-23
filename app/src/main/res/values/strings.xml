@@ -13,7 +13,7 @@
     <string name="undo">Undo</string>
 
     <!--Adding book-->
-    <string name="cover_imageUrl_hint">Paste cover image url here. It has to start with \"http\" and end with \".png\" or \".jpg\".</string>
+    <string name="cover_imageUrl_hint">Paste cover image url here. It has to start with \"http\".</string>
     <string name="book_title_hint">Title</string>
     <string name="book_author_hint">Author</string>
     <string name="book_category_hint">Category</string>
