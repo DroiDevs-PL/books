@@ -1,6 +1,8 @@
 package pl.droidevs.books.library;
 
 import android.content.Context;
+import static com.bumptech.glide.Priority.HIGH;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -21,8 +23,6 @@ import butterknife.ButterKnife;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
-
-import static com.bumptech.glide.Priority.HIGH;
 
 final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewHolder> {
     private List<Book> books = new ArrayList<>();
@@ -60,18 +60,36 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         notifyDataSetChanged();
     }
 
-    static final class BookViewHolder extends RecyclerView.ViewHolder {
-        @Nullable
-        private BookId bookId;
+    public void removeItem(int position, BookItemRemoveListener listener) {
+        listener.onBookRemoved(this.books.get(position));
+        this.books.remove(position);
+        notifyItemRemoved(position);
+    }
 
+    public void addItem(Book book, int position) {
+        this.books.add(position, book);
+        notifyItemInserted(position);
+    }
+
+    @FunctionalInterface
+    public interface BookItemClickListener {
+        void onBookClicked(@NonNull BookId bookId);
+    }
+
+    @FunctionalInterface
+    public interface BookItemRemoveListener {
+        void onBookRemoved(@NonNull Book book);
+    }
+
+    static final class BookViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_book_title)
         TextView tvBookTitle;
-
         @BindView(R.id.tv_book_author)
         TextView tvBookAuthor;
-
         @BindView(R.id.iv_book)
         ImageView ivBook;
+        @Nullable
+        private BookId bookId;
 
         @BindView(R.id.shadow_view)
         View shadowView;
@@ -81,8 +99,9 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
-                if (onClickListener != null && bookId != null)
+                if (onClickListener != null && bookId != null) {
                     onClickListener.onBookClicked(itemView, bookId.getId(), getAdapterPosition());
+                }
             });
         }
 
