@@ -106,37 +106,49 @@ public class BookActivity extends AppCompatActivity {
         viewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
-
         viewModel.setBookId((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
+        viewModel.getBook().observe(this, book -> {
 
-        viewModel.getBook()
-                .observe(this, book -> {
-                    if (book != null) {
-                        collapsingToolbarLayout.setTitle(book.getTitle());
-                        authorTextView.setText(book.getAuthor());
-                        categoryTextView.setText(book.getCategory().toString());
-                        descryptionTextView.setText(book.getDescription());
+            if (book != null) {
+                setupBookViews(book);
+            }
+        });
+    }
 
-                        if (book.getImageUrl() == null) {
-                            Glide.with(BookActivity.this).load(R.drawable.ic_book).into(imageView);
-                        } else {
-                            Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
-                                @Override
-                                public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    super.onResourceReady(resource, transition);
+    void setupBookViews(Book book) {
+        collapsingToolbarLayout.setTitle(book.getTitle());
+        authorTextView.setText(book.getAuthor());
+        categoryTextView.setText(book.getCategory().toString());
+        descryptionTextView.setText(book.getDescription());
 
-                                    int[] colors = getColorsForBarsFromBitmap(resource);
-                                    if (colors != null) {
-                                        collapsingToolbarLayout.setContentScrimColor(colors[0]);
-                                        Window window = getWindow();
-                                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        window.setStatusBarColor(colors[1]);
-                                    }
-                                }
-                            });
-                        }
+        if (book.getImageUrl() != null) {
+            loadCover(book.getImageUrl());
+        }
+    }
+
+    void loadCover(String imageUrl) {
+        Glide.with(this)
+                .asBitmap()
+                .load(imageUrl)
+                .into(new BitmapImageViewTarget(imageView) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        super.onResourceReady(resource, transition);
+
+                        setupBarColors(resource);
                     }
                 });
+    }
+
+    void setupBarColors(Bitmap resource) {
+        int[] colors = getColorsForBarsFromBitmap(resource);
+
+        if (colors != null) {
+            collapsingToolbarLayout.setContentScrimColor(colors[0]);
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(colors[1]);
+        }
     }
 
     @Override
