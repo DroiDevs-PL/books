@@ -114,7 +114,7 @@ public class LibraryActivity extends AppCompatActivity {
         authorTransitionName = bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
         shadowTransitionName = bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME);
 
-        lastSelectedIndex = data.getIntExtra(EXTRAS_LAST_SELECTED_INDEX, -1);
+        lastSelectedIndex = bundle.getInt(EXTRAS_LAST_SELECTED_INDEX, -1);
         if (lastSelectedIndex >= 0) {
             recyclerView.smoothScrollToPosition(lastSelectedIndex);
             setExitSharedElementCallback(new SharedElementCallback() {
