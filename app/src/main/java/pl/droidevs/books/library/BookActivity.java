@@ -138,26 +138,33 @@ public class BookActivity extends AppCompatActivity {
                 });
             }
         });*/
-        viewModel.getBookById(bookId).observe(this,book -> {
-            collapsingToolbarLayout.setTitle(book.getTitle());
-            authorTextView.setText(book.getAuthor());
-            categoryTextView.setText(book.getCategory().toString());
-            descryptionTextView.setText(book.getDescription());
+        viewModel.getBookById(bookId).observe(this, books -> {
+            if (books != null && books.size() > 0) {
+                Book book = books.get(0);
+                collapsingToolbarLayout.setTitle(book.getTitle());
+                authorTextView.setText(book.getAuthor());
+                categoryTextView.setText(book.getCategory().toString());
+                descryptionTextView.setText(book.getDescription());
 
-            Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
-                @Override
-                public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
+                if (book.getImageUrl() == null) {
+                    Glide.with(BookActivity.this).load(R.drawable.ic_book).into(imageView);
+                } else {
+                    Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
+                        @Override
+                        public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            super.onResourceReady(resource, transition);
 
-                    int[] colors = getColorsForBarsFromBitmap(resource);
-                    if (colors != null) {
-                        collapsingToolbarLayout.setContentScrimColor(colors[0]);
-                        Window window = getWindow();
-                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        window.setStatusBarColor(colors[1]);
-                    }
+                            int[] colors = getColorsForBarsFromBitmap(resource);
+                            if (colors != null) {
+                                collapsingToolbarLayout.setContentScrimColor(colors[0]);
+                                Window window = getWindow();
+                                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                window.setStatusBarColor(colors[1]);
+                            }
+                        }
+                    });
                 }
-            });
+            }
         });
     }
 

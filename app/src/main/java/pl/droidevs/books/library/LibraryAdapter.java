@@ -73,7 +73,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull BookId bookId);
+        void onBookClicked(@NonNull View view, @NonNull String bookId, @NonNull Integer index);
     }
 
     @FunctionalInterface
@@ -119,10 +119,5 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
                     )
                     .into(ivBook);
         }
-    }
-
-    @FunctionalInterface
-    public interface BookItemClickListener {
-        void onBookClicked(@NonNull View view, @NonNull String bookId, @NonNull Integer index);
     }
 }

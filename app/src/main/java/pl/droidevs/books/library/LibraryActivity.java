@@ -119,10 +119,12 @@ public class LibraryActivity extends AppCompatActivity {
                 @Override
                 public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                     LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(lastSelectedIndex);
-                    sharedElements.put(imageTransitionName, viewHolder.ivBook);
-                    sharedElements.put(titleTransitionName, viewHolder.tvBookTitle);
-                    sharedElements.put(authorTransitionName, viewHolder.tvBookAuthor);
-                    sharedElements.put(shadowTransitionName, viewHolder.shadowView);
+                    if(viewHolder != null){
+                        sharedElements.put(imageTransitionName, viewHolder.ivBook);
+                        sharedElements.put(titleTransitionName, viewHolder.tvBookTitle);
+                        sharedElements.put(authorTransitionName, viewHolder.tvBookAuthor);
+                        sharedElements.put(shadowTransitionName, viewHolder.shadowView);
+                    }
                 }
             });
         }
