@@ -1,0 +1,4 @@
+<resources>
+    <integer name="animation_base_duration">1000</integer>
+
+</resources>

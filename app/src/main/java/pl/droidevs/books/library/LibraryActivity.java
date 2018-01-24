@@ -21,6 +21,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.transition.Slide;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -67,6 +68,8 @@ public class LibraryActivity extends AppCompatActivity {
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
+
+        getWindow().setEnterTransition(new Slide().setDuration(getResources().getInteger(R.integer.animation_base_duration)));
 
         setupAdapter();
         setupRecyclerView();
