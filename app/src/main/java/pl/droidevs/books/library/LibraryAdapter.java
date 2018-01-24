@@ -1,5 +1,6 @@
 package pl.droidevs.books.library;
 
+import android.content.Context;
 import static com.bumptech.glide.Priority.HIGH;
 
 import android.support.annotation.NonNull;
@@ -38,6 +39,11 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
         holder.bind(books.get(position));
+
+        holder.ivBook.setTransitionName("image_" + position);
+        holder.tvBookTitle.setTransitionName("title_" + position);
+        holder.tvBookAuthor.setTransitionName("author_" + position);
+        holder.shadowView.setTransitionName("shadow_" + position);
     }
 
     @Override
@@ -67,7 +73,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull BookId bookId);
+        void onBookClicked(@NonNull View view, @NonNull String bookId, @NonNull Integer index);
     }
 
     @FunctionalInterface
@@ -85,13 +91,16 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         @Nullable
         private BookId bookId;
 
+        @BindView(R.id.shadow_view)
+        View shadowView;
+
         private BookViewHolder(View itemView, BookItemClickListener onClickListener) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null) {
-                    onClickListener.onBookClicked(bookId);
+                    onClickListener.onBookClicked(itemView, bookId.getId(), getAdapterPosition());
                 }
             });
         }

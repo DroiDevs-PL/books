@@ -32,4 +32,11 @@
         <item name="android:layout_margin">@dimen/spacing_normal</item>
         <item name="android:backgroundTint">@color/colored_button</item>
     </style>
+
+
+
+    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">28sp</item>
+    </style>
+
 </resources>
