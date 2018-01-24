@@ -8,6 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,6 +79,9 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_book);
+
+
+        getWindow().setEnterTransition(new Fade().setDuration(getResources().getInteger(R.integer.animation_base_duration)));
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);

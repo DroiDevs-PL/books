@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLibraryActivity() {
-        startActivity(new Intent(this, LibraryActivity.class), n);
+        startActivity(new Intent(this, LibraryActivity.class));
         finish();
     }
 

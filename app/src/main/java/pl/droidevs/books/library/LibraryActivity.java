@@ -15,13 +15,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.transition.Slide;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -69,17 +69,18 @@ public class LibraryActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
 
-        getWindow().setEnterTransition(new Slide().setDuration(getResources().getInteger(R.integer.animation_base_duration)));
-
         setupAdapter();
         setupRecyclerView();
         setupViewModel();
 
-        floatingActionButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, SaveBookActivity.class));
-        });
+        floatingActionButton.setOnClickListener(
+                view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
 
         progressBar.setVisibility(VISIBLE);
+    }
+
+    private ActivityOptionsCompat createSaveActivityOptions() {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(this);
     }
 
     private void setupAdapter() {
@@ -91,7 +92,7 @@ public class LibraryActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SaveBookActivity.class);
             intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, bookId);
 
-            startActivity(intent);
+            startActivity(intent, createSaveActivityOptions().toBundle());
         });
     }
 

@@ -30,7 +30,9 @@
 
         <activity android:name=".library.LibraryActivity"/>
 
-        <activity android:name=".savebook.SaveBookActivity"/>
+        <activity
+            android:name=".savebook.SaveBookActivity"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>
