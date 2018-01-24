@@ -13,7 +13,17 @@
         android:layout_marginStart="@dimen/spacing_small"
         android:contentDescription="@string/label_thumbnail"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_book" />
+        android:src="@drawable/ic_book"/>
+
+    <View
+        android:id="@+id/shadow_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/scrim"
+        android:layout_alignLeft="@id/iv_book"
+        android:layout_alignRight="@id/iv_book"
+        android:layout_alignTop="@id/iv_book"
+        android:layout_alignBottom="@id/iv_book"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,14 +42,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/primary_text_size"
-            src:text="Sample text" />
+            src:text="Sample text"/>
 
         <TextView
             android:id="@+id/tv_book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/secondary_text_size"
-            src:text="Sample text" />
+            src:text="Sample text"/>
     </LinearLayout>
 
     <View

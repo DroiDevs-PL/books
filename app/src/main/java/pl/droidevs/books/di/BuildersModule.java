@@ -2,6 +2,7 @@ package pl.droidevs.books.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
+import pl.droidevs.books.library.BookActivity;
 import pl.droidevs.books.addbook.AddBookActivity;
 import pl.droidevs.books.library.LibraryActivity;
 import pl.droidevs.books.login.LoginActivity;
@@ -17,6 +18,9 @@ public abstract class BuildersModule {
 
     @ContributesAndroidInjector
     abstract LoginActivity bindLoginActivity();
+
+    @ContributesAndroidInjector
+    abstract BookActivity bindBookActivity();
 
     @ContributesAndroidInjector
     abstract AddBookActivity bindAddBookActivity();
