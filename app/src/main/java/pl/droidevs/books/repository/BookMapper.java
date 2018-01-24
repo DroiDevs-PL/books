@@ -22,8 +22,6 @@ class BookMapper {
                 return books;
             };
 
-    public static final Function<BookEntity, Book> entityToBookFunction = bookEntity -> BookMapper.getBook(bookEntity);
-
     private BookMapper() {
     }
 

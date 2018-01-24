@@ -104,40 +104,6 @@ public class BookActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookViewModel.class);
-        /*viewModel.getBooks().observe(this, books -> {
-            Book selectedBook = null;
-            if (books != null) {
-                for (Book book : books) {
-                    String thisId = book.getId().getId();
-                    if (thisId.equals(bookId)) {
-                        selectedBook = book;
-                        break;
-                    }
-                }
-            }
-
-            if (selectedBook != null) {
-                collapsingToolbarLayout.setTitle(selectedBook.getTitle());
-                authorTextView.setText(selectedBook.getAuthor());
-                categoryTextView.setText(selectedBook.getCategory().toString());
-                descryptionTextView.setText(selectedBook.getDescription());
-
-                Glide.with(BookActivity.this).asBitmap().load(selectedBook.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        super.onResourceReady(resource, transition);
-
-                        int[] colors = getColorsForBarsFromBitmap(resource);
-                        if (colors != null) {
-                            collapsingToolbarLayout.setContentScrimColor(colors[0]);
-                            Window window = getWindow();
-                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                            window.setStatusBarColor(colors[1]);
-                        }
-                    }
-                });
-            }
-        });*/
         viewModel.getBookById(bookId).observe(this, books -> {
             if (books != null && books.size() > 0) {
                 Book book = books.get(0);
