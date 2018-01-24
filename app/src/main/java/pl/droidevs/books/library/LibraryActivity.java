@@ -23,7 +23,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.util.Pair;
@@ -122,10 +121,10 @@ public class LibraryActivity extends AppCompatActivity {
                 public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                     LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(lastSelectedIndex);
                     if(viewHolder != null){
-                        sharedElements.put(imageTransitionName, viewHolder.ivBook);
-                        sharedElements.put(titleTransitionName, viewHolder.tvBookTitle);
-                        sharedElements.put(authorTransitionName, viewHolder.tvBookAuthor);
-                        sharedElements.put(shadowTransitionName, viewHolder.shadowView);
+                        sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
+                        sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
+                        sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
+                        sharedElements.put(bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME), viewHolder.shadowView);
                     }
                 }
             });
