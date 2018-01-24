@@ -35,9 +35,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -52,22 +50,16 @@ import pl.droidevs.books.addbook.AddBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.ui.SwipeCallback;
 
 public class LibraryActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
+    private static final int BOOK_REQUEST = 711;
 
     @BindView(R.id.layout_library_content)
     CoordinatorLayout coordinatorLayout;
-
-    private static final int BOOK_REQUEST = 711;
-
-    private String imageTransitionName;
-    private String titleTransitionName;
-    private String authorTransitionName;
-    private String shadowTransitionName;
-    private int lastSelectedIndex = -1;
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
@@ -107,58 +99,76 @@ public class LibraryActivity extends AppCompatActivity {
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
 
-        Bundle bundle = data.getBundleExtra(BUNDLE_EXTRAS);
-        imageTransitionName = bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME);
-        titleTransitionName = bundle.getString(EXTRAS_TITLE_TRANSITION_NAME);
-        authorTransitionName = bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
-        shadowTransitionName = bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME);
+        setupAnimationForRecyclerViewItems(data.getBundleExtra(BUNDLE_EXTRAS));
+    }
 
-        lastSelectedIndex = data.getIntExtra(EXTRAS_LAST_SELECTED_INDEX, -1);
+    private void setupAnimationForRecyclerViewItems(Bundle bundle) {
+        int lastSelectedIndex = bundle.getInt(EXTRAS_LAST_SELECTED_INDEX, -1);
+
         if (lastSelectedIndex >= 0) {
             recyclerView.smoothScrollToPosition(lastSelectedIndex);
-            setExitSharedElementCallback(new SharedElementCallback() {
-                @Override
-                public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                    LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(lastSelectedIndex);
-                    if(viewHolder != null){
-                        sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
-                        sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
-                        sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
-                        sharedElements.put(bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME), viewHolder.shadowView);
-                    }
-                }
-            });
+            setExitSharedElementCallback(getExitSharedElementCallback(bundle, lastSelectedIndex));
         }
+    }
+
+    private SharedElementCallback getExitSharedElementCallback(Bundle bundle, int positionToScroll) {
+        return new SharedElementCallback() {
+
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(positionToScroll);
+
+                if (viewHolder != null) {
+                    sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
+                    sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
+                    sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
+                    sharedElements.put(bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME), viewHolder.shadowView);
+                }
+            }
+        };
     }
 
     private void setupAdapter() {
         adapter = new LibraryAdapter();
         adapter.setItemClickListener((view, bookId, index) -> {
-            ImageView imageView = view.findViewById(R.id.iv_book);
-            TextView titleTextView = view.findViewById(R.id.tv_book_title);
-            TextView authorTextView = view.findViewById(R.id.tv_book_author);
-            View shadowView = view.findViewById(R.id.shadow_view);
 
-            Intent intent = new Intent(this, BookActivity.class);
-            Bundle extras = new Bundle();
-            extras.putString(EXTRAS_IMAGE_TRANSITION_NAME, imageView.getTransitionName());
-            extras.putString(EXTRAS_TITLE_TRANSITION_NAME, titleTextView.getTransitionName());
-            extras.putString(EXTRAS_AUTHOR_TRANSITION_NAME, authorTextView.getTransitionName());
-            extras.putString(EXTRAS_SHADOW_TRANSITION_NAME, shadowView.getTransitionName());
-            extras.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
-            intent.putExtra(BUNDLE_EXTRAS, extras);
-            intent.putExtra(EXTRAS_BOOK_ID, bookId);
-
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    this,
-                    new Pair<>(imageView, imageView.getTransitionName()),
-                    new Pair<>(titleTextView, titleTextView.getTransitionName()),
-                    new Pair<>(authorTextView, authorTextView.getTransitionName()),
-                    new Pair<>(shadowView, shadowView.getTransitionName())
-            );
-
-            ActivityCompat.startActivityForResult(this, intent, BOOK_REQUEST, options.toBundle());
+            ActivityCompat.startActivityForResult(this,
+                    createBookIntent(view, index, bookId),
+                    BOOK_REQUEST,
+                    createBookActivityOptions(view).toBundle());
         });
+    }
+
+    private Intent createBookIntent(View view, int index, BookId bookId) {
+        Intent intent = new Intent(this, BookActivity.class);
+        intent.putExtra(BUNDLE_EXTRAS, createAnimationBundle(view, index));
+        intent.putExtra(EXTRAS_BOOK_ID, bookId);
+
+        return intent;
+    }
+
+    private Bundle createAnimationBundle(View view, int index) {
+        Bundle animationBundle = new Bundle();
+        animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
+        animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
+        animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
+        animationBundle.putString(EXTRAS_SHADOW_TRANSITION_NAME, view.findViewById(R.id.shadow_view).getTransitionName());
+        animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
+
+        return animationBundle;
+    }
+
+    private ActivityOptionsCompat createBookActivityOptions(View view) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                new Pair<>(view.findViewById(R.id.iv_book),
+                        view.findViewById(R.id.iv_book).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_title),
+                        view.findViewById(R.id.tv_book_title).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_author),
+                        view.findViewById(R.id.tv_book_author).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.shadow_view), view.findViewById(R.id.shadow_view).getTransitionName())
+        );
     }
 
     private void setupRecyclerView() {
