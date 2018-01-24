@@ -31,21 +31,16 @@ import pl.droidevs.books.model.BookId;
 import static pl.droidevs.books.AppHelper.getColorsForBarsFromBitmap;
 
 public class BookActivity extends AppCompatActivity {
-    private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
-    private static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
-    private static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
-    private static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
-    private static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
-    private static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
-    private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
+    public static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
+    public static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
+    public static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
+    public static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
+    public static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
+    public static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
+    public static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
 
+    private Bundle animationBundle;
     private BookViewModel viewModel;
-
-    private String imageTransitionName;
-    private String titleTransitionName;
-    private String authorTransitionName;
-    private String shadowTransitionName;
-    private int lastSelectedIndex;
 
     //region Butter binding
     @BindView(R.id.album_iv)
@@ -64,7 +59,7 @@ public class BookActivity extends AppCompatActivity {
     TextView categoryTextView;
 
     @BindView(R.id.description_tv)
-    TextView descryptionTextView;
+    TextView descriptionTextView;
     //endregion
 
     @Inject
@@ -80,26 +75,20 @@ public class BookActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            imageTransitionName = savedInstanceState.getString(EXTRAS_IMAGE_TRANSITION_NAME);
-            titleTransitionName = savedInstanceState.getString(EXTRAS_TITLE_TRANSITION_NAME);
-            authorTransitionName = savedInstanceState.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
-            shadowTransitionName = savedInstanceState.getString(EXTRAS_SHADOW_TRANSITION_NAME);
-            lastSelectedIndex = savedInstanceState.getInt(EXTRAS_LAST_SELECTED_INDEX);
+            this.animationBundle = savedInstanceState.getBundle(BUNDLE_EXTRAS);
         } else {
-            final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
-            imageTransitionName = extras.getString(EXTRAS_IMAGE_TRANSITION_NAME);
-            titleTransitionName = extras.getString(EXTRAS_TITLE_TRANSITION_NAME);
-            authorTransitionName = extras.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
-            shadowTransitionName = extras.getString(EXTRAS_SHADOW_TRANSITION_NAME);
-            lastSelectedIndex = extras.getInt(EXTRAS_LAST_SELECTED_INDEX);
+            this.animationBundle = getIntent().getBundleExtra(BUNDLE_EXTRAS);
         }
 
+        setupAnimations();
         setupViewModel();
+    }
 
-        imageView.setTransitionName(imageTransitionName);
-        //ToDo: title transitionName
-        authorTextView.setTransitionName(authorTransitionName);
-        shadowView.setTransitionName(shadowTransitionName);
+    void setupAnimations() {
+        imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
+        //TODO title animation: animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME);
+        authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
+        shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
     }
 
     private void setupViewModel() {
@@ -119,7 +108,7 @@ public class BookActivity extends AppCompatActivity {
         collapsingToolbarLayout.setTitle(book.getTitle());
         authorTextView.setText(book.getAuthor());
         categoryTextView.setText(book.getCategory().toString());
-        descryptionTextView.setText(book.getDescription());
+        descriptionTextView.setText(book.getDescription());
 
         if (book.getImageUrl() != null) {
             loadCover(book.getImageUrl());
@@ -154,21 +143,14 @@ public class BookActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(EXTRAS_IMAGE_TRANSITION_NAME, imageTransitionName);
-        outState.putString(EXTRAS_TITLE_TRANSITION_NAME, titleTransitionName);
-        outState.putString(EXTRAS_AUTHOR_TRANSITION_NAME, authorTransitionName);
-        outState.putString(EXTRAS_SHADOW_TRANSITION_NAME, shadowTransitionName);
-        outState.putInt(EXTRAS_LAST_SELECTED_INDEX, lastSelectedIndex);
+
+        outState.putBundle(BUNDLE_EXTRAS, animationBundle);
     }
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();
-        intent.putExtra(EXTRAS_IMAGE_TRANSITION_NAME, imageTransitionName);
-        intent.putExtra(EXTRAS_TITLE_TRANSITION_NAME, titleTransitionName);
-        intent.putExtra(EXTRAS_AUTHOR_TRANSITION_NAME, authorTransitionName);
-        intent.putExtra(EXTRAS_SHADOW_TRANSITION_NAME, shadowTransitionName);
-        intent.putExtra(EXTRAS_LAST_SELECTED_INDEX, lastSelectedIndex);
+        intent.putExtra(BUNDLE_EXTRAS, animationBundle);
         setResult(RESULT_OK, intent);
         super.onBackPressed();
     }

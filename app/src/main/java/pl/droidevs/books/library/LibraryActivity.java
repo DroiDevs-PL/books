@@ -2,6 +2,13 @@ package pl.droidevs.books.library;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHADOW_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
@@ -49,13 +56,6 @@ import pl.droidevs.books.model.Book;
 import pl.droidevs.books.ui.SwipeCallback;
 
 public class LibraryActivity extends AppCompatActivity {
-    private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
-    private static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
-    private static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
-    private static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
-    private static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
-    private static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
-    private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
 
@@ -107,10 +107,12 @@ public class LibraryActivity extends AppCompatActivity {
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
-        imageTransitionName = data.getStringExtra(EXTRAS_IMAGE_TRANSITION_NAME);
-        titleTransitionName = data.getStringExtra(EXTRAS_TITLE_TRANSITION_NAME);
-        authorTransitionName = data.getStringExtra(EXTRAS_AUTHOR_TRANSITION_NAME);
-        shadowTransitionName = data.getStringExtra(EXTRAS_SHADOW_TRANSITION_NAME);
+
+        Bundle bundle = data.getBundleExtra(BUNDLE_EXTRAS);
+        imageTransitionName = bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME);
+        titleTransitionName = bundle.getString(EXTRAS_TITLE_TRANSITION_NAME);
+        authorTransitionName = bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
+        shadowTransitionName = bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME);
 
         lastSelectedIndex = data.getIntExtra(EXTRAS_LAST_SELECTED_INDEX, -1);
         if (lastSelectedIndex >= 0) {
