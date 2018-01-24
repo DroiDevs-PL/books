@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 
 import static pl.droidevs.books.AppHelper.getColorsForBarsFromBitmap;
 
@@ -37,9 +38,9 @@ public class BookActivity extends AppCompatActivity {
     private static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
     private static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
     private static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
+
     private BookViewModel viewModel;
 
-    private String bookId;
     private String imageTransitionName;
     private String titleTransitionName;
     private String authorTransitionName;
@@ -79,7 +80,6 @@ public class BookActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
-            bookId = savedInstanceState.getString(EXTRAS_BOOK_ID);
             imageTransitionName = savedInstanceState.getString(EXTRAS_IMAGE_TRANSITION_NAME);
             titleTransitionName = savedInstanceState.getString(EXTRAS_TITLE_TRANSITION_NAME);
             authorTransitionName = savedInstanceState.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
@@ -87,13 +87,13 @@ public class BookActivity extends AppCompatActivity {
             lastSelectedIndex = savedInstanceState.getInt(EXTRAS_LAST_SELECTED_INDEX);
         } else {
             final Bundle extras = getIntent().getBundleExtra(BUNDLE_EXTRAS);
-            bookId = extras.getString(EXTRAS_BOOK_ID);
             imageTransitionName = extras.getString(EXTRAS_IMAGE_TRANSITION_NAME);
             titleTransitionName = extras.getString(EXTRAS_TITLE_TRANSITION_NAME);
             authorTransitionName = extras.getString(EXTRAS_AUTHOR_TRANSITION_NAME);
             shadowTransitionName = extras.getString(EXTRAS_SHADOW_TRANSITION_NAME);
             lastSelectedIndex = extras.getInt(EXTRAS_LAST_SELECTED_INDEX);
         }
+
         setupViewModel();
 
         imageView.setTransitionName(imageTransitionName);
@@ -103,41 +103,45 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BookViewModel.class);
-        viewModel.getBookById(bookId).observe(this, books -> {
-            if (books != null && books.size() > 0) {
-                Book book = books.get(0);
-                collapsingToolbarLayout.setTitle(book.getTitle());
-                authorTextView.setText(book.getAuthor());
-                categoryTextView.setText(book.getCategory().toString());
-                descryptionTextView.setText(book.getDescription());
+        viewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(BookViewModel.class);
 
-                if (book.getImageUrl() == null) {
-                    Glide.with(BookActivity.this).load(R.drawable.ic_book).into(imageView);
-                } else {
-                    Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
-                        @Override
-                        public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            super.onResourceReady(resource, transition);
+        viewModel.setBookId((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
 
-                            int[] colors = getColorsForBarsFromBitmap(resource);
-                            if (colors != null) {
-                                collapsingToolbarLayout.setContentScrimColor(colors[0]);
-                                Window window = getWindow();
-                                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                window.setStatusBarColor(colors[1]);
-                            }
+        viewModel.getBook()
+                .observe(this, book -> {
+                    if (book != null) {
+                        collapsingToolbarLayout.setTitle(book.getTitle());
+                        authorTextView.setText(book.getAuthor());
+                        categoryTextView.setText(book.getCategory().toString());
+                        descryptionTextView.setText(book.getDescription());
+
+                        if (book.getImageUrl() == null) {
+                            Glide.with(BookActivity.this).load(R.drawable.ic_book).into(imageView);
+                        } else {
+                            Glide.with(BookActivity.this).asBitmap().load(book.getImageUrl()).into(new BitmapImageViewTarget(imageView) {
+                                @Override
+                                public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    super.onResourceReady(resource, transition);
+
+                                    int[] colors = getColorsForBarsFromBitmap(resource);
+                                    if (colors != null) {
+                                        collapsingToolbarLayout.setContentScrimColor(colors[0]);
+                                        Window window = getWindow();
+                                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        window.setStatusBarColor(colors[1]);
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
-            }
-        });
+                    }
+                });
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(EXTRAS_BOOK_ID, bookId);
         outState.putString(EXTRAS_IMAGE_TRANSITION_NAME, imageTransitionName);
         outState.putString(EXTRAS_TITLE_TRANSITION_NAME, titleTransitionName);
         outState.putString(EXTRAS_AUTHOR_TRANSITION_NAME, authorTransitionName);

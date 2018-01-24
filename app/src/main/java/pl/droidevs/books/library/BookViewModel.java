@@ -1,7 +1,6 @@
 package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.repository.BookRepository;
 
 /**
@@ -17,6 +17,8 @@ import pl.droidevs.books.repository.BookRepository;
 
 public class BookViewModel extends ViewModel {
 
+    private BookId bookId;
+
     private final BookRepository bookRepository;
 
     @Inject
@@ -24,11 +26,15 @@ public class BookViewModel extends ViewModel {
         this.bookRepository = bookRepository;
     }
 
+    public void setBookId(BookId bookId) {
+        this.bookId = bookId;
+    }
+
     public LiveData<List<Book>> getBooks() {
         return bookRepository.getBooks();
     }
 
-    public LiveData<List<Book>>getBookById(String id){
-        return bookRepository.getBookById(id);
+    public LiveData<Book> getBook(){
+        return bookRepository.getBookById(bookId);
     }
 }

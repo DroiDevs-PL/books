@@ -1,6 +1,5 @@
 package pl.droidevs.books.library;
 
-import android.content.Context;
 import static com.bumptech.glide.Priority.HIGH;
 
 import android.support.annotation.NonNull;
@@ -73,7 +72,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull View view, @NonNull String bookId, @NonNull Integer index);
+        void onBookClicked(@NonNull View view, @NonNull BookId bookId, @NonNull Integer index);
     }
 
     @FunctionalInterface
@@ -82,6 +81,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     }
 
     static final class BookViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.tv_book_title)
         TextView tvBookTitle;
         @BindView(R.id.tv_book_author)
@@ -100,7 +100,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null) {
-                    onClickListener.onBookClicked(itemView, bookId.getId(), getAdapterPosition());
+                    onClickListener.onBookClicked(itemView, bookId, getAdapterPosition());
                 }
             });
         }

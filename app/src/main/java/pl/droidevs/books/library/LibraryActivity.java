@@ -144,9 +144,9 @@ public class LibraryActivity extends AppCompatActivity {
             extras.putString(EXTRAS_TITLE_TRANSITION_NAME, titleTextView.getTransitionName());
             extras.putString(EXTRAS_AUTHOR_TRANSITION_NAME, authorTextView.getTransitionName());
             extras.putString(EXTRAS_SHADOW_TRANSITION_NAME, shadowView.getTransitionName());
-            extras.putString(EXTRAS_BOOK_ID, bookId);
             extras.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
             intent.putExtra(BUNDLE_EXTRAS, extras);
+            intent.putExtra(EXTRAS_BOOK_ID, bookId);
 
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     this,
