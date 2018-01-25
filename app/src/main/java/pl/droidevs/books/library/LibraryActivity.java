@@ -104,7 +104,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupAnimationForRecyclerViewItems(Bundle bundle) {
         int lastSelectedIndex = bundle.getInt(EXTRAS_LAST_SELECTED_INDEX, -1);
-
+        
         if (lastSelectedIndex >= 0) {
             recyclerView.smoothScrollToPosition(lastSelectedIndex);
             setExitSharedElementCallback(getExitSharedElementCallback(bundle, lastSelectedIndex));
