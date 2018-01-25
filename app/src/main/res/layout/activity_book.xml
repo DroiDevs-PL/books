@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -29,17 +30,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/orient_express"
                 app:layout_collapseMode="parallax"
-                />
+                android:src="@drawable/ic_book"/>
 
             <View
                 android:id="@+id/shadow_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
                 android:background="@drawable/scrim"
-                app:layout_collapseMode="parallax"
-                android:layout_alignParentBottom="true"/>
+                app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -76,56 +76,56 @@
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
                     android:layout_height="@dimen/vote_star_size"
-                    android:src="@drawable/ic_open_book"
-                    android:layout_marginRight="@dimen/vote_star_margin"/>
+                    android:layout_marginRight="@dimen/vote_star_margin"
+                    android:src="@drawable/ic_open_book"/>
 
                 <ImageView
                     android:layout_width="@dimen/vote_star_size"
@@ -137,23 +137,23 @@
                 android:id="@+id/author_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Agatha Christie"
                 android:textSize="@dimen/author_label_text_size"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:text="Agatha Christie"/>
 
             <TextView
                 android:id="@+id/category_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Category"
-                android:textAllCaps="true" />
+                android:textAllCaps="true"
+                tools:text="Category"/>
 
             <TextView
                 android:id="@+id/description_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_normal"
-                tools:text="@string/lorem_ipsum_511" />
+                tools:text="@string/lorem_ipsum_511"/>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

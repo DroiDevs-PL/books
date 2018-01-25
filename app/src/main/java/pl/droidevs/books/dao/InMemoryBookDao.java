@@ -63,8 +63,8 @@ public final class InMemoryBookDao implements BookDao {
     }
 
     @Override
-    public LiveData<List<BookEntity>> getBookById(int bookId) {
-        return booksLiveData;
+    public LiveData<BookEntity> getBookById(int bookId) {
+        return null;
     }
 
     @Override
