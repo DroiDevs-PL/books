@@ -47,7 +47,7 @@
                 android:layout_height="?actionBarSize"
                 android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_collapseMode="pin">
-                <!--app:navigationIcon="@drawable/ic_arrow_back_black"-->
+                <!--app:navigationIcon="@drawable/ic_arrow_back_white"-->
 
             </android.support.v7.widget.Toolbar>
 
@@ -154,7 +154,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_normal"
                 tools:text="@string/lorem_ipsum_511"/>
-
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

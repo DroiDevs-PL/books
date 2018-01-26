@@ -122,7 +122,6 @@ public class LibraryActivity extends AppCompatActivity {
                     sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
                     sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
                     sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
-                    sharedElements.put(bundle.getString(EXTRAS_SHADOW_TRANSITION_NAME), viewHolder.shadowView);
                 }
             }
         };
@@ -152,7 +151,6 @@ public class LibraryActivity extends AppCompatActivity {
         animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
         animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
         animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
-        animationBundle.putString(EXTRAS_SHADOW_TRANSITION_NAME, view.findViewById(R.id.shadow_view).getTransitionName());
         animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
 
         return animationBundle;
@@ -166,8 +164,7 @@ public class LibraryActivity extends AppCompatActivity {
                 new Pair<>(view.findViewById(R.id.tv_book_title),
                         view.findViewById(R.id.tv_book_title).getTransitionName()),
                 new Pair<>(view.findViewById(R.id.tv_book_author),
-                        view.findViewById(R.id.tv_book_author).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.shadow_view), view.findViewById(R.id.shadow_view).getTransitionName())
+                        view.findViewById(R.id.tv_book_author).getTransitionName())
         );
     }
 

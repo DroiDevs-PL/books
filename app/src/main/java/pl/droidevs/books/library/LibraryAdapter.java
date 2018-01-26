@@ -42,7 +42,6 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         holder.ivBook.setTransitionName("image_" + position);
         holder.tvBookTitle.setTransitionName("title_" + position);
         holder.tvBookAuthor.setTransitionName("author_" + position);
-        holder.shadowView.setTransitionName("shadow_" + position);
     }
 
     @Override
@@ -90,9 +89,6 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         ImageView ivBook;
         @Nullable
         private BookId bookId;
-
-        @BindView(R.id.shadow_view)
-        View shadowView;
 
         private BookViewHolder(View itemView, BookItemClickListener onClickListener) {
             super(itemView);
