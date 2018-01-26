@@ -26,6 +26,7 @@
     
 
 ## About Project
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Place_to_1_26_2018%204_54_46%20PM.jpg" width="700" height="470"/>
 Books is an android application that allow user to store information about books they owe or they've read. 
 It will allow to save basic book data like title, authors, category along with description or summary 
 created by the user and personal rank.
