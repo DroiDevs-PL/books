@@ -64,7 +64,7 @@ This screen allows user to create his library by providing a name. In future it 
 
 ### Add book
 This screen allows user to add new book by providing link to cover image, title, authors, category and description.
-<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screen%20Shot%202018-01-12%20at%2021.48.00.png" width="266" height="500"/>
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screenshot_20180126-154411.png" width="266" height="500"/>
 
 ### Display list of books (Library Screen)
 It's main screen of app where whole library is displayed: book cover along with title and authors.
@@ -73,8 +73,13 @@ It's main screen of app where whole library is displayed: book cover along with 
 ### Display book details
 In this screen user can preview more details of book such as: category, description.
 
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screenshot_20180126-155254.png" width="266" height="500"/> <img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screenshot_20180126-155301.png" width="266" height="500"/>
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/video2gif_20180126_155857.gif" width="266" height="500"/>
+
 ### Edit book
 This screen allows user to edit book data.
+
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screenshot_20180126-154423.png" width="266" height="500"/>
 
 ### Remove book
 Option of removing book is available in **Libarary Screen** by swiping book and in **Edit screen**.
