@@ -64,6 +64,7 @@ This screen allows user to create his library by providing a name. In future it 
 
 ### Add book
 This screen allows user to add new book by providing link to cover image, title, authors, category and description.
+<img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screen%20Shot%202018-01-12%20at%2021.48.00.png" width="266" height="500"/>
 <img src="https://raw.githubusercontent.com/nani92/books/gh-pages/Screenshot_20180126-154411.png" width="266" height="500"/>
 
 ### Display list of books (Library Screen)
