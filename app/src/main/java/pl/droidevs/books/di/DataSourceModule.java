@@ -9,7 +9,6 @@ import dagger.Module;
 import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.dao.InMemoryBookDao;
 import pl.droidevs.books.repository.BookCsvRepository;
 import pl.droidevs.books.repository.BookRepository;
 
