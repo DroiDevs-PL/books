@@ -1,4 +1,4 @@
-package pl.droidevs.books;
+package pl.droidevs.books.appHelper;
 
 import android.graphics.Bitmap;
 import android.support.v4.graphics.ColorUtils;
@@ -12,7 +12,14 @@ import java.util.List;
  * Created by micha on 18.12.2017.
  */
 
-public class AppHelper {
+public class colors {
+
+    public static final int HSL_HUE = 0;
+    public static final int HSL_SATURATION = 1;
+    public static final int HSL_LIGHT = 2;
+
+    private static final float MAX_ACTION_BAR_LIGHT = 0.7f;
+    private static final float MIN_ACTION_BAR_COLOR = 0.075f;
 
     public static Palette.Swatch getDominantColor(Bitmap bitmap) {
         List<Palette.Swatch> swatchesTemp = Palette.from(bitmap).generate().getSwatches();
@@ -25,22 +32,22 @@ public class AppHelper {
     public static int[] getColorsForBarsFromSwatch(Palette.Swatch swatch) {
         if (swatch != null) {
             float[] hsl = swatch.getHsl();
-            float actionBarLight = hsl[2];
+            float actionBarLight = hsl[HSL_LIGHT];
             float statusBarLight;
-            if (actionBarLight > 0.7f) {
-                actionBarLight = 0.7f;
+            if (actionBarLight > MAX_ACTION_BAR_LIGHT) {
+                actionBarLight = MAX_ACTION_BAR_LIGHT;
             }
-            if (actionBarLight > 0.075f) {
-                statusBarLight = actionBarLight - 0.075f;
+            if (actionBarLight > MIN_ACTION_BAR_COLOR) {
+                statusBarLight = actionBarLight - MIN_ACTION_BAR_COLOR;
             } else {
                 statusBarLight = actionBarLight;
-                actionBarLight += 0.075f;
+                actionBarLight += MIN_ACTION_BAR_COLOR;
             }
 
-            float[] actionBarHsl = {hsl[0], hsl[1], actionBarLight};
+            float[] actionBarHsl = {hsl[HSL_HUE], hsl[HSL_SATURATION], actionBarLight};
             int actionBarColor = ColorUtils.HSLToColor(actionBarHsl);
 
-            float[] statusBarHsl = {hsl[0], hsl[1], statusBarLight};
+            float[] statusBarHsl = {hsl[HSL_HUE], hsl[HSL_SATURATION], statusBarLight};
             int statusBarColor = ColorUtils.HSLToColor(statusBarHsl);
 
             int[] colors = new int[]{actionBarColor, statusBarColor};

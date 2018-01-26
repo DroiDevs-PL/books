@@ -28,7 +28,7 @@ import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
-import static pl.droidevs.books.AppHelper.getColorsForBarsFromBitmap;
+import static pl.droidevs.books.appHelper.colors.getColorsForBarsFromBitmap;
 
 public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
