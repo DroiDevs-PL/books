@@ -1,16 +1,21 @@
 package pl.droidevs.books.library;
 
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +24,8 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,6 +47,7 @@ public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
     public static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
     public static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
+    public static final String EXTRAS_SHARED_AUTHOR_TEXT_SIZE = "EXTRAS_SHARED_AUTHOR_TEXT_SIZE";
     public static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
 
     private Bundle animationBundle;
@@ -92,6 +100,26 @@ public class BookActivity extends AppCompatActivity {
         //TODO title animation: animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME);
         authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
         shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
+
+        final float startTextSize = getIntent().getFloatExtra(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, 1f);
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            private float textSize = -1;
+
+            @Override
+            public void onSharedElementStart(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                textSize = authorTextView.getTextSize();
+                authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, startTextSize);
+                super.onSharedElementStart(sharedElementNames, sharedElements, sharedElementSnapshots);
+            }
+
+            @Override
+            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                if (textSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                }
+                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+            }
+        });
     }
 
     private void setupViewModel() {

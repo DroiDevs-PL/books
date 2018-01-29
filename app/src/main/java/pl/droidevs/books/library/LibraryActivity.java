@@ -8,6 +8,7 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_SHADOW_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 import android.Manifest;
@@ -36,6 +37,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -139,9 +141,11 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private Intent createBookIntent(View view, int index, BookId bookId) {
+        TextView tvAuthor = view.findViewById(R.id.tv_book_author);
         Intent intent = new Intent(this, BookActivity.class);
         intent.putExtra(BUNDLE_EXTRAS, createAnimationBundle(view, index));
         intent.putExtra(EXTRAS_BOOK_ID, bookId);
+        intent.putExtra(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, tvAuthor.getTextSize());
 
         return intent;
     }
@@ -276,7 +280,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
