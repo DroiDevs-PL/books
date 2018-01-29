@@ -110,13 +110,22 @@ public class BookActivity extends AppCompatActivity {
                 textSize = authorTextView.getTextSize();
                 authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, startTextSize);
                 super.onSharedElementStart(sharedElementNames, sharedElements, sharedElementSnapshots);
+                if (textSize >= 0) {
+                    ValueAnimator animator = ValueAnimator.ofFloat(startTextSize, textSize);
+                    animator.setDuration(200);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float animatedValue = (float) valueAnimator.getAnimatedValue();
+                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,animatedValue);
+                    });
+                    animator.start();
+                }
             }
 
             @Override
             public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                if (textSize >= 0) {
+                /*if (textSize >= 0) {
                     authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                }
+                }*/
                 super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
             }
         });
