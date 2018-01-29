@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,7 +29,9 @@ import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
-import static pl.droidevs.books.appHelper.colors.getColorsForBarsFromBitmap;
+import static pl.droidevs.books.apphelper.ColorHelper.getActionBarColorFromSwatch;
+import static pl.droidevs.books.apphelper.ColorHelper.getDominantColor;
+import static pl.droidevs.books.apphelper.ColorHelper.getStatusBarColorFromSwatch;
 
 public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
@@ -99,10 +102,10 @@ public class BookActivity extends AppCompatActivity {
         viewModel.getBook((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID))
                 .observe(this, book -> {
 
-            if (book != null) {
-                setupBookViews(book);
-            }
-        });
+                    if (book != null) {
+                        setupBookViews(book);
+                    }
+                });
     }
 
     void setupBookViews(Book book) {
@@ -130,14 +133,14 @@ public class BookActivity extends AppCompatActivity {
                 });
     }
 
-    void setupBarColors(Bitmap resource) {
-        int[] colors = getColorsForBarsFromBitmap(resource);
+    void setupBarColors(Bitmap bitmap) {
+        Palette.Swatch swatch = getDominantColor(bitmap);
 
-        if (colors != null) {
-            collapsingToolbarLayout.setContentScrimColor(colors[0]);
+        if (swatch != null) {
+            collapsingToolbarLayout.setContentScrimColor(getActionBarColorFromSwatch(swatch));
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(colors[1]);
+            window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
         }
     }
 
