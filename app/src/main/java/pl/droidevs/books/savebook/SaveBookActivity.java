@@ -80,8 +80,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_book);
-
-
+        
         getWindow().setEnterTransition(new Fade().setDuration(getResources().getInteger(R.integer.animation_base_duration)));
 
         AndroidInjection.inject(this);
@@ -186,7 +185,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.remove_book_item) {
-            RemoveBookDialogFragment removeBookDialogFragment = RemoveBookDialogFragment.newInstance((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
+            RemoveBookDialogFragment removeBookDialogFragment = new RemoveBookDialogFragment();
             removeBookDialogFragment.show(getSupportFragmentManager(), "");
         }
 

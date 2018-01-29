@@ -1,6 +1,5 @@
 package pl.droidevs.books.library;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -75,9 +74,6 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
-    @BindView(R.id.app_barLayout)
-    AppBarLayout appBarLayout;
     //endregion
 
     @Inject
