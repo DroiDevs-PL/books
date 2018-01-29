@@ -38,6 +38,10 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
         holder.bind(books.get(position));
+
+        holder.ivBook.setTransitionName("image_" + position);
+        holder.tvBookTitle.setTransitionName("title_" + position);
+        holder.tvBookAuthor.setTransitionName("author_" + position);
     }
 
     @Override
@@ -67,7 +71,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull BookId bookId);
+        void onBookClicked(@NonNull View view, @NonNull BookId bookId, @NonNull Integer index);
     }
 
     @FunctionalInterface
@@ -76,6 +80,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     }
 
     static final class BookViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.tv_book_title)
         TextView tvBookTitle;
         @BindView(R.id.tv_book_author)
@@ -91,7 +96,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null) {
-                    onClickListener.onBookClicked(bookId);
+                    onClickListener.onBookClicked(itemView, bookId, getAdapterPosition());
                 }
             });
         }

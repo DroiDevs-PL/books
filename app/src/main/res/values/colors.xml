@@ -5,4 +5,6 @@
     <color name="colorPrimaryDark">#002984</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorAccentLight">#ff79b0</color>
+
+    <color name="image_shadow">#3f000000</color>
 </resources>
