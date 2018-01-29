@@ -7,4 +7,5 @@
     <color name="colorAccentLight">#ff79b0</color>
 
     <color name="image_shadow">#3f000000</color>
+    <color name="defaultTextViewTextColor">#707070</color>
 </resources>

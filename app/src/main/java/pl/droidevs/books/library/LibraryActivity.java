@@ -9,6 +9,7 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAM
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_SHADOW_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 import android.Manifest;
@@ -141,21 +142,24 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private Intent createBookIntent(View view, int index, BookId bookId) {
-        TextView tvAuthor = view.findViewById(R.id.tv_book_author);
         Intent intent = new Intent(this, BookActivity.class);
         intent.putExtra(BUNDLE_EXTRAS, createAnimationBundle(view, index));
         intent.putExtra(EXTRAS_BOOK_ID, bookId);
-        intent.putExtra(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, tvAuthor.getTextSize());
 
         return intent;
     }
 
     private Bundle createAnimationBundle(View view, int index) {
+        TextView tvTitle = view.findViewById(R.id.tv_book_title);
+        TextView tvAuthor = view.findViewById(R.id.tv_book_author);
+
         Bundle animationBundle = new Bundle();
         animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
         animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
         animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
         animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
+        animationBundle.putFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE, tvTitle.getTextSize());
+        animationBundle.putFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, tvAuthor.getTextSize());
 
         return animationBundle;
     }

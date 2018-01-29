@@ -1,21 +1,19 @@
 package pl.droidevs.books.library;
 
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +22,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -47,11 +43,16 @@ public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_AUTHOR_TRANSITION_NAME = "EXTRAS_AUTHOR_TRANSITION_NAME";
     public static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
     public static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
+    public static final String EXTRAS_SHARED_TITLE_TEXT_SIZE = "EXTRAS_SHARED_TITLE_TEXT_SIZE";
     public static final String EXTRAS_SHARED_AUTHOR_TEXT_SIZE = "EXTRAS_SHARED_AUTHOR_TEXT_SIZE";
     public static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
 
     private Bundle animationBundle;
     private BookViewModel viewModel;
+
+    private BookId bookId;
+    private float masterTitleTextSize;
+    private float masterAuthorTextSize;
 
     //region Butter binding
     @BindView(R.id.album_iv)
@@ -62,6 +63,9 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.shadow_view)
     View shadowView;
+
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
 
     @BindView(R.id.author_tv)
     TextView authorTextView;
@@ -87,8 +91,10 @@ public class BookActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             this.animationBundle = savedInstanceState.getBundle(BUNDLE_EXTRAS);
+            this.bookId = (BookId) savedInstanceState.getSerializable(EXTRAS_BOOK_ID);
         } else {
             this.animationBundle = getIntent().getBundleExtra(BUNDLE_EXTRAS);
+            this.bookId = (BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID);
         }
 
         setupAnimations();
@@ -97,36 +103,78 @@ public class BookActivity extends AppCompatActivity {
 
     void setupAnimations() {
         imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
-        //TODO title animation: animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME);
+        tvTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
         authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
         shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
+        masterTitleTextSize = animationBundle.getFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE);
+        masterAuthorTextSize = animationBundle.getFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE);
 
-        final float startTextSize = getIntent().getFloatExtra(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, 1f);
-        setEnterSharedElementCallback(new SharedElementCallback() {
-            private float textSize = -1;
+        getWindow().getSharedElementEnterTransition().addListener(new android.transition.Transition.TransitionListener() {
+            private float detailsTitleTextSize = -1;
+            private float detailsAuthorTextSize = -1;
 
             @Override
-            public void onSharedElementStart(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                textSize = authorTextView.getTextSize();
-                authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, startTextSize);
-                super.onSharedElementStart(sharedElementNames, sharedElements, sharedElementSnapshots);
-                if (textSize >= 0) {
-                    ValueAnimator animator = ValueAnimator.ofFloat(startTextSize, textSize);
-                    animator.setDuration(200);
+            public void onTransitionStart(android.transition.Transition transition) {
+                detailsAuthorTextSize = authorTextView.getTextSize();
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(masterAuthorTextSize, detailsAuthorTextSize);
+                    animator.setDuration(250);
                     animator.addUpdateListener(valueAnimator -> {
-                        float animatedValue = (float) valueAnimator.getAnimatedValue();
-                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,animatedValue);
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                     });
                     animator.start();
                 }
+                detailsTitleTextSize = tvTitle.getTextSize();
+                if (detailsTitleTextSize >= 0) {
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(masterTitleTextSize, detailsTitleTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+
+                tvTitle.setVisibility(View.VISIBLE);
+                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
+                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(R.color.defaultTextViewTextColor, Color.WHITE);
+                titleColorAnimator.setDuration(250);
+                titleColorAnimator.addUpdateListener(valueAnimator -> {
+                    int color = (int) valueAnimator.getAnimatedValue();
+                    tvTitle.setTextColor(color);
+                });
+                titleColorAnimator.start();
             }
 
             @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                /*if (textSize >= 0) {
-                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                }*/
-                super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+            public void onTransitionEnd(android.transition.Transition transition) {
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
+                }
+                if (detailsTitleTextSize >= 0) {
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
+                }
+
+                tvTitle.setVisibility(View.GONE);
+                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+            }
+
+            @Override
+            public void onTransitionCancel(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(android.transition.Transition transition) {
+
             }
         });
     }
@@ -136,7 +184,7 @@ public class BookActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
 
-        viewModel.getBook((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID))
+        viewModel.getBook(bookId)
                 .observe(this, book -> {
 
                     if (book != null) {
@@ -146,6 +194,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     void setupBookViews(Book book) {
+        tvTitle.setText(book.getTitle());
         collapsingToolbarLayout.setTitle(book.getTitle());
         authorTextView.setText(book.getAuthor());
         categoryTextView.setText(book.getCategory().toString());
@@ -186,6 +235,7 @@ public class BookActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         outState.putBundle(BUNDLE_EXTRAS, animationBundle);
+        outState.putSerializable(EXTRAS_BOOK_ID, bookId);
     }
 
     @Override
@@ -194,6 +244,75 @@ public class BookActivity extends AppCompatActivity {
         intent.putExtra(BUNDLE_EXTRAS, animationBundle);
         setResult(RESULT_OK, intent);
         super.onBackPressed();
+
+        getWindow().getSharedElementReturnTransition().addListener(new android.transition.Transition.TransitionListener() {
+            private float detailsTitleTextSize = -1;
+            private float detailsAuthorTextSize = -1;
+
+            @Override
+            public void onTransitionStart(android.transition.Transition transition) {
+                detailsAuthorTextSize = authorTextView.getTextSize();
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(detailsAuthorTextSize, masterAuthorTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+                detailsTitleTextSize = tvTitle.getTextSize();
+                if (detailsTitleTextSize >= 0) {
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(detailsTitleTextSize, masterTitleTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+
+                tvTitle.setVisibility(View.VISIBLE);
+                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
+                int defColor;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    defColor = getResources().getColor(R.color.defaultTextViewTextColor, getTheme());
+                } else {
+                    defColor = getResources().getColor(R.color.defaultTextViewTextColor);
+                }
+                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(Color.WHITE, defColor);
+                titleColorAnimator.setDuration(250);
+                titleColorAnimator.addUpdateListener(valueAnimator -> {
+                    int color = (int) valueAnimator.getAnimatedValue();
+                    tvTitle.setTextColor(color);
+                });
+                titleColorAnimator.start();
+            }
+
+            @Override
+            public void onTransitionEnd(android.transition.Transition transition) {
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
+                }
+            }
+
+            @Override
+            public void onTransitionCancel(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(android.transition.Transition transition) {
+
+            }
+        });
     }
 }
 
