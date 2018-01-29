@@ -95,8 +95,9 @@ public class BookActivity extends AppCompatActivity {
         viewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
-        viewModel.setBookId((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
-        viewModel.getBook().observe(this, book -> {
+
+        viewModel.getBook((BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID))
+                .observe(this, book -> {
 
             if (book != null) {
                 setupBookViews(book);

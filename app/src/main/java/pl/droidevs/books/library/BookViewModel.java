@@ -17,8 +17,6 @@ import pl.droidevs.books.repository.BookRepository;
 
 public class BookViewModel extends ViewModel {
 
-    private BookId bookId;
-
     private final BookRepository bookRepository;
 
     @Inject
@@ -26,15 +24,11 @@ public class BookViewModel extends ViewModel {
         this.bookRepository = bookRepository;
     }
 
-    public void setBookId(BookId bookId) {
-        this.bookId = bookId;
-    }
-
     public LiveData<List<Book>> getBooks() {
         return bookRepository.getBooks();
     }
 
-    public LiveData<Book> getBook(){
+    public LiveData<Book> getBook(BookId bookId){
         return bookRepository.getBookById(bookId);
     }
 }
