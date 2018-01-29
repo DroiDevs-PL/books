@@ -6,8 +6,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,10 +29,12 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.Binds;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.savebook.SaveBookActivity;
 
 import static pl.droidevs.books.apphelper.ColorHelper.getActionBarColorFromSwatch;
 import static pl.droidevs.books.apphelper.ColorHelper.getDominantColor;
@@ -63,6 +70,12 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.description_tv)
     TextView descriptionTextView;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.app_barLayout)
+    AppBarLayout appBarLayout;
     //endregion
 
     @Inject
@@ -71,11 +84,12 @@ public class BookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_book);
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState != null) {
             this.animationBundle = savedInstanceState.getBundle(BUNDLE_EXTRAS);
@@ -142,6 +156,26 @@ public class BookActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.book_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.edit_book) {
+            Intent intent = new Intent(this, SaveBookActivity.class);
+            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
+
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
