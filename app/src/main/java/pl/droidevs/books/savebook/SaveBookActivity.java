@@ -45,6 +45,7 @@ import static com.bumptech.glide.Priority.HIGH;
 public class SaveBookActivity extends AppCompatActivity implements RemoveBookDialogFragment.OnRemoveListener {
 
     public static final String BOOK_ID_EXTRA = "book id";
+    public static final int RESULT_BOOK_REMOVED = 302;
 
     @BindView(R.id.addBookConstraintLayout)
     ConstraintLayout container;
@@ -241,6 +242,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
                 .get(RemoveBookViewModel.class);
         removeBookViewModel.removeBook(saveBookViewModel.createBook());
 
+        setResult(RESULT_BOOK_REMOVED);
         finish();
     }
 }

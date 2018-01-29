@@ -1,5 +1,6 @@
 package pl.droidevs.books.library;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -29,7 +30,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dagger.Binds;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
@@ -48,6 +48,8 @@ public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
     public static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
     public static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
+
+    private static final int EDIT_BOOK_REQUEST_CODE = 205;
 
     private Bundle animationBundle;
     private BookViewModel viewModel;
@@ -172,10 +174,20 @@ public class BookActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SaveBookActivity.class);
             intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
 
-            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+            startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_BOOK_REQUEST_CODE &&
+                resultCode == SaveBookActivity.RESULT_BOOK_REMOVED) {
+            finish();
+        }
     }
 
     @Override
