@@ -8,6 +8,8 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 import android.support.annotation.NonNull;
 
+import org.supercsv.cellprocessor.constraint.Unique;
+
 import java.util.List;
 
 import pl.droidevs.books.entity.BookEntity;

@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.library.BookActivity;
 import pl.droidevs.books.library.LibraryActivity;
 
 public class LoginActivity extends AppCompatActivity {

@@ -2,6 +2,12 @@ package pl.droidevs.books.library;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProvider;
@@ -17,6 +23,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.app.SharedElementCallback;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,7 +33,11 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -38,11 +50,13 @@ import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.ui.SwipeCallback;
 
 public class LibraryActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
+    private static final int BOOK_REQUEST = 711;
 
     @BindView(R.id.layout_library_content)
     CoordinatorLayout coordinatorLayout;
@@ -83,17 +97,77 @@ public class LibraryActivity extends AppCompatActivity {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(this);
     }
 
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        setupAnimationForRecyclerViewItems(data.getBundleExtra(BUNDLE_EXTRAS));
+    }
+
+    private void setupAnimationForRecyclerViewItems(Bundle bundle) {
+        int lastSelectedIndex = bundle.getInt(EXTRAS_LAST_SELECTED_INDEX, -1);
+
+        if (lastSelectedIndex >= 0) {
+            recyclerView.smoothScrollToPosition(lastSelectedIndex);
+            setExitSharedElementCallback(getExitSharedElementCallback(bundle, lastSelectedIndex));
+        }
+    }
+
+    private SharedElementCallback getExitSharedElementCallback(Bundle bundle, int positionToScroll) {
+        return new SharedElementCallback() {
+
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                LibraryAdapter.BookViewHolder viewHolder = (LibraryAdapter.BookViewHolder) recyclerView.findViewHolderForAdapterPosition(positionToScroll);
+
+                if (viewHolder != null) {
+                    sharedElements.put(bundle.getString(EXTRAS_IMAGE_TRANSITION_NAME), viewHolder.ivBook);
+                    sharedElements.put(bundle.getString(EXTRAS_TITLE_TRANSITION_NAME), viewHolder.tvBookTitle);
+                    sharedElements.put(bundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME), viewHolder.tvBookAuthor);
+                }
+            }
+        };
+    }
+
     private void setupAdapter() {
         adapter = new LibraryAdapter();
-        adapter.setItemClickListener(bookId -> {
-            // TODO: Start details activity and pass the book id
+        adapter.setItemClickListener((view, bookId, index) -> {
 
-            //TODO: remove temporary start edit
-            Intent intent = new Intent(this, SaveBookActivity.class);
-            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, bookId);
-
-            startActivity(intent, createSaveActivityOptions().toBundle());
+            ActivityCompat.startActivityForResult(this,
+                    createBookIntent(view, index, bookId),
+                    BOOK_REQUEST,
+                    createBookActivityOptions(view).toBundle());
         });
+    }
+
+    private Intent createBookIntent(View view, int index, BookId bookId) {
+        Intent intent = new Intent(this, BookActivity.class);
+        intent.putExtra(BUNDLE_EXTRAS, createAnimationBundle(view, index));
+        intent.putExtra(EXTRAS_BOOK_ID, bookId);
+
+        return intent;
+    }
+
+    private Bundle createAnimationBundle(View view, int index) {
+        Bundle animationBundle = new Bundle();
+        animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
+        animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
+        animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
+        animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
+
+        return animationBundle;
+    }
+
+    private ActivityOptionsCompat createBookActivityOptions(View view) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                new Pair<>(view.findViewById(R.id.iv_book),
+                        view.findViewById(R.id.iv_book).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_title),
+                        view.findViewById(R.id.tv_book_title).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_author),
+                        view.findViewById(R.id.tv_book_author).getTransitionName())
+        );
     }
 
     private void setupRecyclerView() {

@@ -9,3 +9,6 @@
 .externalNativeBuild
 
 .idea
+/.idea
+/app/*.log
+*.log

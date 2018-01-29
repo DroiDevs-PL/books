@@ -34,4 +34,9 @@
     </style>
 
     <style name="AccentColoredButton" parent="Base.Widget.AppCompat.Button.Colored"/>
+
+    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">28sp</item>
+    </style>
+
 </resources>
