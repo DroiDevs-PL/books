@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.entity.BookEntity;
 
@@ -20,5 +21,9 @@ public class BookCsvRepository {
 
     public LiveData<List<BookEntity>> getBookEntities() {
         return bookDao.getAllBooks();
+    }
+
+    public Completable save(BookEntity bookEntity) {
+        return Completable.fromAction(() -> bookDao.addBook(bookEntity));
     }
 }
