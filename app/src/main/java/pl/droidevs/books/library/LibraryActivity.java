@@ -7,7 +7,6 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NA
 import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHADOW_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 import android.Manifest;
@@ -22,8 +21,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +45,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.addbook.AddBookActivity;
+import pl.droidevs.books.removebook.RemoveBookViewModel;
+import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -74,7 +74,6 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
-    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +87,14 @@ public class LibraryActivity extends AppCompatActivity {
         setupRecyclerView();
         setupViewModel();
 
-        floatingActionButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, AddBookActivity.class));
-        });
+        floatingActionButton.setOnClickListener(
+                view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
 
         progressBar.setVisibility(VISIBLE);
+    }
+
+    private ActivityOptionsCompat createSaveActivityOptions() {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(this);
     }
 
     @Override
@@ -190,21 +192,36 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void showRemoveBookSnackbar(@NonNull Book book, int position) {
-        Snackbar.make(floatingActionButton, R.string.book_delete_snackbar, Snackbar.LENGTH_LONG)
+        Snackbar.make(floatingActionButton, R.string.removing_book_snackbar, Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, v -> adapter.addItem(book, position))
                 .addCallback(
                         new BaseTransientBottomBar.BaseCallback<Snackbar>() {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
-                                libraryViewModel.removeBook(book);
+
+                                removeBook(book);
                             }
                         })
                 .show();
     }
 
+    private void removeBook(Book book) {
+        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(RemoveBookViewModel.class);
+
+        removeBookViewModel.wasAnError()
+                .observe(this, error ->
+                        Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
+                                .show());
+
+        removeBookViewModel.removeBook(book);
+    }
+
+
     private void setupViewModel() {
-        libraryViewModel = ViewModelProviders
+        LibraryViewModel libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
@@ -215,12 +232,7 @@ public class LibraryActivity extends AppCompatActivity {
                 adapter.setItems(books);
             }
         });
-
-        libraryViewModel.wasAnError().observe(this, error ->
-                Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
-                        .show());
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -6,8 +6,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,6 +33,7 @@ import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.savebook.SaveBookActivity;
 
 import static pl.droidevs.books.apphelper.ColorHelper.getActionBarColorFromSwatch;
 import static pl.droidevs.books.apphelper.ColorHelper.getDominantColor;
@@ -41,6 +47,8 @@ public class BookActivity extends AppCompatActivity {
     public static final String EXTRAS_SHADOW_TRANSITION_NAME = "EXTRAS_SHADOW_TRANSITION_NAME";
     public static final String EXTRAS_LAST_SELECTED_INDEX = "EXTRAS_LAST_SELECTED_INDEX";
     public static final String BUNDLE_EXTRAS = "BUNDLE_EXTRAS";
+
+    private static final int EDIT_BOOK_REQUEST_CODE = 205;
 
     private Bundle animationBundle;
     private BookViewModel viewModel;
@@ -63,6 +71,9 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.description_tv)
     TextView descriptionTextView;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     //endregion
 
     @Inject
@@ -71,11 +82,12 @@ public class BookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         setContentView(R.layout.activity_book);
 
         AndroidInjection.inject(this);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState != null) {
             this.animationBundle = savedInstanceState.getBundle(BUNDLE_EXTRAS);
@@ -141,6 +153,36 @@ public class BookActivity extends AppCompatActivity {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.book_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.edit_book) {
+            Intent intent = new Intent(this, SaveBookActivity.class);
+            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
+
+            startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_BOOK_REQUEST_CODE &&
+                resultCode == SaveBookActivity.RESULT_BOOK_REMOVED) {
+            finish();
         }
     }
 

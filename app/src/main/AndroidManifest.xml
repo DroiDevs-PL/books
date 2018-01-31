@@ -19,7 +19,7 @@
 
         <activity
             android:name=".login.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar.Colored"
             android:windowSoftInputMode="stateHidden|adjustResize">
 
             <intent-filter>
@@ -29,9 +29,14 @@
         </activity>
 
         <activity android:name=".library.LibraryActivity"/>
-        <activity android:name=".library.BookActivity"></activity>
 
-        <activity android:name=".addbook.AddBookActivity"/>
+        <activity
+            android:name=".library.BookActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".savebook.SaveBookActivity"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

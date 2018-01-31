@@ -10,11 +10,10 @@
     <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
     <string name="message_export_successful">Your library were exported successfully.</string>
     <string name="message_export_not_successful">Due to an error we weren\'t able to export your library.</string>
-    <string name="book_delete_snackbar">Sure you want to delete?</string>
     <string name="undo">Undo</string>
 
     <!--Adding book-->
-    <string name="cover_imageUrl_hint">Paste cover image url here. It has to start with \"http\" and end with \".png\" or \".jpg\".</string>
+    <string name="cover_imageUrl_hint">Paste cover image url here. It has to start with \"http\".</string>
     <string name="book_title_hint">Title</string>
     <string name="book_author_hint">Author</string>
     <string name="book_category_hint">Category</string>
@@ -25,5 +24,13 @@
 
     <!--Removing book-->
     <string name="remove_book_error">We encountered problem with removing book.</string>
+    <string name="remove_book">Remove book</string>
+    <string name="removing_book">Removing book</string>
+    <string name="removing_book_snackbar">Sure you want to delete?</string>
+    <string name="removing_book_dialog_frag">Are you sure you want to remove this book from your library?</string>
+    <string name="delete">Delete</string>
+
+    <!--Editing book-->
+    <string name="edit_book">Edit book</string>
 
 </resources>

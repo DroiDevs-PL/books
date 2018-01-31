@@ -39,7 +39,6 @@ public class DataSourceModule {
     @Singleton
     @Provides
     BookDao bookDao(Context context) {
-        //return new InMemoryBookDao();
         return bookDataBase(context).bookDao();
     }
 }
