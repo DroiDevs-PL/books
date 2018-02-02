@@ -72,6 +72,7 @@ public class BookActivity extends AppCompatActivity {
 
     private int lastAppBarOffset = 1;
     private int lineCount = 0;
+    private double percent;
 
     //region Butter binding
     @BindView(R.id.album_iv)
@@ -140,14 +141,7 @@ public class BookActivity extends AppCompatActivity {
                 this.lineCount = linesCount;
 
                 int range = appBarLayout.getTotalScrollRange();
-                double percent = (double) (range + verticalOffset) / (double) range;
-            /*if (percent > 0.66) {
-                tvTitle.setMaxLines(3);
-            } else if (percent > 0.33) {
-                tvTitle.setMaxLines(2);
-            } else {
-                tvTitle.setMaxLines(1);
-            }*/
+                percent = (double) (range + verticalOffset) / (double) range;
 
                 float collapsedTextSize = getResources().getDimension(R.dimen.collapsed_toolbar_text_size);
                 float expandTextSize = getResources().getDimension(R.dimen.expanded_toolbar_text_size);
@@ -252,7 +246,6 @@ public class BookActivity extends AppCompatActivity {
                     });
                     animator.start();
                 }
-                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
                 ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(R.color.defaultTextViewTextColor, Color.WHITE);
                 titleColorAnimator.setDuration(250);
                 titleColorAnimator.addUpdateListener(valueAnimator -> {
@@ -270,8 +263,6 @@ public class BookActivity extends AppCompatActivity {
                 if (detailsTitleTextSize >= 0) {
                     tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
                 }
-
-                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
             }
 
             @Override
@@ -387,12 +378,29 @@ public class BookActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.putExtra(BUNDLE_EXTRAS, animationBundle);
         setResult(RESULT_OK, intent);
+
+        TextView tvTitle;
+
+        if (percent < 0.4) {
+            tvExpandedTitle.setTransitionName("");
+            tvCollpsedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
+            tvTitle = tvCollpsedTitle;
+
+            int ivHeight = imageView.getHeight();
+            int tHeight = toolbar.getHeight();
+            int ivPadding = -(ivHeight - 4 * tHeight);
+            imageView.setTranslationY(ivPadding);
+        } else {
+            tvTitle = tvExpandedTitle;
+        }
+
         super.onBackPressed();
 
         getWindow().getSharedElementEnterTransition().removeListener(transitionListener);
         transitionListener = new android.transition.Transition.TransitionListener() {
             private float detailsTitleTextSize = -1;
             private float detailsAuthorTextSize = -1;
+
 
             @Override
             public void onTransitionStart(android.transition.Transition transition) {
@@ -408,18 +416,17 @@ public class BookActivity extends AppCompatActivity {
                     animator.start();
                 }
 
-                detailsTitleTextSize = tvExpandedTitle.getTextSize();
+                detailsTitleTextSize = tvTitle.getTextSize();
                 if (detailsTitleTextSize >= 0) {
-                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
                     ValueAnimator animator = ValueAnimator.ofFloat(detailsTitleTextSize, masterTitleTextSize);
                     animator.setDuration(250);
                     animator.addUpdateListener(valueAnimator -> {
                         float textSize = (float) valueAnimator.getAnimatedValue();
-                        tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                     });
                     animator.start();
                 }
-                collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.TransparentText);
                 int defColor;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     defColor = getResources().getColor(R.color.defaultTextViewTextColor, getTheme());
@@ -430,7 +437,7 @@ public class BookActivity extends AppCompatActivity {
                 titleColorAnimator.setDuration(250);
                 titleColorAnimator.addUpdateListener(valueAnimator -> {
                     int color = (int) valueAnimator.getAnimatedValue();
-                    tvExpandedTitle.setTextColor(color);
+                    tvTitle.setTextColor(color);
                 });
                 titleColorAnimator.start();
             }
@@ -441,7 +448,7 @@ public class BookActivity extends AppCompatActivity {
                     authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
                 }
                 if (detailsTitleTextSize >= 0) {
-                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
                 }
             }
 
