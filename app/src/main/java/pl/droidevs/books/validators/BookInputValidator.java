@@ -1,20 +1,18 @@
 package pl.droidevs.books.validators;
 
 import android.text.TextUtils;
+import android.util.Patterns;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BookInputValidator {
 
-    private static final String IMAGE_PATTERN = "(http(s?):/)(/[^/]+)+\\.(?:jpg|png)";
     private static final int TITLE_MIN_LENGTH = 3;
     private static final int AUTHOR_MIN_LENGTH = 3;
 
     public static boolean isCoverUrlValid(String imageUrl) {
-        Matcher matcher = Pattern.compile(IMAGE_PATTERN).matcher(imageUrl);
-
-        return matcher.matches();
+        return Patterns.WEB_URL.matcher(imageUrl).matches();
     }
 
     public static boolean isTitleValid(String title) {

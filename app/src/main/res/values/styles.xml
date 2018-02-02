@@ -11,6 +11,9 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Colored">
         <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
 
@@ -33,13 +36,13 @@
         <item name="android:backgroundTint">@color/colored_button</item>
     </style>
 
-
+    <style name="AccentColoredButton" parent="Base.Widget.AppCompat.Button.Colored"/>
 
     <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">@dimen/expanded_toolbar_text_size</item>
     </style>
     <style name="TransparentText" parent="@style/ExpandedAppBar">
-        <item name="android:textColor">#0000</item>
+        <item name="android:textColor">#00000000</item>
     </style>
 
 </resources>

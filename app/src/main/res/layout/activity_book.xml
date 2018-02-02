@@ -7,7 +7,7 @@
     tools:context="pl.droidevs.books.library.BookActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_barLayout"
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/collapsing_app_bar_layout_height"
         android:background="@color/colorPrimary"
@@ -50,21 +50,44 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <TextView
-                android:id="@+id/tv_title"
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/cl_title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="@dimen/spacing_normal"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="32dp"
-                android:ellipsize="end"
-                android:gravity="bottom"
-                android:maxLines="3"
-                android:theme="@style/ExpandedAppBar"
-                tools:visibility="visible"
-                android:visibility="gone"
-                tools:text="@string/lorem_ipsum_111"/>
+                android:layout_height="match_parent"
+                app:layout_collapseMode="pin"
+                tools:layout_marginBottom="-30dp">
+                <TextView
+                    android:id="@+id/tv_collapsed_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/lorem_ipsum_111"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:theme="@style/ExpandedAppBar"
+                    android:textStyle="bold"
+                    android:textColor="#0fff"
+                    app:layout_constraintTop_toTopOf="@+id/tv_expanded_title"
+                    app:layout_constraintStart_toStartOf="@+id/tv_expanded_title"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_expanded_title"/>
+
+                <TextView
+                    android:id="@+id/tv_expanded_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginStart="@dimen/spacing_normal"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:theme="@style/ExpandedAppBar"
+                    android:textStyle="bold"
+                    tools:text="@string/lorem_ipsum_111"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
 
         </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
@@ -154,7 +177,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/author_label_text_size"
                 android:textStyle="bold"
-                tools:text="Agatha Christie"/>
+                tools:text="Agatha Christie" />
 
             <TextView
                 android:id="@+id/category_tv"

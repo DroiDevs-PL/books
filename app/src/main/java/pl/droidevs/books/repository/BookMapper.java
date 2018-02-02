@@ -26,6 +26,11 @@ class BookMapper {
     }
 
     public static Book getBook(BookEntity entity) {
+
+        if (entity == null) {
+            return null;
+        }
+
         final Book book = new Book(
                 new BookId(String.valueOf(entity.getId())),
                 entity.getTitle(),
