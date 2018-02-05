@@ -1,17 +1,10 @@
 package pl.droidevs.books.library;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
-
 import android.Manifest;
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -22,14 +15,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.app.SharedElementCallback;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,13 +40,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.removebook.RemoveBookViewModel;
-import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.removebook.RemoveBookViewModel;
+import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.ui.SwipeCallback;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -236,26 +240,44 @@ public class LibraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.library_menu, menu);
+
+        // Get the SearchView and set the searchable configuration
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.v(LibraryActivity.class.getName(), query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.v(LibraryActivity.class.getName(), newText);
+                return false;
+            }
+        });
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.export_item) {
             exportOptionSelected();
 
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
 
     private void exportOptionSelected() {
-
         if (hasWriteStoragePermission()) {
             exportLibrary();
         } else {

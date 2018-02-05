@@ -26,11 +26,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".library.LibraryActivity">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".LibrarySearchActivity" />
-        </activity>
+        <activity android:name=".library.LibraryActivity" />
 
         <activity
             android:name=".library.BookActivity"
@@ -40,14 +36,5 @@
             android:name=".savebook.SaveBookActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <activity android:name=".library.LibrarySearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-        </activity>
     </application>
-
 </manifest>

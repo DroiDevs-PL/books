@@ -35,5 +35,6 @@
 
     <!--Searching book-->
     <string name="search_hint">Search books</string>
+    <string name="search_action">Search</string>
 
 </resources>
