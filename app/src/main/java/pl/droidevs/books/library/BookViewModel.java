@@ -25,7 +25,7 @@ public class BookViewModel extends ViewModel {
     }
 
     public LiveData<List<Book>> getBooks() {
-        return bookRepository.getBooks();
+        return bookRepository.fetchAll();
     }
 
     public LiveData<Book> getBook(BookId bookId){

@@ -11,7 +11,7 @@ import pl.droidevs.books.model.BookId;
 
 class BookMapper {
 
-    public static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
+    static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
             input -> {
                 List<Book> books = new ArrayList<>(input.size());
 
@@ -25,14 +25,13 @@ class BookMapper {
     private BookMapper() {
     }
 
-    public static Book getBook(BookEntity entity) {
-
+    static Book getBook(BookEntity entity) {
         if (entity == null) {
             return null;
         }
 
         final Book book = new Book(
-                new BookId(String.valueOf(entity.getId())),
+                BookId.of(entity.getId()),
                 entity.getTitle(),
                 entity.getAuthor(),
                 Book.Category.valueOf(entity.getCategory()));
@@ -42,7 +41,7 @@ class BookMapper {
         return book;
     }
 
-    public static BookEntity getBookEntity(Book book) {
+    static BookEntity getBookEntity(Book book) {
         final BookEntity entity = new BookEntity();
         entity.setAuthor(book.getAuthor());
         entity.setCategory(book.getCategory().toString());
@@ -51,13 +50,13 @@ class BookMapper {
         entity.setImageUrl(book.getImageUrl());
 
         if (book.getId() != null) {
-            entity.setId(Integer.parseInt(book.getId().getId()));
+            entity.setId(Integer.parseInt(book.getId().getValue()));
         }
 
         return entity;
     }
 
-    public static int getBookEntityIdFromBookId(BookId bookId) {
-        return Integer.parseInt(bookId.getId());
+    static int getBookEntityIdFromBookId(BookId bookId) {
+        return Integer.parseInt(bookId.getValue());
     }
 }
