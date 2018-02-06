@@ -62,6 +62,8 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
     private static final int BOOK_REQUEST = 711;
 
+    private SearchView searchView;
+
     @BindView(R.id.layout_library_content)
     CoordinatorLayout coordinatorLayout;
 
@@ -243,26 +245,36 @@ public class LibraryActivity extends AppCompatActivity {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.library_menu, menu);
 
-        // Get the SearchView and set the searchable configuration
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
-        // Assumes current activity is the searchable activity
+        searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryRefinementEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                // TODO: Build a filter and send a request
                 Log.v(LibraryActivity.class.getName(), query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.v(LibraryActivity.class.getName(), newText);
+                // TODO: Go for suggestions
                 return false;
             }
         });
+        searchView.setOnCloseListener(() -> {
+            // TODO: Clear the filter and send the request
+            return false;
+        });
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        searchView.onActionViewCollapsed();
+        super.onBackPressed();
     }
 
     @Override
@@ -272,7 +284,6 @@ public class LibraryActivity extends AppCompatActivity {
 
             return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -310,16 +321,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
-
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportOptionSelected();
             } else {
