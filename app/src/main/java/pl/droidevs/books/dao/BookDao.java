@@ -21,13 +21,13 @@ public interface BookDao {
     LiveData<List<BookEntity>> getAllBooks();
 
     @Query("SELECT * FROM " + TABLE_NAME + " WHERE id = :bookId")
-    LiveData<BookEntity> getBookById(int bookId);
+    LiveData<BookEntity> getBookById(long bookId);
 
-    @Query("SELECT * FROM " + TABLE_NAME + " WHERE title LIKE :title OR author LIKE :author")
+    @Query("SELECT * FROM " + TABLE_NAME + " WHERE title LIKE '%' || :title || '%' OR author LIKE '%' || :author || '%'")
     LiveData<List<BookEntity>> getByTitleOrAuthor(final String title, final String author);
 
     @Insert(onConflict = REPLACE)
-    void addBook(BookEntity book);
+    long addBook(BookEntity book);
 
     @Delete
     void removeBook(BookEntity book);
