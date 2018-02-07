@@ -24,7 +24,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -80,6 +79,8 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
+
+    LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,13 +138,10 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         adapter = new LibraryAdapter();
-        adapter.setItemClickListener((view, bookId, index) -> {
-
-            ActivityCompat.startActivityForResult(this,
-                    createBookIntent(view, index, bookId),
-                    BOOK_REQUEST,
-                    createBookActivityOptions(view).toBundle());
-        });
+        adapter.setItemClickListener((view, bookId, index) -> ActivityCompat.startActivityForResult(this,
+                createBookIntent(view, index, bookId),
+                BOOK_REQUEST,
+                createBookActivityOptions(view).toBundle()));
     }
 
     private Intent createBookIntent(View view, int index, BookId bookId) {
@@ -167,12 +165,9 @@ public class LibraryActivity extends AppCompatActivity {
     private ActivityOptionsCompat createBookActivityOptions(View view) {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
-                new Pair<>(view.findViewById(R.id.iv_book),
-                        view.findViewById(R.id.iv_book).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_title),
-                        view.findViewById(R.id.tv_book_title).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_author),
-                        view.findViewById(R.id.tv_book_author).getTransitionName())
+                new Pair<>(view.findViewById(R.id.iv_book), view.findViewById(R.id.iv_book).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_title), view.findViewById(R.id.tv_book_title).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_author), view.findViewById(R.id.tv_book_author).getTransitionName())
         );
     }
 
@@ -205,7 +200,6 @@ public class LibraryActivity extends AppCompatActivity {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
-
                                 removeBook(book);
                             }
                         })
@@ -227,7 +221,7 @@ public class LibraryActivity extends AppCompatActivity {
 
 
     private void setupViewModel() {
-        LibraryViewModel libraryViewModel = ViewModelProviders
+        libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
@@ -252,8 +246,7 @@ public class LibraryActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // TODO: Build a filter and send a request
-                Log.v(LibraryActivity.class.getName(), query);
+                libraryViewModel.setFilter(query);
                 return false;
             }
 
@@ -264,7 +257,7 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
         searchView.setOnCloseListener(() -> {
-            // TODO: Clear the filter and send the request
+            libraryViewModel.clearFilter();
             return false;
         });
 
