@@ -132,8 +132,289 @@ public class BookActivity extends AppCompatActivity {
 
         setupAnimations();
         setupViewModel();
+        setAppBarLayoutOffsetChangedListener();
+    }
+
+    void setupAnimations() {
+        imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
+        tvExpandedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
+        authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
+        shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
+        masterTitleTextSize = animationBundle.getFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE);
+        masterAuthorTextSize = animationBundle.getFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE);
+
+        setTransitionListener(getEnterTransitionListener());
+    }
+
+    private void setupViewModel() {
+        viewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(BookViewModel.class);
+
+        viewModel.getBook(bookId)
+                .observe(this, book -> {
+
+                    if (book != null) {
+                        setupBookViews(book);
+                    }
+                });
+    }
+
+    private void setupBookViews(Book book) {
+        tvExpandedTitle.setText(book.getTitle());
+        tvCollpsedTitle.setText(book.getTitle());
+        collapsingToolbarLayout.setTitle(/*book.getTitle()*/" ");
+        authorTextView.setText(book.getAuthor());
+        categoryTextView.setText(book.getCategory().toString());
+        descriptionTextView.setText(book.getDescription());
+
+        if (book.getImageUrl() != null) {
+            loadCover(book.getImageUrl());
+        }
+    }
+
+    private void loadCover(String imageUrl) {
+        Glide.with(this)
+                .asBitmap()
+                .load(imageUrl)
+                .into(new BitmapImageViewTarget(imageView) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        super.onResourceReady(resource, transition);
+
+                        setupBarColors(resource);
+                    }
+                });
+    }
+
+    private void setupBarColors(Bitmap bitmap) {
+        Palette.Swatch swatch = getDominantColor(bitmap);
+
+        if (swatch != null) {
+            collapsingToolbarLayout.setContentScrimColor(getActionBarColorFromSwatch(swatch));
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.book_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.edit_book) {
+            Intent intent = new Intent(this, SaveBookActivity.class);
+            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
+
+            startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_BOOK_REQUEST_CODE &&
+                resultCode == SaveBookActivity.RESULT_BOOK_REMOVED) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBundle(BUNDLE_EXTRAS, animationBundle);
+        outState.putSerializable(EXTRAS_BOOK_ID, bookId);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(BUNDLE_EXTRAS, animationBundle);
+        setResult(RESULT_OK, intent);
+
+        setExitTransition();
+
+        super.onBackPressed();
+    }
+
+    private void setTransitionListener(@Nullable android.transition.Transition.TransitionListener newTransitionListener) {
+        if (this.transitionListener != null) {
+            getWindow().getSharedElementEnterTransition().removeListener(this.transitionListener);
+        }
+        this.transitionListener = newTransitionListener;
+        if (newTransitionListener != null) {
+            getWindow().getSharedElementEnterTransition().addListener(this.transitionListener);
+        }
+    }
+
+    private android.transition.Transition.TransitionListener getEnterTransitionListener() {
+        return new android.transition.Transition.TransitionListener() {
+            private float detailsTitleTextSize = -1;
+            private float detailsAuthorTextSize = -1;
+
+            @Override
+            public void onTransitionStart(android.transition.Transition transition) {
+                detailsAuthorTextSize = authorTextView.getTextSize();
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(masterAuthorTextSize, detailsAuthorTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+
+                detailsTitleTextSize = tvExpandedTitle.getTextSize();
+                if (detailsTitleTextSize >= 0) {
+                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(masterTitleTextSize, detailsTitleTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(R.color.defaultTextViewTextColor, Color.WHITE);
+                titleColorAnimator.setDuration(250);
+                titleColorAnimator.addUpdateListener(valueAnimator -> {
+                    int color = (int) valueAnimator.getAnimatedValue();
+                    tvExpandedTitle.setTextColor(color);
+                });
+                titleColorAnimator.start();
+            }
+
+            @Override
+            public void onTransitionEnd(android.transition.Transition transition) {
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
+                }
+                if (detailsTitleTextSize >= 0) {
+                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
+                }
+            }
+
+            @Override
+            public void onTransitionCancel(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(android.transition.Transition transition) {
+
+            }
+        };
+    }
+
+    private android.transition.Transition.TransitionListener getExitTransitionListener(TextView tvTitle) {
+        return new android.transition.Transition.TransitionListener() {
+            private float detailsTitleTextSize = -1;
+            private float detailsAuthorTextSize = -1;
 
 
+            @Override
+            public void onTransitionStart(android.transition.Transition transition) {
+                detailsAuthorTextSize = authorTextView.getTextSize();
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(detailsAuthorTextSize, masterAuthorTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+
+                detailsTitleTextSize = tvTitle.getTextSize();
+                if (detailsTitleTextSize >= 0) {
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
+                    ValueAnimator animator = ValueAnimator.ofFloat(detailsTitleTextSize, masterTitleTextSize);
+                    animator.setDuration(250);
+                    animator.addUpdateListener(valueAnimator -> {
+                        float textSize = (float) valueAnimator.getAnimatedValue();
+                        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                    });
+                    animator.start();
+                }
+                int defColor;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    defColor = getResources().getColor(R.color.defaultTextViewTextColor, getTheme());
+                } else {
+                    defColor = getResources().getColor(R.color.defaultTextViewTextColor);
+                }
+                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(Color.WHITE, defColor);
+                titleColorAnimator.setDuration(250);
+                titleColorAnimator.addUpdateListener(valueAnimator -> {
+                    int color = (int) valueAnimator.getAnimatedValue();
+                    tvTitle.setTextColor(color);
+                });
+                titleColorAnimator.start();
+            }
+
+            @Override
+            public void onTransitionEnd(android.transition.Transition transition) {
+                if (detailsAuthorTextSize >= 0) {
+                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
+                }
+                if (detailsTitleTextSize >= 0) {
+                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
+                }
+            }
+
+            @Override
+            public void onTransitionCancel(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(android.transition.Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(android.transition.Transition transition) {
+
+            }
+        };
+    }
+
+    private void setExitTransition() {
+        if (percent < 0.4) {
+            tvExpandedTitle.setTransitionName("");
+            tvCollpsedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
+
+            int ivHeight = imageView.getHeight();
+            int tHeight = toolbar.getHeight();
+            int ivPadding = -(ivHeight - 4 * tHeight);
+            imageView.setTranslationY(ivPadding);
+
+            setTransitionListener(getExitTransitionListener(tvCollpsedTitle));
+        } else {
+            tvCollpsedTitle.setTransitionName("");
+            tvExpandedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
+            setTransitionListener(getExitTransitionListener(tvExpandedTitle));
+        }
+    }
+
+    private void setAppBarLayoutOffsetChangedListener(){
         appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             int linesCount = tvExpandedTitle.getLineCount();
             if (lastAppBarOffset != verticalOffset || linesCount != this.lineCount) {
@@ -204,270 +485,6 @@ public class BookActivity extends AppCompatActivity {
                 tvExpandedTitle.requestLayout();
             }
         });
-    }
-
-    void setupAnimations() {
-        imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
-        tvExpandedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
-        authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
-        shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
-        masterTitleTextSize = animationBundle.getFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE);
-        masterAuthorTextSize = animationBundle.getFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE);
-
-        if (transitionListener != null) {
-            getWindow().getSharedElementEnterTransition().removeListener(transitionListener);
-        }
-        transitionListener = new android.transition.Transition.TransitionListener() {
-            private float detailsTitleTextSize = -1;
-            private float detailsAuthorTextSize = -1;
-
-            @Override
-            public void onTransitionStart(android.transition.Transition transition) {
-                detailsAuthorTextSize = authorTextView.getTextSize();
-                if (detailsAuthorTextSize >= 0) {
-                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
-                    ValueAnimator animator = ValueAnimator.ofFloat(masterAuthorTextSize, detailsAuthorTextSize);
-                    animator.setDuration(250);
-                    animator.addUpdateListener(valueAnimator -> {
-                        float textSize = (float) valueAnimator.getAnimatedValue();
-                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                    });
-                    animator.start();
-                }
-
-                detailsTitleTextSize = tvExpandedTitle.getTextSize();
-                if (detailsTitleTextSize >= 0) {
-                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
-                    ValueAnimator animator = ValueAnimator.ofFloat(masterTitleTextSize, detailsTitleTextSize);
-                    animator.setDuration(250);
-                    animator.addUpdateListener(valueAnimator -> {
-                        float textSize = (float) valueAnimator.getAnimatedValue();
-                        tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                    });
-                    animator.start();
-                }
-                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(R.color.defaultTextViewTextColor, Color.WHITE);
-                titleColorAnimator.setDuration(250);
-                titleColorAnimator.addUpdateListener(valueAnimator -> {
-                    int color = (int) valueAnimator.getAnimatedValue();
-                    tvExpandedTitle.setTextColor(color);
-                });
-                titleColorAnimator.start();
-            }
-
-            @Override
-            public void onTransitionEnd(android.transition.Transition transition) {
-                if (detailsAuthorTextSize >= 0) {
-                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
-                }
-                if (detailsTitleTextSize >= 0) {
-                    tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
-                }
-            }
-
-            @Override
-            public void onTransitionCancel(android.transition.Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(android.transition.Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(android.transition.Transition transition) {
-
-            }
-        };
-        getWindow().getSharedElementEnterTransition().addListener(transitionListener);
-    }
-
-    private void setupViewModel() {
-        viewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(BookViewModel.class);
-
-        viewModel.getBook(bookId)
-                .observe(this, book -> {
-
-                    if (book != null) {
-                        setupBookViews(book);
-                    }
-                });
-    }
-
-    void setupBookViews(Book book) {
-        tvExpandedTitle.setText(book.getTitle());
-        tvCollpsedTitle.setText(book.getTitle());
-        collapsingToolbarLayout.setTitle(/*book.getTitle()*/" ");
-        authorTextView.setText(book.getAuthor());
-        categoryTextView.setText(book.getCategory().toString());
-        descriptionTextView.setText(book.getDescription());
-
-        if (book.getImageUrl() != null) {
-            loadCover(book.getImageUrl());
-        }
-    }
-
-    void loadCover(String imageUrl) {
-        Glide.with(this)
-                .asBitmap()
-                .load(imageUrl)
-                .into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        super.onResourceReady(resource, transition);
-
-                        setupBarColors(resource);
-                    }
-                });
-    }
-
-    void setupBarColors(Bitmap bitmap) {
-        Palette.Swatch swatch = getDominantColor(bitmap);
-
-        if (swatch != null) {
-            collapsingToolbarLayout.setContentScrimColor(getActionBarColorFromSwatch(swatch));
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.book_menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.edit_book) {
-            Intent intent = new Intent(this, SaveBookActivity.class);
-            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
-
-            startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == EDIT_BOOK_REQUEST_CODE &&
-                resultCode == SaveBookActivity.RESULT_BOOK_REMOVED) {
-            finish();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putBundle(BUNDLE_EXTRAS, animationBundle);
-        outState.putSerializable(EXTRAS_BOOK_ID, bookId);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.putExtra(BUNDLE_EXTRAS, animationBundle);
-        setResult(RESULT_OK, intent);
-
-        TextView tvTitle;
-
-        if (percent < 0.4) {
-            tvExpandedTitle.setTransitionName("");
-            tvCollpsedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
-            tvTitle = tvCollpsedTitle;
-
-            int ivHeight = imageView.getHeight();
-            int tHeight = toolbar.getHeight();
-            int ivPadding = -(ivHeight - 4 * tHeight);
-            imageView.setTranslationY(ivPadding);
-        } else {
-            tvTitle = tvExpandedTitle;
-        }
-
-        super.onBackPressed();
-
-        getWindow().getSharedElementEnterTransition().removeListener(transitionListener);
-        transitionListener = new android.transition.Transition.TransitionListener() {
-            private float detailsTitleTextSize = -1;
-            private float detailsAuthorTextSize = -1;
-
-
-            @Override
-            public void onTransitionStart(android.transition.Transition transition) {
-                detailsAuthorTextSize = authorTextView.getTextSize();
-                if (detailsAuthorTextSize >= 0) {
-                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsAuthorTextSize);
-                    ValueAnimator animator = ValueAnimator.ofFloat(detailsAuthorTextSize, masterAuthorTextSize);
-                    animator.setDuration(250);
-                    animator.addUpdateListener(valueAnimator -> {
-                        float textSize = (float) valueAnimator.getAnimatedValue();
-                        authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                    });
-                    animator.start();
-                }
-
-                detailsTitleTextSize = tvTitle.getTextSize();
-                if (detailsTitleTextSize >= 0) {
-                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, detailsTitleTextSize);
-                    ValueAnimator animator = ValueAnimator.ofFloat(detailsTitleTextSize, masterTitleTextSize);
-                    animator.setDuration(250);
-                    animator.addUpdateListener(valueAnimator -> {
-                        float textSize = (float) valueAnimator.getAnimatedValue();
-                        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                    });
-                    animator.start();
-                }
-                int defColor;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    defColor = getResources().getColor(R.color.defaultTextViewTextColor, getTheme());
-                } else {
-                    defColor = getResources().getColor(R.color.defaultTextViewTextColor);
-                }
-                ValueAnimator titleColorAnimator = ValueAnimator.ofArgb(Color.WHITE, defColor);
-                titleColorAnimator.setDuration(250);
-                titleColorAnimator.addUpdateListener(valueAnimator -> {
-                    int color = (int) valueAnimator.getAnimatedValue();
-                    tvTitle.setTextColor(color);
-                });
-                titleColorAnimator.start();
-            }
-
-            @Override
-            public void onTransitionEnd(android.transition.Transition transition) {
-                if (detailsAuthorTextSize >= 0) {
-                    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterAuthorTextSize);
-                }
-                if (detailsTitleTextSize >= 0) {
-                    tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, masterTitleTextSize);
-                }
-            }
-
-            @Override
-            public void onTransitionCancel(android.transition.Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(android.transition.Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(android.transition.Transition transition) {
-
-            }
-        };
-        getWindow().getSharedElementReturnTransition().addListener(transitionListener);
     }
 }
 
