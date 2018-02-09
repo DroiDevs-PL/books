@@ -1,7 +1,5 @@
 package pl.droidevs.books.library;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -38,7 +36,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
-import io.reactivex.internal.schedulers.ImmediateThinScheduler;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
@@ -49,6 +46,7 @@ import static pl.droidevs.books.apphelper.ColorHelper.getDominantColor;
 import static pl.droidevs.books.apphelper.ColorHelper.getStatusBarColorFromSwatch;
 
 public class BookActivity extends AppCompatActivity {
+    //region Consts
     public static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
     public static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
     public static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
@@ -61,6 +59,14 @@ public class BookActivity extends AppCompatActivity {
 
     private static final int EDIT_BOOK_REQUEST_CODE = 205;
 
+    private static final double APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE = 0.4;
+    private static final double APP_BAR_MIN_EXPANDED_SCROLL_PERCENT_VALUE = 1.0 - APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE;
+    private static final double APP_BAR_ALPHA_SCROLL_MAX_PERCENT_VALUE = APP_BAR_MIN_EXPANDED_SCROLL_PERCENT_VALUE - APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE;
+
+    private static final int MAX_ALPHA = 255;
+    private static final int MIN_ALPHA = 0;
+    //endregion
+
     private Bundle animationBundle;
     private BookViewModel viewModel;
 
@@ -71,8 +77,8 @@ public class BookActivity extends AppCompatActivity {
     private android.transition.Transition.TransitionListener transitionListener;
 
     private int lastAppBarOffset = 1;
-    private int lineCount = 0;
-    private double percent;
+    private int linesCount = 0;
+    private double appBarScrollPercentValue;
 
     //region Butter binding
     @BindView(R.id.album_iv)
@@ -112,6 +118,7 @@ public class BookActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
+    //region Inheritance methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,70 +139,13 @@ public class BookActivity extends AppCompatActivity {
 
         setupAnimations();
         setupViewModel();
-        setAppBarLayoutOffsetChangedListener();
+        setupAppBarLayoutOffsetListener();
     }
 
-    void setupAnimations() {
-        imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
-        tvExpandedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
-        authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
-        shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
-        masterTitleTextSize = animationBundle.getFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE);
-        masterAuthorTextSize = animationBundle.getFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE);
-
-        setTransitionListener(getEnterTransitionListener());
-    }
-
-    private void setupViewModel() {
-        viewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(BookViewModel.class);
-
-        viewModel.getBook(bookId)
-                .observe(this, book -> {
-
-                    if (book != null) {
-                        setupBookViews(book);
-                    }
-                });
-    }
-
-    private void setupBookViews(Book book) {
-        tvExpandedTitle.setText(book.getTitle());
-        tvCollpsedTitle.setText(book.getTitle());
-        collapsingToolbarLayout.setTitle(/*book.getTitle()*/" ");
-        authorTextView.setText(book.getAuthor());
-        categoryTextView.setText(book.getCategory().toString());
-        descriptionTextView.setText(book.getDescription());
-
-        if (book.getImageUrl() != null) {
-            loadCover(book.getImageUrl());
-        }
-    }
-
-    private void loadCover(String imageUrl) {
-        Glide.with(this)
-                .asBitmap()
-                .load(imageUrl)
-                .into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        super.onResourceReady(resource, transition);
-
-                        setupBarColors(resource);
-                    }
-                });
-    }
-
-    private void setupBarColors(Bitmap bitmap) {
-        Palette.Swatch swatch = getDominantColor(bitmap);
-
-        if (swatch != null) {
-            collapsingToolbarLayout.setContentScrimColor(getActionBarColorFromSwatch(swatch));
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        setTransitionListener(null);
     }
 
     @Override
@@ -246,7 +196,9 @@ public class BookActivity extends AppCompatActivity {
 
         super.onBackPressed();
     }
+    //endregion
 
+    //region Transitions
     private void setTransitionListener(@Nullable android.transition.Transition.TransitionListener newTransitionListener) {
         if (this.transitionListener != null) {
             getWindow().getSharedElementEnterTransition().removeListener(this.transitionListener);
@@ -397,7 +349,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void setExitTransition() {
-        if (percent < 0.4) {
+        if (appBarScrollPercentValue < APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE) {
             tvExpandedTitle.setTransitionName("");
             tvCollpsedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
 
@@ -413,37 +365,101 @@ public class BookActivity extends AppCompatActivity {
             setTransitionListener(getExitTransitionListener(tvExpandedTitle));
         }
     }
+    //endregion
 
-    private void setAppBarLayoutOffsetChangedListener(){
+    void setupAnimations() {
+        imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
+        tvExpandedTitle.setTransitionName(animationBundle.getString(EXTRAS_TITLE_TRANSITION_NAME));
+        authorTextView.setTransitionName(animationBundle.getString(EXTRAS_AUTHOR_TRANSITION_NAME));
+        shadowView.setTransitionName(animationBundle.getString(EXTRAS_SHADOW_TRANSITION_NAME));
+        masterTitleTextSize = animationBundle.getFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE);
+        masterAuthorTextSize = animationBundle.getFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE);
+
+        setTransitionListener(getEnterTransitionListener());
+    }
+
+    private void setupViewModel() {
+        viewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(BookViewModel.class);
+
+        viewModel.getBook(bookId)
+                .observe(this, book -> {
+
+                    if (book != null) {
+                        setupBookViews(book);
+                    }
+                });
+    }
+
+    private void setupBookViews(Book book) {
+        tvExpandedTitle.setText(book.getTitle());
+        tvCollpsedTitle.setText(book.getTitle());
+        collapsingToolbarLayout.setTitle(/*book.getTitle()*/" ");
+        authorTextView.setText(book.getAuthor());
+        categoryTextView.setText(book.getCategory().toString());
+        descriptionTextView.setText(book.getDescription());
+
+        if (book.getImageUrl() != null) {
+            loadCover(book.getImageUrl());
+        }
+    }
+
+    private void loadCover(String imageUrl) {
+        Glide.with(this)
+                .asBitmap()
+                .load(imageUrl)
+                .into(new BitmapImageViewTarget(imageView) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        super.onResourceReady(resource, transition);
+
+                        setupBarColors(resource);
+                    }
+                });
+    }
+
+    private void setupBarColors(Bitmap bitmap) {
+        Palette.Swatch swatch = getDominantColor(bitmap);
+
+        if (swatch != null) {
+            collapsingToolbarLayout.setContentScrimColor(getActionBarColorFromSwatch(swatch));
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getStatusBarColorFromSwatch(swatch));
+        }
+    }
+
+    private void setupAppBarLayoutOffsetListener() {
         appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             int linesCount = tvExpandedTitle.getLineCount();
-            if (lastAppBarOffset != verticalOffset || linesCount != this.lineCount) {
-                lastAppBarOffset = verticalOffset;
-                this.lineCount = linesCount;
+            if (this.lastAppBarOffset != verticalOffset || linesCount != this.linesCount) {
+                this.lastAppBarOffset = verticalOffset;
+                this.linesCount = linesCount;
 
-                int range = appBarLayout.getTotalScrollRange();
-                percent = (double) (range + verticalOffset) / (double) range;
+                int appBarScrollRange = appBarLayout.getTotalScrollRange();
+                appBarScrollPercentValue = (double) (appBarScrollRange + verticalOffset) / (double) appBarScrollRange;
 
                 float collapsedTextSize = getResources().getDimension(R.dimen.collapsed_toolbar_text_size);
                 float expandTextSize = getResources().getDimension(R.dimen.expanded_toolbar_text_size);
                 float textSizeDifference = expandTextSize - collapsedTextSize;
-                float textSize = collapsedTextSize + (float) (textSizeDifference * percent);
+                float textSize = collapsedTextSize + (float) (textSizeDifference * appBarScrollPercentValue);
                 tvExpandedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                 tvCollpsedTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
 
                 int expandedAlpha;
                 int collapsedAlpha;
-                if (percent > 0.6) {
-                    expandedAlpha = 255;
-                    collapsedAlpha = 0;
-                } else if (percent < 0.4) {
-                    expandedAlpha = 0;
-                    collapsedAlpha = 255;
+                if (appBarScrollPercentValue > APP_BAR_MIN_EXPANDED_SCROLL_PERCENT_VALUE) {
+                    expandedAlpha = MAX_ALPHA;
+                    collapsedAlpha = MIN_ALPHA;
+                } else if (appBarScrollPercentValue < APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE) {
+                    expandedAlpha = MIN_ALPHA;
+                    collapsedAlpha = MAX_ALPHA;
                 } else {
-                    double aplhaPercent = (percent - 0.4) / 2 * 10;
-                    expandedAlpha = (int) (255.0 * aplhaPercent);
-                    collapsedAlpha = (int) (255.0 * (1.0 - aplhaPercent));
+                    double aplhaPercent = (appBarScrollPercentValue - APP_BAR_MAX_COLLEPSED_SCROLL_PERCENT_VALUE) / APP_BAR_ALPHA_SCROLL_MAX_PERCENT_VALUE;
+                    expandedAlpha = (int) ((double) MAX_ALPHA * aplhaPercent);
+                    collapsedAlpha = (int) ((double) MAX_ALPHA * (1.0 - aplhaPercent));
                 }
                 tvExpandedTitle.setTextColor(ColorUtils.setAlphaComponent(Color.WHITE, expandedAlpha));
                 tvCollpsedTitle.setTextColor(ColorUtils.setAlphaComponent(Color.WHITE, collapsedAlpha));
@@ -452,14 +468,12 @@ public class BookActivity extends AppCompatActivity {
                 int bottomCollapsedSpacing = getResources().getDimensionPixelSize(R.dimen.collapsed_toolbar_bottom_spacing);
                 int bottomExpandedSpacing = getResources().getDimensionPixelSize(R.dimen.expanded_toolbar_bottom_spacing);
                 int bottomSpacingDifference = bottomExpandedSpacing - bottomCollapsedSpacing;
-                int bottomSpacing = bottomCollapsedSpacing + (int) (bottomSpacingDifference * percent);
+                int bottomSpacing = bottomCollapsedSpacing + (int) (bottomSpacingDifference * appBarScrollPercentValue);
                 ViewGroup.MarginLayoutParams clLayoutParams = (ViewGroup.MarginLayoutParams) clTitle.getLayoutParams();
                 if (linesCount > 1) {
                     int lineHeight = tvExpandedTitle.getLineHeight();
-                    int iHeight = tvExpandedTitle.getHeight();
-                    int lineSpacing = iHeight - (linesCount * lineHeight);
-                    double lineDistance = (lineHeight /*+ lineSpacing*/) * (linesCount - 1) /*lineHeight * linesCount*/;
-                    int titleNegativeSpacing = (int) (lineDistance * (1.0 - percent));
+                    double lineDistance = lineHeight * (linesCount - 1);
+                    int titleNegativeSpacing = (int) (lineDistance * (1.0 - appBarScrollPercentValue));
 
                     clLayoutParams.bottomMargin = -titleNegativeSpacing;
                 } else {
@@ -467,21 +481,28 @@ public class BookActivity extends AppCompatActivity {
                 }
                 clTitle.requestLayout();
 
-                int startCollapsedSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_small);
                 int endCollapsedSpacing = getResources().getDimensionPixelSize(R.dimen.toolbar_item_size);
                 int horizontalExpandedSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_normal);
 
-                int startSpacingDifference = horizontalExpandedSpacing - startCollapsedSpacing;
-                int startSpacing = startCollapsedSpacing + (int) (startSpacingDifference * percent);
 
-                int endSpacingDifference = horizontalExpandedSpacing - endCollapsedSpacing;
-                int endSpacing = endCollapsedSpacing + (int) (endSpacingDifference * percent);
+                double endSpacingDifference = /*horizontalExpandedSpacing +*/ endCollapsedSpacing;
+                int endSpacing = /*endCollapsedSpacing*/horizontalExpandedSpacing + (int) (endSpacingDifference * (1.0 - appBarScrollPercentValue));
 
 
-                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) tvExpandedTitle.getLayoutParams();
-                layoutParams.bottomMargin = bottomSpacing;
-//            layoutParams.leftMargin = startSpacing;
-                layoutParams.rightMargin = endSpacing;
+                ViewGroup.MarginLayoutParams tvExpandedTitleLayoutParams = (ViewGroup.MarginLayoutParams) tvExpandedTitle.getLayoutParams();
+                tvExpandedTitleLayoutParams.bottomMargin = bottomSpacing;
+
+                /*
+                * "layoutParams.setMarginEnd(endSpacing);"
+                * is not working :(
+                */
+                boolean isRTL = getResources().getBoolean(R.bool.is_layout_direction_rtl);
+                if (isRTL) {
+                    tvExpandedTitleLayoutParams.leftMargin = endSpacing;
+                } else {
+                    tvExpandedTitleLayoutParams.rightMargin = endSpacing;
+                }
+
                 tvExpandedTitle.requestLayout();
             }
         });
