@@ -355,7 +355,7 @@ public class BookActivity extends AppCompatActivity {
 
             int ivHeight = imageView.getHeight();
             int tHeight = toolbar.getHeight();
-            int ivPadding = -(ivHeight - 4 * tHeight);
+            int ivPadding = -((ivHeight - tHeight) / 2);
             imageView.setTranslationY(ivPadding);
 
             setTransitionListener(getExitTransitionListener(tvCollpsedTitle));
