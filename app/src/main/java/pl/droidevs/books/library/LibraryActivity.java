@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -28,7 +27,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import java.util.List;
 import java.util.Map;
@@ -64,13 +62,13 @@ public class LibraryActivity extends AppCompatActivity {
     private SearchView searchView;
 
     @BindView(R.id.layout_library_content)
-    CoordinatorLayout coordinatorLayout;
+    View contentLayout;
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
 
-    @BindView(R.id.progress_books)
-    ProgressBar progressBar;
+    @BindView(R.id.layout_progress)
+    View progressBar;
 
     @BindView(R.id.button_add_book)
     FloatingActionButton floatingActionButton;
@@ -97,7 +95,7 @@ public class LibraryActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(
                 view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
 
-        progressBar.setVisibility(VISIBLE);
+        showProgress();
     }
 
     private ActivityOptionsCompat createSaveActivityOptions() {
@@ -226,12 +224,22 @@ public class LibraryActivity extends AppCompatActivity {
                 .get(LibraryViewModel.class);
 
         libraryViewModel.getBooks().observe(this, books -> {
-            progressBar.setVisibility(GONE);
+            hideProgress();
 
             if (books != null) {
                 adapter.setItems(books);
             }
         });
+    }
+
+    private void hideProgress() {
+        progressBar.setVisibility(GONE);
+        contentLayout.setVisibility(VISIBLE);
+    }
+
+    private void showProgress() {
+        progressBar.setVisibility(VISIBLE);
+        contentLayout.setVisibility(GONE);
     }
 
     @Override
@@ -247,6 +255,7 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 libraryViewModel.setFilter(query);
+                showProgress();
                 return false;
             }
 
@@ -308,7 +317,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void displayMessage(int messageResourceId) {
-        Snackbar.make(coordinatorLayout, messageResourceId, Snackbar.LENGTH_SHORT)
+        Snackbar.make(contentLayout, messageResourceId, Snackbar.LENGTH_SHORT)
                 .show();
     }
 

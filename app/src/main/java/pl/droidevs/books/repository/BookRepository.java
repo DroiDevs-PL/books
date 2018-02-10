@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import pl.droidevs.books.dao.BookDao;
+import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
@@ -31,7 +32,8 @@ public final class BookRepository {
     }
 
     public LiveData<List<Book>> fetchAll() {
-        return Transformations.map(bookDao.getAllBooks(), BookMapper.entitiesToBooksFunction);
+        final LiveData<List<BookEntity>> books = bookDao.getAllBooks();
+        return Transformations.map(books, BookMapper.entitiesToBooksFunction);
     }
 
     @NonNull
@@ -40,8 +42,8 @@ public final class BookRepository {
             return fetchAll();
         }
 
-        return Transformations.map(bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor()),
-                BookMapper.entitiesToBooksFunction);
+        final LiveData<List<BookEntity>> books = bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor());
+        return Transformations.map(books, BookMapper.entitiesToBooksFunction);
     }
 
     @NonNull
