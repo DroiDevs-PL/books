@@ -35,10 +35,11 @@ public final class LibraryViewModel extends ViewModel {
     }
 
     @Nullable
-    public String getQuery() {
+    String getQuery() {
         return filterInput.getValue();
     }
 
+    @NonNull
     public LiveData<List<Book>> getBooks() {
         return books;
     }

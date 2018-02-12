@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
@@ -53,6 +54,8 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
+import static pl.droidevs.books.library.LibrarySearchSuggestionProvider.AUTHORITY;
+import static pl.droidevs.books.library.LibrarySearchSuggestionProvider.MODE;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -251,14 +254,16 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void setupSearchView(Menu menu) {
+        final SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, AUTHORITY, MODE);
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryRefinementEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 libraryViewModel.setQuery(query);
+                searchRecentSuggestions.saveRecentQuery(query, null);
                 showProgress();
                 return false;
             }
