@@ -77,8 +77,7 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
-
-    LibraryViewModel libraryViewModel;
+    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,7 +245,12 @@ public class LibraryActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.library_menu, menu);
+        setupSearchView(menu);
 
+        return true;
+    }
+
+    private void setupSearchView(Menu menu) {
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -254,7 +258,7 @@ public class LibraryActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                libraryViewModel.setFilter(query);
+                libraryViewModel.setQuery(query);
                 showProgress();
                 return false;
             }
@@ -266,11 +270,10 @@ public class LibraryActivity extends AppCompatActivity {
             }
         });
         searchView.setOnCloseListener(() -> {
-            libraryViewModel.clearFilter();
+            libraryViewModel.clearQuery();
             return false;
         });
-
-        return true;
+        searchView.setQuery(libraryViewModel.getQuery(), false);
     }
 
     @Override

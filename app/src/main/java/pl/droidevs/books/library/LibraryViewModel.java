@@ -26,12 +26,17 @@ public final class LibraryViewModel extends ViewModel {
         filterInput.setValue(null);
     }
 
-    void setFilter(@Nullable final String filter) {
-        filterInput.setValue(filter);
+    void setQuery(@Nullable final String query) {
+        filterInput.setValue(query);
     }
 
-    void clearFilter() {
-        setFilter(null);
+    void clearQuery() {
+        setQuery(null);
+    }
+
+    @Nullable
+    public String getQuery() {
+        return filterInput.getValue();
     }
 
     public LiveData<List<Book>> getBooks() {
