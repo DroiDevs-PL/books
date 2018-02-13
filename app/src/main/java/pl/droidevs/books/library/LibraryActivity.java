@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,8 +54,6 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
-import static pl.droidevs.books.library.LibrarySearchSuggestionProvider.AUTHORITY;
-import static pl.droidevs.books.library.LibrarySearchSuggestionProvider.MODE;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -248,29 +246,26 @@ public class LibraryActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.library_menu, menu);
-        setupSearchView(menu);
+        setupSearchView(menu.findItem(R.id.search_item));
 
         return true;
     }
 
-    private void setupSearchView(Menu menu) {
-        final SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, AUTHORITY, MODE);
+    private void setupSearchView(final MenuItem searchItem) {
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.search_item).getActionView();
+        searchView = (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryRefinementEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
-                libraryViewModel.setQuery(query);
-                searchRecentSuggestions.saveRecentQuery(query, null);
-                showProgress();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // TODO: Go for suggestions
+                libraryViewModel.setQuery(newText);
+
                 return false;
             }
         });
@@ -278,7 +273,13 @@ public class LibraryActivity extends AppCompatActivity {
             libraryViewModel.clearQuery();
             return false;
         });
-        searchView.setQuery(libraryViewModel.getQuery(), false);
+
+        final String currentQuery = libraryViewModel.getQuery();
+        if (!TextUtils.isEmpty(currentQuery)) {
+            searchItem.expandActionView();
+            searchView.setQuery(currentQuery, true);
+            searchView.clearFocus();
+        }
     }
 
     @Override

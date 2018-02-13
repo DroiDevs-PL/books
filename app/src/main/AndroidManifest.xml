@@ -36,10 +36,5 @@
             android:name=".savebook.SaveBookActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <provider
-            android:name=".library.LibrarySearchSuggestionProvider"
-            android:authorities="pl.droidevs.books.library.LibrarySearchSuggestionProvider"
-            android:exported="false" />
-
     </application>
 </manifest>

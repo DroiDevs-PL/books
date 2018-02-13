@@ -8,7 +8,9 @@
         android:title="@string/search_action"
         android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always|collapseActionView" />
+    <!-- When set showAsAction="ifRoom|collapseActionView" the menu item was placed in Action Overflow
+     when search view was expanded. -->
 
     <item
         android:id="@+id/export_item"
