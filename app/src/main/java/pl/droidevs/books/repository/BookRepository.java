@@ -15,6 +15,8 @@ import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
+import static pl.droidevs.books.repository.BookMapper.toEntity;
+
 public final class BookRepository {
     private final BookDao bookDao;
 
@@ -24,11 +26,11 @@ public final class BookRepository {
     }
 
     public Completable save(Book book) {
-        return Completable.fromAction(() -> bookDao.addBook(BookMapper.getBookEntity(book)));
+        return Completable.fromAction(() -> bookDao.addBook(toEntity(book)));
     }
 
     public Completable remove(Book book) {
-        return Completable.fromAction(() -> bookDao.removeBook(BookMapper.getBookEntity(book)));
+        return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)));
     }
 
     public LiveData<List<Book>> fetchAll() {
@@ -47,9 +49,9 @@ public final class BookRepository {
     }
 
     @NonNull
-    public LiveData<Book> getBookById(BookId bookId) {
-        int bookEntityId = BookMapper.getBookEntityIdFromBookId(bookId);
+    public LiveData<Book> fetchBy(BookId bookId) {
+        long bookEntityId = BookMapper.getBookEntityIdFromBookId(bookId);
 
-        return Transformations.map(bookDao.getBookById(bookEntityId), BookMapper::getBook);
+        return Transformations.map(bookDao.getBookById(bookEntityId), BookMapper::toBook);
     }
 }

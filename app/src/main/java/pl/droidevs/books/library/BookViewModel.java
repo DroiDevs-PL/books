@@ -14,11 +14,11 @@ public class BookViewModel extends ViewModel {
     private final BookRepository bookRepository;
 
     @Inject
-    public BookViewModel(BookRepository bookRepository) {
+    BookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
     LiveData<Book> getBook(BookId bookId) {
-        return bookRepository.getBookById(bookId);
+        return bookRepository.fetchBy(bookId);
     }
 }

@@ -1,6 +1,8 @@
 package pl.droidevs.books.repository;
 
 import android.arch.core.util.Function;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +16,8 @@ class BookMapper {
     static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
             input -> {
                 List<Book> books = new ArrayList<>(input.size());
-
                 for (BookEntity bookEntity : input) {
-                    books.add(BookMapper.getBook(bookEntity));
+                    books.add(BookMapper.toBook(bookEntity));
                 }
 
                 return books;
@@ -25,7 +26,7 @@ class BookMapper {
     private BookMapper() {
     }
 
-    static Book getBook(BookEntity entity) {
+    static Book toBook(@Nullable final BookEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -41,7 +42,7 @@ class BookMapper {
         return book;
     }
 
-    static BookEntity getBookEntity(Book book) {
+    static BookEntity toEntity(@NonNull final Book book) {
         final BookEntity entity = new BookEntity();
         entity.setAuthor(book.getAuthor());
         entity.setCategory(book.getCategory().toString());
@@ -50,13 +51,13 @@ class BookMapper {
         entity.setImageUrl(book.getImageUrl());
 
         if (book.getId() != null) {
-            entity.setId(Integer.parseInt(book.getId().getValue()));
+            entity.setId(getBookEntityIdFromBookId(book.getId()));
         }
 
         return entity;
     }
 
-    static int getBookEntityIdFromBookId(BookId bookId) {
-        return Integer.parseInt(bookId.getValue());
+    static long getBookEntityIdFromBookId(BookId bookId) {
+        return Long.parseLong(bookId.getValue());
     }
 }
