@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.CsvBeanWriter;
@@ -25,7 +24,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.repository.BookCsvRepository;
-import pl.droidevs.books.repository.BookRepository;
 
 public class ExportImportViewModel extends ViewModel {
 
@@ -126,16 +124,6 @@ public class ExportImportViewModel extends ViewModel {
         bookCsvRepository.save(bookEntity)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {}
-
-                    @Override
-                    public void onComplete() {}
-
-                    @Override
-                    public void onError(Throwable e) {}
-                });
+                .subscribe();
     }
 }
