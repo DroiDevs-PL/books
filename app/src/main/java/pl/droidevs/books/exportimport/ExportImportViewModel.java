@@ -80,7 +80,7 @@ public class ExportImportViewModel extends ViewModel {
         String baseDirectoryPath = Environment
                 .getExternalStorageDirectory()
                 .getAbsolutePath();
-        String filePath = baseDirectoryPath + File.separator + FILE_NAME;
+        String filePath = String.format("%s%s%s", baseDirectoryPath, File.separator, FILE_NAME);
 
         return new File(filePath);
     }
