@@ -23,7 +23,12 @@ public class BookCsvRepository {
         return bookDao.getAllBooks();
     }
 
-    public Completable save(BookEntity bookEntity) {
-        return Completable.fromAction(() -> bookDao.addBook(bookEntity));
+    public Completable save(List<BookEntity> bookEntities) {
+        return Completable.fromAction(() -> {
+
+            for (BookEntity bookEntity : bookEntities){
+                bookDao.addBook(bookEntity);
+            }
+        });
     }
 }

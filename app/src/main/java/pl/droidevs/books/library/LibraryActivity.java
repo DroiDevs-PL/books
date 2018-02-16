@@ -318,10 +318,22 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(ExportImportViewModel.class);
 
+        exportImportViewModel.wasImportSuccesfull().observe(this,
+                success -> {
+                    progressBar.setVisibility(GONE);
+
+                    if (success) {
+                        displayMessage(R.string.message_import_successful);
+                    } else {
+                        displayMessage(R.string.message_import_not_successful);
+                    }
+                });
+
         try {
+            progressBar.setVisibility(VISIBLE);
             exportImportViewModel.importBooks();
-            displayMessage(R.string.message_import_successful);
         } catch (ExportFailedException e) {
+            progressBar.setVisibility(GONE);
             displayMessage(R.string.message_import_not_successful);
         }
     }

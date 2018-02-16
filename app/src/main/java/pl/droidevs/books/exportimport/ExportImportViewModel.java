@@ -1,6 +1,7 @@
 package pl.droidevs.books.exportimport;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.os.Environment;
@@ -14,13 +15,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.repository.BookCsvRepository;
@@ -29,6 +29,7 @@ public class ExportImportViewModel extends ViewModel {
 
     private static final String FILE_NAME = "Books.csv";
     private BookCsvRepository bookCsvRepository;
+    private MutableLiveData<Boolean> importedSuccessful = new MutableLiveData<>();
 
     @Inject
     public ExportImportViewModel(BookCsvRepository bookCsvRepository) {
@@ -108,22 +109,32 @@ public class ExportImportViewModel extends ViewModel {
             File file = getFile();
             FileReader fileReader = new FileReader(file.getAbsoluteFile());
             CsvBeanReader reader = new CsvBeanReader(fileReader, CsvPreference.STANDARD_PREFERENCE);
-
-            BookEntity bookEntity;
-
-            while ((bookEntity = reader.read(BookEntity.class, CSVHelper.getBookEntityCsvHeaders(), CSVHelper.getProcessors())) != null) {
-                saveBook(bookEntity);
-            }
-
+            saveBooks(getBookEntities(reader));
         } catch (IOException e) {
             throw new ImportFailedException(e);
         }
     }
 
-    void saveBook(BookEntity bookEntity){
-        bookCsvRepository.save(bookEntity)
+    private List<BookEntity> getBookEntities(CsvBeanReader csvBeanReader) throws IOException {
+        List<BookEntity> bookEntities = new ArrayList<>();
+        BookEntity bookEntity;
+
+        while ((bookEntity = csvBeanReader.read(BookEntity.class, CSVHelper.getBookEntityCsvHeaders(), CSVHelper.getProcessors())) != null) {
+            bookEntities.add(bookEntity);
+        }
+
+        return bookEntities;
+    }
+
+    void saveBooks(List<BookEntity> bookEntities) {
+        bookCsvRepository.save(bookEntities)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .subscribe(() -> importedSuccessful.postValue(true),
+                        e -> importedSuccessful.postValue(false));
+    }
+
+    public LiveData<Boolean> wasImportSuccesfull() {
+        return importedSuccessful;
     }
 }
