@@ -1,5 +1,16 @@
 package pl.droidevs.books.library;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
+
 import android.Manifest;
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProvider;
@@ -28,6 +39,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -58,6 +71,7 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAM
 public class LibraryActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
+    private static final int REQUEST_PERMISSION_READ_FILE_CODE = 502;
     private static final int BOOK_REQUEST = 711;
 
     private SearchView searchView;
@@ -151,11 +165,16 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private Bundle createAnimationBundle(View view, int index) {
+        TextView tvTitle = view.findViewById(R.id.tv_book_title);
+        TextView tvAuthor = view.findViewById(R.id.tv_book_author);
+
         Bundle animationBundle = new Bundle();
         animationBundle.putString(EXTRAS_IMAGE_TRANSITION_NAME, view.findViewById(R.id.iv_book).getTransitionName());
         animationBundle.putString(EXTRAS_TITLE_TRANSITION_NAME, view.findViewById(R.id.tv_book_title).getTransitionName());
         animationBundle.putString(EXTRAS_AUTHOR_TRANSITION_NAME, view.findViewById(R.id.tv_book_author).getTransitionName());
         animationBundle.putInt(EXTRAS_LAST_SELECTED_INDEX, index);
+        animationBundle.putFloat(EXTRAS_SHARED_TITLE_TEXT_SIZE, tvTitle.getTextSize());
+        animationBundle.putFloat(EXTRAS_SHARED_AUTHOR_TEXT_SIZE, tvAuthor.getTextSize());
 
         return animationBundle;
     }
@@ -296,6 +315,12 @@ public class LibraryActivity extends AppCompatActivity {
             return true;
         }
 
+        if (item.getItemId() == R.id.import_item) {
+            importOptionSelected();
+
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -336,6 +361,51 @@ public class LibraryActivity extends AppCompatActivity {
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
+    void importOptionSelected() {
+
+        if (hasReadStoragePermission()) {
+            importLibrary();
+        } else {
+            requestReadStoragePermissions();
+        }
+    }
+
+    private boolean hasReadStoragePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void importLibrary() {
+        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(ExportImportViewModel.class);
+
+        exportImportViewModel.wasImportSuccesfull().observe(this,
+                success -> {
+                    progressBar.setVisibility(GONE);
+
+                    if (success) {
+                        displayMessage(R.string.message_import_successful);
+                    } else {
+                        displayMessage(R.string.message_import_not_successful);
+                    }
+                });
+
+        try {
+            progressBar.setVisibility(VISIBLE);
+            exportImportViewModel.importBooks();
+        } catch (ExportFailedException e) {
+            progressBar.setVisibility(GONE);
+            displayMessage(R.string.message_import_not_successful);
+        }
+    }
+
+    private void requestReadStoragePermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_PERMISSION_READ_FILE_CODE);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
@@ -343,6 +413,15 @@ public class LibraryActivity extends AppCompatActivity {
                 exportOptionSelected();
             } else {
                 displayMessage(R.string.message_permission_denied_cant_export);
+            }
+        }
+
+        if (requestCode == REQUEST_PERMISSION_READ_FILE_CODE) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                importOptionSelected();
+            } else {
+                displayMessage(R.string.message_permission_denied_cant_import);
             }
         }
     }
