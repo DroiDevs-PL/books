@@ -59,6 +59,7 @@ import pl.droidevs.books.ui.SwipeCallback;
 public class LibraryActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
+    private static final int REQUEST_PERMISSION_READ_FILE_CODE = 502;
     private static final int BOOK_REQUEST = 711;
 
     @BindView(R.id.layout_library_content)
@@ -259,6 +260,12 @@ public class LibraryActivity extends AppCompatActivity {
             return true;
         }
 
+        if (item.getItemId() == R.id.import_item) {
+            importOptionSelected();
+
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -300,6 +307,51 @@ public class LibraryActivity extends AppCompatActivity {
                 REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
+    void importOptionSelected() {
+
+        if (hasReadStoragePermission()) {
+            importLibrary();
+        } else {
+            requestReadStoragePermissions();
+        }
+    }
+
+    private boolean hasReadStoragePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void importLibrary() {
+        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+                .of(this, viewModelFactory)
+                .get(ExportImportViewModel.class);
+
+        exportImportViewModel.wasImportSuccesfull().observe(this,
+                success -> {
+                    progressBar.setVisibility(GONE);
+
+                    if (success) {
+                        displayMessage(R.string.message_import_successful);
+                    } else {
+                        displayMessage(R.string.message_import_not_successful);
+                    }
+                });
+
+        try {
+            progressBar.setVisibility(VISIBLE);
+            exportImportViewModel.importBooks();
+        } catch (ExportFailedException e) {
+            progressBar.setVisibility(GONE);
+            displayMessage(R.string.message_import_not_successful);
+        }
+    }
+
+    private void requestReadStoragePermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_PERMISSION_READ_FILE_CODE);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -310,6 +362,15 @@ public class LibraryActivity extends AppCompatActivity {
                 exportOptionSelected();
             } else {
                 displayMessage(R.string.message_permission_denied_cant_export);
+            }
+        }
+
+        if (requestCode == REQUEST_PERMISSION_READ_FILE_CODE) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                importOptionSelected();
+            } else {
+                displayMessage(R.string.message_permission_denied_cant_import);
             }
         }
     }
