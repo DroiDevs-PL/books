@@ -26,7 +26,7 @@ public class BookCsvRepository {
     public Completable save(List<BookEntity> bookEntities) {
         return Completable.fromAction(() -> {
 
-            for (BookEntity bookEntity : bookEntities){
+            for (BookEntity bookEntity : bookEntities) {
                 bookDao.addBook(bookEntity);
             }
         });

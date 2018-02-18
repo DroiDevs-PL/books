@@ -57,6 +57,7 @@
                 android:layout_height="match_parent"
                 app:layout_collapseMode="pin"
                 tools:layout_marginBottom="-30dp">
+
                 <TextView
                     android:id="@+id/tv_collapsed_title"
                     android:layout_width="0dp"
@@ -69,7 +70,7 @@
                     android:textColor="#0fff"
                     app:layout_constraintTop_toTopOf="@+id/tv_expanded_title"
                     app:layout_constraintStart_toStartOf="@+id/tv_expanded_title"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_expanded_title"/>
+                    app:layout_constraintEnd_toEndOf="@+id/tv_expanded_title" />
 
                 <TextView
                     android:id="@+id/tv_expanded_title"
@@ -85,7 +86,7 @@
                     tools:text="@string/lorem_ipsum_111"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 

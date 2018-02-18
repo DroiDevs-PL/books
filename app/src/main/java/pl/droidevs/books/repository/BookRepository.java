@@ -35,6 +35,7 @@ public final class BookRepository {
 
     public LiveData<List<Book>> fetchAll() {
         final LiveData<List<BookEntity>> books = bookDao.getAllBooks();
+
         return Transformations.map(books, BookMapper.entitiesToBooksFunction);
     }
 
@@ -45,6 +46,7 @@ public final class BookRepository {
         }
 
         final LiveData<List<BookEntity>> books = bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor());
+
         return Transformations.map(books, BookMapper.entitiesToBooksFunction);
     }
 

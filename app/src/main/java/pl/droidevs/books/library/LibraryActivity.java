@@ -1,16 +1,5 @@
 package pl.droidevs.books.library;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
-
 import android.Manifest;
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProvider;
@@ -39,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -66,6 +54,8 @@ import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NA
 import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 public class LibraryActivity extends AppCompatActivity {
@@ -290,6 +280,7 @@ public class LibraryActivity extends AppCompatActivity {
         });
         searchView.setOnCloseListener(() -> {
             libraryViewModel.clearQuery();
+
             return false;
         });
 
@@ -402,7 +393,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestReadStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_READ_FILE_CODE);
     }
 

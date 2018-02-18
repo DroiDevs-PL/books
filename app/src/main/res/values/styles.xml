@@ -41,6 +41,7 @@
     <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">@dimen/expanded_toolbar_text_size</item>
     </style>
+
     <style name="TransparentText" parent="@style/ExpandedAppBar">
         <item name="android:textColor">#00000000</item>
     </style>
