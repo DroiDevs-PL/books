@@ -265,19 +265,7 @@ public class LibraryActivity extends AppCompatActivity {
         searchView = (SearchView) searchItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryRefinementEnabled(true);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                libraryViewModel.setQuery(newText);
-
-                return false;
-            }
-        });
+        searchView.setOnQueryTextListener(new LibraryQueryTextListener(libraryViewModel));
         searchView.setOnCloseListener(() -> {
             libraryViewModel.clearQuery();
 
@@ -353,7 +341,6 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     void importOptionSelected() {
-
         if (hasReadStoragePermission()) {
             importLibrary();
         } else {
@@ -414,6 +401,26 @@ public class LibraryActivity extends AppCompatActivity {
             } else {
                 displayMessage(R.string.message_permission_denied_cant_import);
             }
+        }
+    }
+
+    private static class LibraryQueryTextListener implements SearchView.OnQueryTextListener {
+        private final LibraryViewModel libraryViewModel;
+
+        private LibraryQueryTextListener(@NonNull final LibraryViewModel libraryViewModel) {
+            this.libraryViewModel = libraryViewModel;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(final String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            libraryViewModel.setQuery(newText);
+
+            return false;
         }
     }
 }
