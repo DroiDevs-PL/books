@@ -2,31 +2,45 @@ package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.CompletableObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
+import pl.droidevs.books.repository.BookFilter;
 import pl.droidevs.books.repository.BookRepository;
 
 public final class LibraryViewModel extends ViewModel {
-
-    private final BookRepository bookRepository;
+    private final MutableLiveData<String> filterInput = new MutableLiveData<>();
+    private final LiveData<List<Book>> books;
 
     @Inject
-    public LibraryViewModel(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    LibraryViewModel(@NonNull BookRepository bookRepository) {
+        books = Transformations.switchMap(filterInput, filter ->
+                bookRepository.fetchBy(BookFilter.withTitleAndAuthor(filter, filter)));
+        filterInput.setValue(null);
     }
 
+    void setQuery(@Nullable final String query) {
+        filterInput.setValue(query);
+    }
+
+    void clearQuery() {
+        setQuery(null);
+    }
+
+    @Nullable
+    String getQuery() {
+        return filterInput.getValue();
+    }
+
+    @NonNull
     public LiveData<List<Book>> getBooks() {
-        return bookRepository.getBooks();
+        return books;
     }
 }

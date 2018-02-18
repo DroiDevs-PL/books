@@ -10,18 +10,18 @@ public class BookEntity {
     public static final String TABLE_NAME = "books";
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     private String title;
     private String author;
     private String description;
     private String category;
     private String imageUrl;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

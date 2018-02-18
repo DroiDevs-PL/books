@@ -36,7 +36,7 @@ public class SaveBookViewModel extends ViewModel {
     }
 
     public LiveData<Book> getBook() {
-        return bookRepository.getBookById(this.bookId);
+        return bookRepository.fetchBy(this.bookId);
     }
 
     public LiveData<Boolean> wasSavingSuccessful() {

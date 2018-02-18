@@ -1,42 +1,33 @@
 package pl.droidevs.books.library;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
-import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
-
 import android.Manifest;
+import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.app.SharedElementCallback;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -48,13 +39,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.removebook.RemoveBookViewModel;
-import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.removebook.RemoveBookViewModel;
+import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.ui.SwipeCallback;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_IMAGE_TRANSITION_NAME;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_LAST_SELECTED_INDEX;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_AUTHOR_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_SHARED_TITLE_TEXT_SIZE;
+import static pl.droidevs.books.library.BookActivity.EXTRAS_TITLE_TRANSITION_NAME;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -62,14 +64,16 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_READ_FILE_CODE = 502;
     private static final int BOOK_REQUEST = 711;
 
+    private SearchView searchView;
+
     @BindView(R.id.layout_library_content)
-    CoordinatorLayout coordinatorLayout;
+    View contentLayout;
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
 
-    @BindView(R.id.progress_books)
-    ProgressBar progressBar;
+    @BindView(R.id.layout_progress)
+    View progressBar;
 
     @BindView(R.id.button_add_book)
     FloatingActionButton floatingActionButton;
@@ -78,6 +82,7 @@ public class LibraryActivity extends AppCompatActivity {
     ViewModelProvider.Factory viewModelFactory;
 
     private LibraryAdapter adapter;
+    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +99,7 @@ public class LibraryActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(
                 view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
 
-        progressBar.setVisibility(VISIBLE);
+        showProgress();
     }
 
     private ActivityOptionsCompat createSaveActivityOptions() {
@@ -135,13 +140,10 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setupAdapter() {
         adapter = new LibraryAdapter();
-        adapter.setItemClickListener((view, bookId, index) -> {
-
-            ActivityCompat.startActivityForResult(this,
-                    createBookIntent(view, index, bookId),
-                    BOOK_REQUEST,
-                    createBookActivityOptions(view).toBundle());
-        });
+        adapter.setItemClickListener((view, bookId, index) -> ActivityCompat.startActivityForResult(this,
+                createBookIntent(view, index, bookId),
+                BOOK_REQUEST,
+                createBookActivityOptions(view).toBundle()));
     }
 
     private Intent createBookIntent(View view, int index, BookId bookId) {
@@ -170,12 +172,9 @@ public class LibraryActivity extends AppCompatActivity {
     private ActivityOptionsCompat createBookActivityOptions(View view) {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(
                 this,
-                new Pair<>(view.findViewById(R.id.iv_book),
-                        view.findViewById(R.id.iv_book).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_title),
-                        view.findViewById(R.id.tv_book_title).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_author),
-                        view.findViewById(R.id.tv_book_author).getTransitionName())
+                new Pair<>(view.findViewById(R.id.iv_book), view.findViewById(R.id.iv_book).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_title), view.findViewById(R.id.tv_book_title).getTransitionName()),
+                new Pair<>(view.findViewById(R.id.tv_book_author), view.findViewById(R.id.tv_book_author).getTransitionName())
         );
     }
 
@@ -208,7 +207,6 @@ public class LibraryActivity extends AppCompatActivity {
                             @Override
                             public void onDismissed(Snackbar transientBottomBar, int event) {
                                 super.onDismissed(transientBottomBar, event);
-
                                 removeBook(book);
                             }
                         })
@@ -230,12 +228,12 @@ public class LibraryActivity extends AppCompatActivity {
 
 
     private void setupViewModel() {
-        LibraryViewModel libraryViewModel = ViewModelProviders
+        libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
         libraryViewModel.getBooks().observe(this, books -> {
-            progressBar.setVisibility(GONE);
+            hideProgress();
 
             if (books != null) {
                 adapter.setItems(books);
@@ -243,17 +241,53 @@ public class LibraryActivity extends AppCompatActivity {
         });
     }
 
+    private void hideProgress() {
+        progressBar.setVisibility(GONE);
+        contentLayout.setVisibility(VISIBLE);
+    }
+
+    private void showProgress() {
+        progressBar.setVisibility(VISIBLE);
+        contentLayout.setVisibility(GONE);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.library_menu, menu);
+        setupSearchView(menu.findItem(R.id.search_item));
 
         return true;
     }
 
+    private void setupSearchView(final MenuItem searchItem) {
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryRefinementEnabled(true);
+        searchView.setOnQueryTextListener(new LibraryQueryTextListener(libraryViewModel));
+        searchView.setOnCloseListener(() -> {
+            libraryViewModel.clearQuery();
+
+            return false;
+        });
+
+        final String currentQuery = libraryViewModel.getQuery();
+        if (!TextUtils.isEmpty(currentQuery)) {
+            searchItem.expandActionView();
+            searchView.setQuery(currentQuery, true);
+            searchView.clearFocus();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        searchView.onActionViewCollapsed();
+        super.onBackPressed();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.export_item) {
             exportOptionSelected();
 
@@ -270,7 +304,6 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void exportOptionSelected() {
-
         if (hasWriteStoragePermission()) {
             exportLibrary();
         } else {
@@ -297,7 +330,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void displayMessage(int messageResourceId) {
-        Snackbar.make(coordinatorLayout, messageResourceId, Snackbar.LENGTH_SHORT)
+        Snackbar.make(contentLayout, messageResourceId, Snackbar.LENGTH_SHORT)
                 .show();
     }
 
@@ -308,7 +341,6 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     void importOptionSelected() {
-
         if (hasReadStoragePermission()) {
             importLibrary();
         } else {
@@ -348,16 +380,13 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestReadStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                 REQUEST_PERMISSION_READ_FILE_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_SAVE_FILE_CODE) {
-
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportOptionSelected();
             } else {
@@ -372,6 +401,26 @@ public class LibraryActivity extends AppCompatActivity {
             } else {
                 displayMessage(R.string.message_permission_denied_cant_import);
             }
+        }
+    }
+
+    private static class LibraryQueryTextListener implements SearchView.OnQueryTextListener {
+        private final LibraryViewModel libraryViewModel;
+
+        private LibraryQueryTextListener(@NonNull final LibraryViewModel libraryViewModel) {
+            this.libraryViewModel = libraryViewModel;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(final String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            libraryViewModel.setQuery(newText);
+
+            return false;
         }
     }
 }

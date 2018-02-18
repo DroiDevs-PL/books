@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search_item"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search_action"
+        android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+    <!-- When set showAsAction="ifRoom|collapseActionView" the menu item was placed in Action Overflow
+     when search view was expanded. -->
+
+    <item
+        android:id="@+id/export_item"
+        android:title="@string/action_export"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/import_item"
+        android:title="@string/action_import"
+        app:showAsAction="never" />
+</menu>

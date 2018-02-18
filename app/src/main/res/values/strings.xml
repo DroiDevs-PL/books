@@ -40,4 +40,8 @@
     <!--Editing book-->
     <string name="edit_book">Edit book</string>
 
+    <!--Searching book-->
+    <string name="search_hint">Search books</string>
+    <string name="search_action">Search</string>
+
 </resources>

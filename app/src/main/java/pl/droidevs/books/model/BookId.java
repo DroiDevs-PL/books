@@ -4,15 +4,15 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-public class BookId implements Serializable {
-    private final String id;
+public final class BookId implements Serializable {
+    private final String value;
 
-    public BookId(@NonNull final String id) {
-        this.id = id;
+    private BookId(@NonNull final String value) {
+        this.value = value;
     }
 
-    public String getId() {
-        return id;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -22,11 +22,19 @@ public class BookId implements Serializable {
 
         BookId bookId = (BookId) o;
 
-        return id.equals(bookId.id);
+        return value.equals(bookId.value);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return value.hashCode();
+    }
+
+    public static BookId of(@NonNull final String value) {
+        return new BookId(value);
+    }
+
+    public static BookId of(final long value) {
+        return new BookId(Long.toString(value));
     }
 }

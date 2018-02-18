@@ -1,6 +1,8 @@
 package pl.droidevs.books.repository;
 
 import android.arch.core.util.Function;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +13,11 @@ import pl.droidevs.books.model.BookId;
 
 class BookMapper {
 
-    public static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
+    static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
             input -> {
                 List<Book> books = new ArrayList<>(input.size());
-
                 for (BookEntity bookEntity : input) {
-                    books.add(BookMapper.getBook(bookEntity));
+                    books.add(BookMapper.toBook(bookEntity));
                 }
 
                 return books;
@@ -25,14 +26,13 @@ class BookMapper {
     private BookMapper() {
     }
 
-    public static Book getBook(BookEntity entity) {
-
+    static Book toBook(@Nullable final BookEntity entity) {
         if (entity == null) {
             return null;
         }
 
         final Book book = new Book(
-                new BookId(String.valueOf(entity.getId())),
+                BookId.of(entity.getId()),
                 entity.getTitle(),
                 entity.getAuthor(),
                 Book.Category.valueOf(entity.getCategory()));
@@ -42,7 +42,7 @@ class BookMapper {
         return book;
     }
 
-    public static BookEntity getBookEntity(Book book) {
+    static BookEntity toEntity(@NonNull final Book book) {
         final BookEntity entity = new BookEntity();
         entity.setAuthor(book.getAuthor());
         entity.setCategory(book.getCategory().toString());
@@ -51,13 +51,13 @@ class BookMapper {
         entity.setImageUrl(book.getImageUrl());
 
         if (book.getId() != null) {
-            entity.setId(Integer.parseInt(book.getId().getId()));
+            entity.setId(getBookEntityIdFromBookId(book.getId()));
         }
 
         return entity;
     }
 
-    public static int getBookEntityIdFromBookId(BookId bookId) {
-        return Integer.parseInt(bookId.getId());
+    static long getBookEntityIdFromBookId(BookId bookId) {
+        return Long.parseLong(bookId.getValue());
     }
 }
