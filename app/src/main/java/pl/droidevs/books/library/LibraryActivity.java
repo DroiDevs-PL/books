@@ -39,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.about.AboutActivity;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -288,19 +289,20 @@ public class LibraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.export_item) {
-            exportOptionSelected();
-
-            return true;
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.export_item:
+                exportOptionSelected();
+                return true;
+            case R.id.import_item:
+                importOptionSelected();
+                return true;
+            case R.id.about_item:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        if (item.getItemId() == R.id.import_item) {
-            importOptionSelected();
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void exportOptionSelected() {

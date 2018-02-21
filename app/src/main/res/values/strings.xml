@@ -7,6 +7,7 @@
 
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
+    <string name="about">O aplikacji</string>
 
     <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
     <string name="message_permission_denied_cant_import">We are not able to import library without permission.</string>
