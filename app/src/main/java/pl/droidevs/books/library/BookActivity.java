@@ -118,7 +118,6 @@ public class BookActivity extends AppCompatActivity {
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    //region Inheritance methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -365,7 +364,6 @@ public class BookActivity extends AppCompatActivity {
             setTransitionListener(getExitTransitionListener(tvExpandedTitle));
         }
     }
-    //endregion
 
     void setupAnimations() {
         imageView.setTransitionName(animationBundle.getString(EXTRAS_IMAGE_TRANSITION_NAME));
@@ -413,7 +411,6 @@ public class BookActivity extends AppCompatActivity {
                     @Override
                     public void onResourceReady(Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         super.onResourceReady(resource, transition);
-
                         setupBarColors(resource);
                     }
                 });

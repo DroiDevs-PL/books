@@ -10,19 +10,32 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.reactive.Schedulers;
 
 import static pl.droidevs.books.repository.BookMapper.toEntity;
 
 public final class BookRepository {
     private final BookDao bookDao;
+    private Schedulers schedulers;
 
     @Inject
-    public BookRepository(BookDao bookDao) {
+    public BookRepository(@NonNull final BookDao bookDao,
+                          @NonNull final Schedulers schedulers) {
         this.bookDao = bookDao;
+        this.schedulers = schedulers;
+    }
+
+    public Completable save(List<Book> books) {
+        return Completable.fromAction(() -> {
+            for (Book book : books) {
+                bookDao.addBook(toEntity(book));
+            }
+        }).observeOn(schedulers.getObserver()).subscribeOn(schedulers.getSubscriber());
+
     }
 
     public Completable save(Book book) {
@@ -33,21 +46,29 @@ public final class BookRepository {
         return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)));
     }
 
-    public LiveData<List<Book>> fetchAll() {
-        final LiveData<List<BookEntity>> books = bookDao.getAllBooks();
-
-        return Transformations.map(books, BookMapper.entitiesToBooksFunction);
+    public Single<List<Book>> fetchAll() {
+        return bookDao.getAllBooks()
+                .toObservable()
+                .flatMapIterable(list -> list)
+                .map(BookMapper::toBook)
+                .toList()
+                .observeOn(schedulers.getObserver())
+                .subscribeOn(schedulers.getSubscriber());
     }
 
     @NonNull
-    public LiveData<List<Book>> fetchBy(@Nullable final BookFilter filter) {
+    public Single<List<Book>> fetchBy(@Nullable final BookFilter filter) {
         if (filter == null || filter.isEmpty()) {
             return fetchAll();
         }
 
-        final LiveData<List<BookEntity>> books = bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor());
-
-        return Transformations.map(books, BookMapper.entitiesToBooksFunction);
+        return bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor())
+                .toObservable()
+                .flatMapIterable(list -> list)
+                .map(BookMapper::toBook)
+                .toList()
+                .observeOn(schedulers.getObserver())
+                .subscribeOn(schedulers.getSubscriber());
     }
 
     @NonNull

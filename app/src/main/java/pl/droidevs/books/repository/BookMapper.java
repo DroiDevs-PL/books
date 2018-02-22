@@ -1,32 +1,16 @@
 package pl.droidevs.books.repository;
 
-import android.arch.core.util.Function;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 
-class BookMapper {
-
-    static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
-            input -> {
-                List<Book> books = new ArrayList<>(input.size());
-                for (BookEntity bookEntity : input) {
-                    books.add(BookMapper.toBook(bookEntity));
-                }
-
-                return books;
-            };
-
+public class BookMapper {
     private BookMapper() {
     }
 
-    static Book toBook(@Nullable final BookEntity entity) {
+    public static Book toBook(@Nullable final BookEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -42,7 +26,11 @@ class BookMapper {
         return book;
     }
 
-    static BookEntity toEntity(@NonNull final Book book) {
+    public static BookEntity toEntity(@Nullable final Book book) {
+        if (book == null) {
+            return null;
+        }
+
         final BookEntity entity = new BookEntity();
         entity.setAuthor(book.getAuthor());
         entity.setCategory(book.getCategory().toString());

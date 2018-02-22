@@ -8,10 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -101,8 +98,8 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         Book.Category[] categories = Book.Category.values();
         List<String> categoryNames = new ArrayList<>();
 
-        for (int i = 0; i < categories.length; i++) {
-            categoryNames.add(categories[i].toString());
+        for (Book.Category category : categories) {
+            categoryNames.add(category.toString());
         }
 
         return categoryNames;
@@ -143,7 +140,6 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     }
 
     private Observer<Book> bookObserver = book -> {
-
         if (book == null) {
             return;
         }
@@ -161,7 +157,6 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         List<String> categories = getCategoryNames();
 
         for (int i = 0; i < categories.size(); i++) {
-
             if (categories.get(i).equals(category)) {
                 return i;
             }
@@ -173,7 +168,6 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         if (shouldDisplayEdit()) {
             getMenuInflater().inflate(R.menu.edit_book_menu, menu);
         }
@@ -183,7 +177,6 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.remove_book_item) {
             RemoveBookDialogFragment removeBookDialogFragment = new RemoveBookDialogFragment();
             removeBookDialogFragment.show(getSupportFragmentManager(), "");

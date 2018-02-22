@@ -9,6 +9,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Single;
 import pl.droidevs.books.entity.BookEntity;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
@@ -18,13 +19,13 @@ import static pl.droidevs.books.entity.BookEntity.TABLE_NAME;
 public interface BookDao {
 
     @Query("SELECT * FROM " + TABLE_NAME)
-    LiveData<List<BookEntity>> getAllBooks();
+    Single<List<BookEntity>> getAllBooks();
 
     @Query("SELECT * FROM " + TABLE_NAME + " WHERE id = :bookId")
     LiveData<BookEntity> getBookById(long bookId);
 
     @Query("SELECT * FROM " + TABLE_NAME + " WHERE title LIKE '%' || :title || '%' OR author LIKE '%' || :author || '%'")
-    LiveData<List<BookEntity>> getByTitleOrAuthor(final String title, final String author);
+    Single<List<BookEntity>> getByTitleOrAuthor(final String title, final String author);
 
     @Insert(onConflict = REPLACE)
     long addBook(BookEntity book);

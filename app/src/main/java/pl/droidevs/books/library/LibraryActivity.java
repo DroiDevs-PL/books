@@ -39,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.Resource;
 import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
@@ -49,6 +50,9 @@ import pl.droidevs.books.ui.SwipeCallback;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static pl.droidevs.books.Resource.Status.ERROR;
+import static pl.droidevs.books.Resource.Status.LOADING;
+import static pl.droidevs.books.Resource.Status.SUCCESS;
 import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
@@ -226,19 +230,25 @@ public class LibraryActivity extends AppCompatActivity {
         removeBookViewModel.removeBook(book);
     }
 
-
     private void setupViewModel() {
         libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
-        libraryViewModel.getBooks().observe(this, books -> {
-            hideProgress();
+        libraryViewModel.getBooks().observe(this, this::processResponse);
+    }
 
-            if (books != null) {
-                adapter.setItems(books);
-            }
-        });
+    private void processResponse(final Resource<List<Book>> resource) {
+        if (LOADING == resource.getStatus()) showProgress();
+        else hideProgress();
+
+        if (ERROR == resource.getStatus()) showErrorMessage(resource.getError());
+        else if (SUCCESS == resource.getStatus()) showBooks(resource.getData());
+    }
+
+    private void showProgress() {
+        progressBar.setVisibility(VISIBLE);
+        contentLayout.setVisibility(GONE);
     }
 
     private void hideProgress() {
@@ -246,9 +256,13 @@ public class LibraryActivity extends AppCompatActivity {
         contentLayout.setVisibility(VISIBLE);
     }
 
-    private void showProgress() {
-        progressBar.setVisibility(VISIBLE);
-        contentLayout.setVisibility(GONE);
+    private void showErrorMessage(final Throwable error) {
+        // You should map a throwable to error message here
+        displayMessage(R.string.error_fetching_failed);
+    }
+
+    private void showBooks(final List<Book> data) {
+        adapter.setItems(data);
     }
 
     @Override
@@ -278,6 +292,13 @@ public class LibraryActivity extends AppCompatActivity {
             searchView.setQuery(currentQuery, true);
             searchView.clearFocus();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Temporary solution
+        libraryViewModel.refresh();
     }
 
     @Override
@@ -325,7 +346,7 @@ public class LibraryActivity extends AppCompatActivity {
             exportImportViewModel.exportBooks();
             displayMessage(R.string.message_export_successful);
         } catch (ExportFailedException e) {
-            displayMessage(R.string.message_export_not_successful);
+            displayMessage(R.string.error_export_failed);
         }
     }
 
@@ -358,24 +379,16 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(ExportImportViewModel.class);
 
-        exportImportViewModel.wasImportSuccesfull().observe(this,
-                success -> {
-                    progressBar.setVisibility(GONE);
+        exportImportViewModel.getResult().observe(this, resource -> {
+            if (LOADING == resource.getStatus()) showProgress();
+            else hideProgress();
 
-                    if (success) {
-                        displayMessage(R.string.message_import_successful);
-                    } else {
-                        displayMessage(R.string.message_import_not_successful);
-                    }
-                });
+            if (SUCCESS == resource.getStatus()) displayMessage(R.string.message_import_successful);
+            else if (ERROR == resource.getStatus()) displayMessage(R.string.error_import_failed);
+            libraryViewModel.refresh();
+        });
 
-        try {
-            progressBar.setVisibility(VISIBLE);
-            exportImportViewModel.importBooks();
-        } catch (ExportFailedException e) {
-            progressBar.setVisibility(GONE);
-            displayMessage(R.string.message_import_not_successful);
-        }
+        exportImportViewModel.importBooks();
     }
 
     private void requestReadStoragePermissions() {

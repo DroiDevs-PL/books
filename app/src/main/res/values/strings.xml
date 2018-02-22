@@ -8,13 +8,14 @@
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
 
+    <string name="error_fetching_failed">Couldn\'t load books from library. Please swipe to t</string>
     <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
     <string name="message_permission_denied_cant_import">We are not able to import library without permission.</string>
     <string name="message_export_successful">Your library were exported successfully.</string>
-    <string name="message_export_not_successful">Due to an error we weren\'t able to export your library.</string>
+    <string name="error_export_failed">Due to an error we weren\'t able to export your library.</string>
 
     <string name="message_import_successful">Library were imported successfully.</string>
-    <string name="message_import_not_successful">Due to an error we weren\'t able to import library.</string>
+    <string name="error_import_failed">Due to an error we weren\'t able to import library.</string>
     <string name="book_delete_snackbar">Sure you want to delete?</string>
 
     <string name="undo">Undo</string>
@@ -33,7 +34,7 @@
     <string name="remove_book_error">We encountered problem with removing book.</string>
     <string name="remove_book">Remove book</string>
     <string name="removing_book">Removing book</string>
-    <string name="removing_book_snackbar">Sure you want to delete?</string>
+    <string name="removing_book_snackbar">The book has been removed.</string>
     <string name="removing_book_dialog_frag">Are you sure you want to remove this book from your library?</string>
     <string name="delete">Delete</string>
 

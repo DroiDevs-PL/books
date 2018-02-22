@@ -1,36 +1,42 @@
 package pl.droidevs.books.exportimport;
 
 import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.ParseInt;
+import org.supercsv.cellprocessor.ParseLong;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import pl.droidevs.books.entity.BookEntity;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 class CSVHelper {
-
-    public static String[] getBookEntityCsvHeaders() {
-        Field[] fields = BookEntity.class.getDeclaredFields();
-        String[] fieldNames = new String[fields.length - 1];
-
-        for (int i = 0; i < fields.length - 1; i++) {
-            fieldNames[i] = fields[i].getName();
-        }
-
-        return fieldNames;
+    private CSVHelper() {
     }
 
-    public static CellProcessor[] getProcessors() {
-        final CellProcessor[] processors = new CellProcessor[] {
+    static String[] getBookEntityCsvHeaders() {
+        final Field[] fields = BookEntity.class.getDeclaredFields();
+        final List<String> fieldNames = new ArrayList<>();
+
+        for (Field field : fields) {
+            if (!isStatic(field.getModifiers())) {
+                fieldNames.add(field.getName());
+            }
+        }
+
+        return fieldNames.toArray(new String[fieldNames.size()]);
+    }
+
+    static CellProcessor[] getProcessors() {
+        return new CellProcessor[]{
                 null,
                 null,
                 null,
-                new Optional(new ParseInt()),
+                new Optional(new ParseLong()),
                 null,
                 null,
         };
-
-        return processors;
     }
 }

@@ -9,22 +9,16 @@ import dagger.Module;
 import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.repository.BookCsvRepository;
+import pl.droidevs.books.reactive.Schedulers;
 import pl.droidevs.books.repository.BookRepository;
 
 @Module(includes = AppModule.class)
-public class DataSourceModule {
+class DataSourceModule {
 
     @Singleton
     @Provides
-    BookRepository bookRepository(BookDao bookDao) {
-        return new BookRepository(bookDao);
-    }
-
-    @Singleton
-    @Provides
-    BookCsvRepository bookCsvRepository(BookDao bookDao) {
-        return new BookCsvRepository(bookDao);
+    BookRepository bookRepository(BookDao bookDao, Schedulers schedulers) {
+        return new BookRepository(bookDao, schedulers);
     }
 
     @Singleton

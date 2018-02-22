@@ -1,5 +1,6 @@
 package pl.droidevs.books.dao;
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -7,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,6 +29,9 @@ import static pl.droidevs.books.util.LiveDataTestUtil.getValue;
 
 @RunWith(AndroidJUnit4.class)
 public class BookDaoTest {
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
     private static final int NONE_EXISTING_BOOK_ID = Integer.MIN_VALUE;
 
     private BookDao objectUnderTest;
@@ -35,7 +40,9 @@ public class BookDaoTest {
     @Before
     public void setup() {
         final Context context = InstrumentationRegistry.getTargetContext();
-        database = Room.inMemoryDatabaseBuilder(context, BookDataBase.class).build();
+        database = Room.inMemoryDatabaseBuilder(context, BookDataBase.class)
+                .allowMainThreadQueries()
+                .build();
         objectUnderTest = database.bookDao();
     }
 
@@ -63,7 +70,7 @@ public class BookDaoTest {
     @Test
     public void whenThereIsNoBooks_EmptyListShouldBeReturned() throws Exception {
         // When: fetching all books
-        final List<BookEntity> books = getValue(objectUnderTest.getAllBooks());
+        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingGet();
 
         // Then: Empty list is returned
         assertThat(books, is(empty()));
@@ -75,7 +82,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().build());
 
         // When: fetching all books
-        final List<BookEntity> books = getValue(objectUnderTest.getAllBooks());
+        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingGet();
 
         // Then: All books are returned
         assertThat(books, hasSize(1));
@@ -88,7 +95,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().withTitle("Clean Architecture").build());
 
         // When: fetching for given title
-        final List<BookEntity> books = getValue(objectUnderTest.getByTitleOrAuthor("Code", null));
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Code", null).blockingGet();
 
         // Then: matching books are returned
         assertThat(books, hasSize(1));
@@ -101,7 +108,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().writtenBy("Robert Browning").build());
 
         // When: fetching for given author
-        final List<BookEntity> books = getValue(objectUnderTest.getByTitleOrAuthor(null, "Martin"));
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor(null, "Martin").blockingGet();
 
         // Then: matching books are returned
         assertThat(books, hasSize(1));
@@ -114,7 +121,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().withTitle("The Ring and the Book").writtenBy("Robert Browning").build());
 
         // When: fetching for given title or author
-        final List<BookEntity> books = getValue(objectUnderTest.getByTitleOrAuthor("Clean", "Browning"));
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Clean", "Browning").blockingGet();
 
         // Then: matching books are returned
         assertThat(books, hasSize(2));
