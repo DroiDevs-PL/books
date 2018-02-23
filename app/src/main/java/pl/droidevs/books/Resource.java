@@ -16,7 +16,6 @@ public final class Resource<T> {
 
     @Nullable
     private final T data;
-    private boolean loading;
 
     private Resource(@NonNull final Status status, final @Nullable T data, final @Nullable Throwable error) {
         this.status = status;

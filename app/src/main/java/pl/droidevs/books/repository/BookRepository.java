@@ -10,7 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.Flowable;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
@@ -46,27 +46,27 @@ public final class BookRepository {
         return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)));
     }
 
-    public Single<List<Book>> fetchAll() {
+    public Flowable<List<Book>> fetchAll() {
         return bookDao.getAllBooks()
-                .toObservable()
                 .flatMapIterable(list -> list)
                 .map(BookMapper::toBook)
                 .toList()
+                .toFlowable()
                 .observeOn(schedulers.getObserver())
                 .subscribeOn(schedulers.getSubscriber());
     }
 
     @NonNull
-    public Single<List<Book>> fetchBy(@Nullable final BookFilter filter) {
+    public Flowable<List<Book>> fetchBy(@Nullable final BookFilter filter) {
         if (filter == null || filter.isEmpty()) {
             return fetchAll();
         }
 
         return bookDao.getByTitleOrAuthor(filter.getTitle(), filter.getAuthor())
-                .toObservable()
                 .flatMapIterable(list -> list)
                 .map(BookMapper::toBook)
                 .toList()
+                .toFlowable()
                 .observeOn(schedulers.getObserver())
                 .subscribeOn(schedulers.getSubscriber());
     }

@@ -236,6 +236,7 @@ public class LibraryActivity extends AppCompatActivity {
                 .get(LibraryViewModel.class);
 
         libraryViewModel.getBooks().observe(this, this::processResponse);
+        libraryViewModel.refresh();
     }
 
     private void processResponse(final Resource<List<Book>> resource) {
@@ -292,13 +293,6 @@ public class LibraryActivity extends AppCompatActivity {
             searchView.setQuery(currentQuery, true);
             searchView.clearFocus();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Temporary solution
-        libraryViewModel.refresh();
     }
 
     @Override

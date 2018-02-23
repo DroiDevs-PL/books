@@ -41,7 +41,14 @@ public final class LibraryViewModel extends ViewModel {
 
     void setQuery(@Nullable final String query) {
         filterInput.setValue(query);
-        refresh();
+        disposables.add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+                .doOnNext(result -> this.books.setValue(Resource.success(result)))
+                .doOnError(throwable -> this.books.setValue(Resource.error(throwable)))
+                .subscribe(
+                        result -> this.books.setValue(Resource.success(result)),
+                        throwable -> this.books.setValue(Resource.error(throwable))
+                )
+        );
     }
 
     void clearQuery() {

@@ -70,7 +70,7 @@ public class BookDaoTest {
     @Test
     public void whenThereIsNoBooks_EmptyListShouldBeReturned() throws Exception {
         // When: fetching all books
-        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingGet();
+        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingFirst();
 
         // Then: Empty list is returned
         assertThat(books, is(empty()));
@@ -82,7 +82,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().build());
 
         // When: fetching all books
-        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingGet();
+        final List<BookEntity> books = objectUnderTest.getAllBooks().blockingFirst();
 
         // Then: All books are returned
         assertThat(books, hasSize(1));
@@ -95,7 +95,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().withTitle("Clean Architecture").build());
 
         // When: fetching for given title
-        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Code", null).blockingGet();
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Code", null).blockingFirst();
 
         // Then: matching books are returned
         assertThat(books, hasSize(1));
@@ -108,7 +108,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().writtenBy("Robert Browning").build());
 
         // When: fetching for given author
-        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor(null, "Martin").blockingGet();
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor(null, "Martin").blockingFirst();
 
         // Then: matching books are returned
         assertThat(books, hasSize(1));
@@ -121,7 +121,7 @@ public class BookDaoTest {
         objectUnderTest.addBook(aBook().withTitle("The Ring and the Book").writtenBy("Robert Browning").build());
 
         // When: fetching for given title or author
-        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Clean", "Browning").blockingGet();
+        final List<BookEntity> books = objectUnderTest.getByTitleOrAuthor("Clean", "Browning").blockingFirst();
 
         // Then: matching books are returned
         assertThat(books, hasSize(2));

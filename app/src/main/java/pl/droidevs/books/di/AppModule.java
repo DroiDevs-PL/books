@@ -36,7 +36,7 @@ public class AppModule {
         return new Schedulers() {
             @Override
             public Scheduler getSubscriber() {
-                return io.reactivex.schedulers.Schedulers.io();
+                return io.reactivex.schedulers.Schedulers.newThread();
             }
 
             @Override
