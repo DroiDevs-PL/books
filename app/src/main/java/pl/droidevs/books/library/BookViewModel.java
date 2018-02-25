@@ -7,14 +7,14 @@ import javax.inject.Inject;
 
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
-import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.repository.DatabaseBookRepository;
 
 public class BookViewModel extends ViewModel {
 
-    private final BookRepository bookRepository;
+    private final DatabaseBookRepository bookRepository;
 
     @Inject
-    BookViewModel(BookRepository bookRepository) {
+    BookViewModel(DatabaseBookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

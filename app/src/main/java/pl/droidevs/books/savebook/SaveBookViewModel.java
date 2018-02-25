@@ -13,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
-import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.repository.DatabaseBookRepository;
 import pl.droidevs.books.validators.BookInputValidator;
 
 public class SaveBookViewModel extends ViewModel {
@@ -26,12 +26,12 @@ public class SaveBookViewModel extends ViewModel {
     private String description;
     private String category;
 
-    private final BookRepository bookRepository;
+    private final DatabaseBookRepository bookRepository;
 
     private MutableLiveData<Boolean> successWithSaving = new MutableLiveData<>();
 
     @Inject
-    public SaveBookViewModel(BookRepository bookRepository) {
+    public SaveBookViewModel(DatabaseBookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

@@ -1,7 +1,5 @@
 package pl.droidevs.books.library;
 
-import static com.bumptech.glide.Priority.HIGH;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,6 +21,8 @@ import butterknife.ButterKnife;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
+
+import static com.bumptech.glide.Priority.HIGH;
 
 final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewHolder> {
     private List<Book> books = new ArrayList<>();
@@ -53,8 +54,8 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         this.bookItemClickListener = bookItemClickListener;
     }
 
-    void setItems(@NonNull final List<Book> books) {
-        this.books = books;
+    void setItems(@NonNull final Collection<Book> books) {
+        this.books = new ArrayList<>(books);
         notifyDataSetChanged();
     }
 

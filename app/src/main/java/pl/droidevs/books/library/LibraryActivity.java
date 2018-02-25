@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +41,8 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.Resource;
+import pl.droidevs.books.exportimport.BookTransferViewModel;
 import pl.droidevs.books.exportimport.ExportFailedException;
-import pl.droidevs.books.exportimport.ExportImportViewModel;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
@@ -75,6 +76,9 @@ public class LibraryActivity extends AppCompatActivity {
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
+
+    @BindView(R.id.tv_no_content)
+    TextView noBooks;
 
     @BindView(R.id.layout_progress)
     View progressBar;
@@ -239,7 +243,7 @@ public class LibraryActivity extends AppCompatActivity {
         libraryViewModel.refresh();
     }
 
-    private void processResponse(final Resource<List<Book>> resource) {
+    private void processResponse(final Resource<Collection<Book>> resource) {
         if (LOADING == resource.getStatus()) showProgress();
         else hideProgress();
 
@@ -262,8 +266,11 @@ public class LibraryActivity extends AppCompatActivity {
         displayMessage(R.string.error_fetching_failed);
     }
 
-    private void showBooks(final List<Book> data) {
+    private void showBooks(final Collection<Book> data) {
         adapter.setItems(data);
+
+        noBooks.setText(libraryViewModel.isQuery() ? R.string.search_no_result : R.string.empty_library);
+        noBooks.setVisibility(data.isEmpty() ? VISIBLE : GONE);
     }
 
     @Override
@@ -332,12 +339,12 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void exportLibrary() {
-        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+        final BookTransferViewModel bookTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(ExportImportViewModel.class);
+                .get(BookTransferViewModel.class);
 
         try {
-            exportImportViewModel.exportBooks();
+            bookTransferViewModel.exportBooks();
             displayMessage(R.string.message_export_successful);
         } catch (ExportFailedException e) {
             displayMessage(R.string.error_export_failed);
@@ -369,11 +376,11 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void importLibrary() {
-        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+        final BookTransferViewModel bookTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(ExportImportViewModel.class);
+                .get(BookTransferViewModel.class);
 
-        exportImportViewModel.getResult().observe(this, resource -> {
+        bookTransferViewModel.getResult().observe(this, resource -> {
             if (LOADING == resource.getStatus()) showProgress();
             else hideProgress();
 
@@ -382,7 +389,7 @@ public class LibraryActivity extends AppCompatActivity {
             libraryViewModel.refresh();
         });
 
-        exportImportViewModel.importBooks();
+        bookTransferViewModel.importBooks();
     }
 
     private void requestReadStoragePermissions() {
@@ -402,7 +409,6 @@ public class LibraryActivity extends AppCompatActivity {
         }
 
         if (requestCode == REQUEST_PERMISSION_READ_FILE_CODE) {
-
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 importOptionSelected();
             } else {

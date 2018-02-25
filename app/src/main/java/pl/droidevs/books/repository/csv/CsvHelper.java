@@ -1,4 +1,4 @@
-package pl.droidevs.books.exportimport;
+package pl.droidevs.books.repository.csv;
 
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ParseLong;
@@ -12,8 +12,8 @@ import pl.droidevs.books.entity.BookEntity;
 
 import static java.lang.reflect.Modifier.isStatic;
 
-class CSVHelper {
-    private CSVHelper() {
+class CsvHelper {
+    private CsvHelper() {
     }
 
     static String[] getBookEntityCsvHeaders() {

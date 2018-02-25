@@ -13,6 +13,7 @@
     <string name="message_permission_denied_cant_import">We are not able to import library without permission.</string>
     <string name="message_export_successful">Your library were exported successfully.</string>
     <string name="error_export_failed">Due to an error we weren\'t able to export your library.</string>
+    <string name="empty_library">Your library is empty:(\nWhy don\'t you add a book?</string>
 
     <string name="message_import_successful">Library were imported successfully.</string>
     <string name="error_import_failed">Due to an error we weren\'t able to import library.</string>
@@ -44,5 +45,5 @@
     <!--Searching book-->
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
-
+    <string name="search_no_result">There are no books\nmatching your criteria.</string>
 </resources>

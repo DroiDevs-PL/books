@@ -1,6 +1,11 @@
 package pl.droidevs.books.repository;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import pl.droidevs.books.entity.BookEntity;
 import pl.droidevs.books.model.Book;
@@ -10,6 +15,19 @@ public class BookMapper {
     private BookMapper() {
     }
 
+    @NonNull
+    public static Collection<Book> toBooks(@Nullable final Collection<BookEntity> entities) {
+        if (entities == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<Book> books = new ArrayList<>(entities.size());
+        for (BookEntity entity : entities) books.add(toBook(entity));
+
+        return books;
+    }
+
+    @Nullable
     public static Book toBook(@Nullable final BookEntity entity) {
         if (entity == null) {
             return null;
@@ -43,6 +61,18 @@ public class BookMapper {
         }
 
         return entity;
+    }
+
+    @NonNull
+    public static Collection<BookEntity> toEntities(@Nullable final Collection<Book> books) {
+        if (books == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<BookEntity> entities = new ArrayList<>(books.size());
+        for (Book book : books) entities.add(toEntity(book));
+
+        return entities;
     }
 
     static long getBookEntityIdFromBookId(BookId bookId) {

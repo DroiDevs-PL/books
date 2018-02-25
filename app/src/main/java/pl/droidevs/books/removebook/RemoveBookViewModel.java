@@ -12,15 +12,15 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pl.droidevs.books.R;
 import pl.droidevs.books.model.Book;
-import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.repository.DatabaseBookRepository;
 
 public class RemoveBookViewModel extends ViewModel{
 
-    private BookRepository bookRepository;
+    private DatabaseBookRepository bookRepository;
     private MutableLiveData<Integer> errorMessageResource = new MutableLiveData<>();
 
     @Inject
-    public RemoveBookViewModel(BookRepository bookRepository) {
+    public RemoveBookViewModel(DatabaseBookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
