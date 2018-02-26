@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -42,7 +43,6 @@ import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.exportimport.BookTransferViewModel;
-import pl.droidevs.books.exportimport.ExportFailedException;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
@@ -226,15 +226,13 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(RemoveBookViewModel.class);
 
-        removeBookViewModel.getRemovalResult()
+        removeBookViewModel.removeBook(book)
                 .observe(this, resource -> {
                             if (resource != null && resource.getStatus() == ERROR) {
                                 Snackbar.make(floatingActionButton, R.string.remove_book_error, Snackbar.LENGTH_LONG).show();
                             }
                         }
                 );
-
-        removeBookViewModel.removeBook(book);
     }
 
     private void setupViewModel() {
@@ -243,7 +241,6 @@ public class LibraryActivity extends AppCompatActivity {
                 .get(LibraryViewModel.class);
 
         libraryViewModel.getBooks().observe(this, this::processResponse);
-        libraryViewModel.refresh();
     }
 
     private void processResponse(final Resource<Collection<Book>> resource) {
@@ -346,12 +343,8 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(BookTransferViewModel.class);
 
-        try {
-            bookTransferViewModel.exportBooks();
-            displayMessage(R.string.message_export_successful);
-        } catch (ExportFailedException e) {
-            displayMessage(R.string.error_export_failed);
-        }
+        bookTransferViewModel.exportBooks().observe(this, resource ->
+                handleBookTransfer(resource, R.string.message_export_successful, R.string.error_export_failed));
     }
 
     private void displayMessage(int messageResourceId) {
@@ -383,16 +376,16 @@ public class LibraryActivity extends AppCompatActivity {
                 .of(this, viewModelFactory)
                 .get(BookTransferViewModel.class);
 
-        bookTransferViewModel.getResult().observe(this, resource -> {
-            if (LOADING == resource.getStatus()) showProgress();
-            else hideProgress();
+        bookTransferViewModel.importBooks().observe(this, resource ->
+                handleBookTransfer(resource, R.string.message_import_successful, R.string.error_import_failed));
+    }
 
-            if (SUCCESS == resource.getStatus()) displayMessage(R.string.message_import_successful);
-            else if (ERROR == resource.getStatus()) displayMessage(R.string.error_import_failed);
-            libraryViewModel.refresh();
-        });
+    private void handleBookTransfer(final Resource<Void> resource, @StringRes int successMessageId, @StringRes int errorMessageId) {
+        if (LOADING == resource.getStatus()) showProgress();
+        else hideProgress();
 
-        bookTransferViewModel.importBooks();
+        if (SUCCESS == resource.getStatus()) displayMessage(successMessageId);
+        else if (ERROR == resource.getStatus()) displayMessage(errorMessageId);
     }
 
     private void requestReadStoragePermissions() {

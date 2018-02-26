@@ -1,24 +1,36 @@
 package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
 
+import pl.droidevs.books.Resource;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.ui.RxViewModel;
 
-public class BookViewModel extends ViewModel {
+public final class BookViewModel extends RxViewModel {
 
     private final DatabaseBookRepository bookRepository;
+    private final MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
 
     @Inject
-    BookViewModel(DatabaseBookRepository bookRepository) {
+    BookViewModel(@NonNull final DatabaseBookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    LiveData<Book> getBook(BookId bookId) {
-        return bookRepository.fetchBy(bookId);
+    LiveData<Resource<Book>> getBook(BookId bookId) {
+        add(bookRepository.fetchBy(bookId)
+                .doOnSubscribe(it -> bookLiveData.setValue(Resource.loading()))
+                .subscribe(
+                        book -> bookLiveData.setValue(Resource.success(book)),
+                        throwable -> bookLiveData.setValue(Resource.error(throwable))
+                )
+        );
+
+        return bookLiveData;
     }
 }

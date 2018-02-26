@@ -35,8 +35,8 @@ public final class Resource<T> {
         return new Resource<>(ERROR, data, error);
     }
 
-    public static <T> Resource<T> error(@Nullable final Throwable errorCode) {
-        return new Resource<>(ERROR, null, errorCode);
+    public static <T> Resource<T> error(@Nullable final Throwable throwable) {
+        return new Resource<>(ERROR, null, throwable);
     }
 
     public static <T> Resource<T> loading() {

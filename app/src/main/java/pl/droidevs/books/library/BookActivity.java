@@ -15,6 +15,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition.TransitionListener;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,12 +42,12 @@ import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.savebook.SaveBookActivity;
 
+import static pl.droidevs.books.Resource.Status.SUCCESS;
 import static pl.droidevs.books.apphelper.ColorHelper.getActionBarColorFromSwatch;
 import static pl.droidevs.books.apphelper.ColorHelper.getDominantColor;
 import static pl.droidevs.books.apphelper.ColorHelper.getStatusBarColorFromSwatch;
 
 public class BookActivity extends AppCompatActivity {
-    //region Consts
     public static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
     public static final String EXTRAS_IMAGE_TRANSITION_NAME = "EXTRAS_IMAGE_TRANSITION_NAME";
     public static final String EXTRAS_TITLE_TRANSITION_NAME = "EXTRAS_TITLE_TRANSITION_NAME";
@@ -65,22 +66,19 @@ public class BookActivity extends AppCompatActivity {
 
     private static final int MAX_ALPHA = 255;
     private static final int MIN_ALPHA = 0;
-    //endregion
 
     private Bundle animationBundle;
-    private BookViewModel viewModel;
 
     private BookId bookId;
     private float masterTitleTextSize;
     private float masterAuthorTextSize;
 
-    private android.transition.Transition.TransitionListener transitionListener;
+    private TransitionListener transitionListener;
 
     private int lastAppBarOffset = 1;
     private int linesCount = 0;
     private double appBarScrollPercentValue;
 
-    //region Butter binding
     @BindView(R.id.album_iv)
     ImageView imageView;
 
@@ -113,7 +111,6 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    //endregion
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -137,8 +134,13 @@ public class BookActivity extends AppCompatActivity {
         }
 
         setupAnimations();
-        setupViewModel();
         setupAppBarLayoutOffsetListener();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupViewModel();
     }
 
     @Override
@@ -149,14 +151,13 @@ public class BookActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.book_menu, menu);
+        getMenuInflater().inflate(R.menu.book_details_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.edit_book) {
             Intent intent = new Intent(this, SaveBookActivity.class);
             intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
@@ -195,10 +196,8 @@ public class BookActivity extends AppCompatActivity {
 
         super.onBackPressed();
     }
-    //endregion
 
-    //region Transitions
-    private void setTransitionListener(@Nullable android.transition.Transition.TransitionListener newTransitionListener) {
+    private void setTransitionListener(@Nullable TransitionListener newTransitionListener) {
         if (this.transitionListener != null) {
             getWindow().getSharedElementEnterTransition().removeListener(this.transitionListener);
         }
@@ -208,8 +207,8 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private android.transition.Transition.TransitionListener getEnterTransitionListener() {
-        return new android.transition.Transition.TransitionListener() {
+    private TransitionListener getEnterTransitionListener() {
+        return new TransitionListener() {
             private float detailsTitleTextSize = -1;
             private float detailsAuthorTextSize = -1;
 
@@ -259,26 +258,22 @@ public class BookActivity extends AppCompatActivity {
 
             @Override
             public void onTransitionCancel(android.transition.Transition transition) {
-
             }
 
             @Override
             public void onTransitionPause(android.transition.Transition transition) {
-
             }
 
             @Override
             public void onTransitionResume(android.transition.Transition transition) {
-
             }
         };
     }
 
-    private android.transition.Transition.TransitionListener getExitTransitionListener(TextView tvTitle) {
-        return new android.transition.Transition.TransitionListener() {
+    private TransitionListener getExitTransitionListener(TextView tvTitle) {
+        return new TransitionListener() {
             private float detailsTitleTextSize = -1;
             private float detailsAuthorTextSize = -1;
-
 
             @Override
             public void onTransitionStart(android.transition.Transition transition) {
@@ -332,17 +327,14 @@ public class BookActivity extends AppCompatActivity {
 
             @Override
             public void onTransitionCancel(android.transition.Transition transition) {
-
             }
 
             @Override
             public void onTransitionPause(android.transition.Transition transition) {
-
             }
 
             @Override
             public void onTransitionResume(android.transition.Transition transition) {
-
             }
         };
     }
@@ -377,20 +369,23 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        viewModel = ViewModelProviders
+        BookViewModel viewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
 
         viewModel.getBook(bookId)
-                .observe(this, book -> {
-
-                    if (book != null) {
-                        setupBookViews(book);
+                .observe(this, resource -> {
+                    if ((resource != null) && (resource.getStatus() == SUCCESS)) {
+                        setupBookViews(resource.getData());
                     }
                 });
     }
 
     private void setupBookViews(Book book) {
+        if (book == null) {
+            return;
+        }
+
         tvExpandedTitle.setText(book.getTitle());
         tvCollpsedTitle.setText(book.getTitle());
         collapsingToolbarLayout.setTitle(/*book.getTitle()*/" ");
@@ -461,7 +456,6 @@ public class BookActivity extends AppCompatActivity {
                 tvExpandedTitle.setTextColor(ColorUtils.setAlphaComponent(Color.WHITE, expandedAlpha));
                 tvCollpsedTitle.setTextColor(ColorUtils.setAlphaComponent(Color.WHITE, collapsedAlpha));
 
-
                 int bottomCollapsedSpacing = getResources().getDimensionPixelSize(R.dimen.collapsed_toolbar_bottom_spacing);
                 int bottomExpandedSpacing = getResources().getDimensionPixelSize(R.dimen.expanded_toolbar_bottom_spacing);
                 int bottomSpacingDifference = bottomExpandedSpacing - bottomCollapsedSpacing;
@@ -480,7 +474,6 @@ public class BookActivity extends AppCompatActivity {
 
                 int endCollapsedSpacing = getResources().getDimensionPixelSize(R.dimen.toolbar_item_size);
                 int horizontalExpandedSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_normal);
-
 
                 double endSpacingDifference = /*horizontalExpandedSpacing +*/ endCollapsedSpacing;
                 int endSpacing = /*endCollapsedSpacing*/horizontalExpandedSpacing + (int) (endSpacingDifference * (1.0 - appBarScrollPercentValue));
@@ -505,4 +498,3 @@ public class BookActivity extends AppCompatActivity {
         });
     }
 }
-

@@ -20,16 +20,14 @@ public final class RemoveBookViewModel extends RxViewModel {
         this.bookRepository = bookRepository;
     }
 
-    public void removeBook(Book book) {
+    public LiveData<Resource<Void>> removeBook(Book book) {
         add(bookRepository.remove(book)
                 .subscribe(
                         () -> removalResult.setValue(Resource.success()),
                         throwable -> removalResult.setValue(Resource.error(throwable))
                 )
         );
-    }
 
-    public LiveData<Resource<Void>> getRemovalResult() {
         return removalResult;
     }
 }

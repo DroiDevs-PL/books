@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import javax.inject.Inject;
 
+import pl.droidevs.books.Resource;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.repository.DatabaseBookRepository;
@@ -23,19 +24,21 @@ public final class SaveBookViewModel extends RxViewModel {
 
     private final DatabaseBookRepository bookRepository;
 
-    private MutableLiveData<Boolean> successWithSaving = new MutableLiveData<>();
+    private MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
+    private MutableLiveData<Resource<Void>> saveLiveData = new MutableLiveData<>();
 
     @Inject
-    public SaveBookViewModel(DatabaseBookRepository bookRepository) {
+    SaveBookViewModel(DatabaseBookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public LiveData<Book> getBook() {
-        return bookRepository.fetchBy(this.bookId);
-    }
+    public LiveData<Resource<Book>> getBook() {
+        add(bookRepository.fetchBy(this.bookId).subscribe(
+                book -> bookLiveData.setValue(Resource.success(book)),
+                throwable -> bookLiveData.setValue(Resource.error(throwable))
+        ));
 
-    public LiveData<Boolean> wasSavingSuccessful() {
-        return successWithSaving;
+        return bookLiveData;
     }
 
     public void setBookId(BookId bookId) {
@@ -46,7 +49,7 @@ public final class SaveBookViewModel extends RxViewModel {
         return BookInputValidator.isCoverUrlValid(imageUrl);
     }
 
-    public void setImageUrl(String imageUrl) {
+    void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
@@ -58,7 +61,7 @@ public final class SaveBookViewModel extends RxViewModel {
         this.author = author;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -66,19 +69,22 @@ public final class SaveBookViewModel extends RxViewModel {
         this.category = category;
     }
 
-    public boolean isDataValid() {
+    boolean isDataValid() {
         return BookInputValidator.isAuthorValid(author) &&
                 BookInputValidator.isTitleValid(title);
     }
 
-    public void saveBook() {
+    LiveData<Resource<Void>> saveBook() {
         add(bookRepository.save(createBook())
-                .subscribe(() -> successWithSaving.setValue(true),
-                        throwable -> successWithSaving.setValue(false)
-                ));
+                .subscribe(() -> saveLiveData.setValue(Resource.success()),
+                        throwable -> saveLiveData.setValue(Resource.error(throwable))
+                )
+        );
+
+        return saveLiveData;
     }
 
-    public Book createBook() {
+    Book createBook() {
         Book book = new Book(bookId, this.title, this.author, Book.Category.valueOf(this.category));
         book.setImageUrl(this.imageUrl);
         book.setDescription(this.description);

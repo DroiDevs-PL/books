@@ -1,7 +1,5 @@
 package pl.droidevs.books.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Transformations;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,6 +9,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import pl.droidevs.books.dao.BookDao;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
@@ -74,9 +73,12 @@ public final class DatabaseBookRepository {
     }
 
     @NonNull
-    public LiveData<Book> fetchBy(BookId bookId) {
+    public Maybe<Book> fetchBy(BookId bookId) {
         long bookEntityId = BookMapper.getBookEntityIdFromBookId(bookId);
 
-        return Transformations.map(bookDao.getBookById(bookEntityId), BookMapper::toBook);
+        return bookDao.getBookById(bookEntityId)
+                .map(BookMapper::toBook)
+                .observeOn(schedulers.getObserver())
+                .subscribeOn(schedulers.getSubscriber());
     }
 }

@@ -27,18 +27,6 @@ public final class LibraryViewModel extends RxViewModel {
         this.bookRepository = bookRepository;
     }
 
-    void refresh() {
-        final String query = filterInput.getValue();
-
-        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
-                .doOnSubscribe(it -> books.setValue(Resource.loading()))
-                .subscribe(
-                        result -> books.setValue(Resource.success(result)),
-                        throwable -> books.setValue(Resource.error(throwable))
-                )
-        );
-    }
-
     void setQuery(@Nullable final String query) {
         filterInput.setValue(query);
         add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
@@ -64,6 +52,16 @@ public final class LibraryViewModel extends RxViewModel {
 
     @NonNull
     public LiveData<Resource<Collection<Book>>> getBooks() {
+        final String query = filterInput.getValue();
+
+        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+                .doOnSubscribe(it -> books.setValue(Resource.loading()))
+                .subscribe(
+                        result -> books.setValue(Resource.success(result)),
+                        throwable -> books.setValue(Resource.error(throwable))
+                )
+        );
+
         return books;
     }
 }
