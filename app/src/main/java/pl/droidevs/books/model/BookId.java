@@ -30,6 +30,11 @@ public final class BookId implements Serializable {
         return value.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     public static BookId of(@NonNull final String value) {
         return new BookId(value);
     }

@@ -2,7 +2,6 @@ package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,16 +9,15 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.CompositeDisposable;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.repository.BookFilter;
 import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.ui.RxViewModel;
 
 import static android.text.TextUtils.isEmpty;
 
-public final class LibraryViewModel extends ViewModel {
-    private final CompositeDisposable disposables = new CompositeDisposable();
+public final class LibraryViewModel extends RxViewModel {
     private final MutableLiveData<String> filterInput = new MutableLiveData<>();
     private final MutableLiveData<Resource<Collection<Book>>> books = new MutableLiveData<>();
     private final DatabaseBookRepository bookRepository;
@@ -32,7 +30,7 @@ public final class LibraryViewModel extends ViewModel {
     void refresh() {
         final String query = filterInput.getValue();
 
-        disposables.add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
                 .doOnSubscribe(it -> books.setValue(Resource.loading()))
                 .subscribe(
                         result -> books.setValue(Resource.success(result)),
@@ -43,7 +41,7 @@ public final class LibraryViewModel extends ViewModel {
 
     void setQuery(@Nullable final String query) {
         filterInput.setValue(query);
-        disposables.add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
                 .subscribe(
                         result -> books.setValue(Resource.success(result)),
                         throwable -> books.setValue(Resource.error(throwable))
@@ -67,10 +65,5 @@ public final class LibraryViewModel extends ViewModel {
     @NonNull
     public LiveData<Resource<Collection<Book>>> getBooks() {
         return books;
-    }
-
-    @Override
-    protected void onCleared() {
-        disposables.clear();
     }
 }

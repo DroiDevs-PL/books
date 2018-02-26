@@ -222,14 +222,17 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void removeBook(Book book) {
-        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+        final RemoveBookViewModel removeBookViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(RemoveBookViewModel.class);
 
-        removeBookViewModel.wasAnError()
-                .observe(this, error ->
-                        Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
-                                .show());
+        removeBookViewModel.getRemovalResult()
+                .observe(this, resource -> {
+                            if (resource != null && resource.getStatus() == ERROR) {
+                                Snackbar.make(floatingActionButton, R.string.remove_book_error, Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                );
 
         removeBookViewModel.removeBook(book);
     }

@@ -38,11 +38,20 @@ public final class DatabaseBookRepository {
     }
 
     public Completable save(Book book) {
-        return Completable.fromAction(() -> bookDao.addBook(toEntity(book)));
+//        return Single.fromCallable(() -> {
+//            bookDao.addBook(toEntity(book));
+//            return book;
+//        });
+
+        return Completable.fromAction(() -> bookDao.addBook(toEntity(book)))
+                .subscribeOn(schedulers.getSubscriber())
+                .observeOn(schedulers.getObserver());
     }
 
     public Completable remove(Book book) {
-        return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)));
+        return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)))
+                .subscribeOn(schedulers.getSubscriber())
+                .observeOn(schedulers.getObserver());
     }
 
     public Flowable<Collection<Book>> fetchAll() {

@@ -2,19 +2,17 @@ package pl.droidevs.books.exportimport;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.CompositeDisposable;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.repository.DatabaseBookRepository;
 import pl.droidevs.books.repository.csv.CsvBookRepository;
+import pl.droidevs.books.ui.RxViewModel;
 
-public final class BookTransferViewModel extends ViewModel {
+public final class BookTransferViewModel extends RxViewModel {
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
     private final MutableLiveData<Resource<Void>> transferResult = new MutableLiveData<>();
     private DatabaseBookRepository databaseRepository;
     private CsvBookRepository csvRepository;
@@ -27,39 +25,36 @@ public final class BookTransferViewModel extends ViewModel {
     }
 
     public void exportBooks() {
-        databaseRepository.fetchAll()
+        add(databaseRepository.fetchAll()
                 .take(1)
                 .doOnSubscribe(it -> transferResult.setValue(Resource.loading()))
                 .subscribe(
-                        books -> csvRepository.saveAll(books).subscribe(
+                        books -> add(csvRepository.saveAll(books).subscribe(
                                 () -> transferResult.setValue(Resource.success()),
-                                throwable -> transferResult.setValue(Resource.error(throwable))
+                                throwable -> transferResult.setValue(Resource.error(throwable)))
                         ),
                         throwable -> transferResult.setValue(Resource.error(throwable))
-                );
+                )
+        );
     }
 
 
     public void importBooks() {
-        csvRepository.fetchAll()
+        add(csvRepository.fetchAll()
                 .take(1)
                 .doOnSubscribe(it -> transferResult.setValue(Resource.loading()))
                 .subscribe(
-                        books -> databaseRepository.saveAll(books).subscribe(
+                        books -> add(databaseRepository.saveAll(books).subscribe(
                                 () -> transferResult.setValue(Resource.success()),
-                                throwable -> transferResult.setValue(Resource.error(throwable))
+                                throwable -> transferResult.setValue(Resource.error(throwable)))
                         ),
                         throwable -> transferResult.setValue(Resource.error(throwable))
-                );
+                )
+        );
     }
 
 
     public LiveData<Resource<Void>> getResult() {
         return transferResult;
-    }
-
-    @Override
-    protected void onCleared() {
-        disposables.clear();
     }
 }
