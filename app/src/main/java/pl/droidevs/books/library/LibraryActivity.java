@@ -42,7 +42,6 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
 import pl.droidevs.books.Resource;
-import pl.droidevs.books.exportimport.BookTransferViewModel;
 import pl.droidevs.books.model.Book;
 import pl.droidevs.books.model.BookId;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
@@ -339,11 +338,11 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void exportLibrary() {
-        final BookTransferViewModel bookTransferViewModel = ViewModelProviders
+        final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(BookTransferViewModel.class);
+                .get(LibraryTransferViewModel.class);
 
-        bookTransferViewModel.exportBooks().observe(this, resource ->
+        libraryTransferViewModel.exportBooks().observe(this, resource ->
                 handleBookTransfer(resource, R.string.message_export_successful, R.string.error_export_failed));
     }
 
@@ -372,11 +371,11 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void importLibrary() {
-        final BookTransferViewModel bookTransferViewModel = ViewModelProviders
+        final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(BookTransferViewModel.class);
+                .get(LibraryTransferViewModel.class);
 
-        bookTransferViewModel.importBooks().observe(this, resource ->
+        libraryTransferViewModel.importBooks().observe(this, resource ->
                 handleBookTransfer(resource, R.string.message_import_successful, R.string.error_import_failed));
     }
 

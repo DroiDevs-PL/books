@@ -1,4 +1,4 @@
-package pl.droidevs.books.exportimport;
+package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -11,7 +11,7 @@ import pl.droidevs.books.repository.DatabaseBookRepository;
 import pl.droidevs.books.repository.csv.CsvBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
-public final class BookTransferViewModel extends RxViewModel {
+public final class LibraryTransferViewModel extends RxViewModel {
 
     private final MutableLiveData<Resource<Void>> exportResult = new MutableLiveData<>();
     private final MutableLiveData<Resource<Void>> importResult = new MutableLiveData<>();
@@ -19,8 +19,8 @@ public final class BookTransferViewModel extends RxViewModel {
     private CsvBookRepository csvRepository;
 
     @Inject
-    BookTransferViewModel(@NonNull final DatabaseBookRepository databaseRepository,
-                          @NonNull final CsvBookRepository csvRepository) {
+    LibraryTransferViewModel(@NonNull final DatabaseBookRepository databaseRepository,
+                             @NonNull final CsvBookRepository csvRepository) {
         this.databaseRepository = databaseRepository;
         this.csvRepository = csvRepository;
     }

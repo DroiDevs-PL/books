@@ -13,8 +13,8 @@ import dagger.Binds;
 import dagger.MapKey;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
-import pl.droidevs.books.exportimport.BookTransferViewModel;
 import pl.droidevs.books.library.BookViewModel;
+import pl.droidevs.books.library.LibraryTransferViewModel;
 import pl.droidevs.books.library.LibraryViewModel;
 import pl.droidevs.books.login.LoginViewModel;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
@@ -43,8 +43,8 @@ public abstract class ViewModelModule {
 
     @IntoMap
     @Binds
-    @ViewModelKey(BookTransferViewModel.class)
-    abstract ViewModel exportImportViewModel(BookTransferViewModel viewModel);
+    @ViewModelKey(LibraryTransferViewModel.class)
+    abstract ViewModel exportImportViewModel(LibraryTransferViewModel viewModel);
 
     @IntoMap
     @Binds
