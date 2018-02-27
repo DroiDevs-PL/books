@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.domain.BookId;
-import pl.droidevs.books.repository.database.DatabaseBookRepository;
+import pl.droidevs.books.repository.BookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 import pl.droidevs.books.validators.BookInputValidator;
 
@@ -22,13 +22,12 @@ public final class SaveBookViewModel extends RxViewModel {
     private String description;
     private String category;
 
-    private final DatabaseBookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     private MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
-    private MutableLiveData<Resource<Book>> saveLiveData = new MutableLiveData<>();
 
     @Inject
-    SaveBookViewModel(DatabaseBookRepository bookRepository) {
+    SaveBookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
@@ -77,16 +76,12 @@ public final class SaveBookViewModel extends RxViewModel {
     LiveData<Resource<Book>> saveBook() {
         add(bookRepository.save(createBook())
                 .subscribe(
-                        book -> saveLiveData.setValue(Resource.success()),
-                        throwable -> saveLiveData.setValue(Resource.error(throwable))
+                        book -> bookLiveData.setValue(Resource.success()),
+                        throwable -> bookLiveData.setValue(Resource.error(throwable))
                 )
         );
 
-        return saveLiveData;
-    }
-
-    public LiveData<Resource<Book>> getSavedBook() {
-        return saveLiveData;
+        return bookLiveData;
     }
 
     Book createBook() {

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.repository.BookFilter;
-import pl.droidevs.books.repository.database.DatabaseBookRepository;
+import pl.droidevs.books.repository.BookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 import static android.text.TextUtils.isEmpty;
@@ -20,10 +20,10 @@ import static android.text.TextUtils.isEmpty;
 public final class LibraryViewModel extends RxViewModel {
     private final MutableLiveData<String> filterInput = new MutableLiveData<>();
     private final MutableLiveData<Resource<Collection<Book>>> books = new MutableLiveData<>();
-    private final DatabaseBookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     @Inject
-    LibraryViewModel(@NonNull final DatabaseBookRepository bookRepository) {
+    LibraryViewModel(@NonNull final BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

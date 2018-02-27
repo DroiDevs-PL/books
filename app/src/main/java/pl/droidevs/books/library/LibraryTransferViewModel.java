@@ -7,19 +7,19 @@ import android.support.annotation.NonNull;
 import javax.inject.Inject;
 
 import pl.droidevs.books.Resource;
+import pl.droidevs.books.repository.BookRepository;
 import pl.droidevs.books.repository.csv.CsvBookRepository;
-import pl.droidevs.books.repository.database.DatabaseBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 public final class LibraryTransferViewModel extends RxViewModel {
 
     private final MutableLiveData<Resource<Void>> exportResult = new MutableLiveData<>();
     private final MutableLiveData<Resource<Void>> importResult = new MutableLiveData<>();
-    private DatabaseBookRepository databaseRepository;
+    private BookRepository databaseRepository;
     private CsvBookRepository csvRepository;
 
     @Inject
-    LibraryTransferViewModel(@NonNull final DatabaseBookRepository databaseRepository,
+    LibraryTransferViewModel(@NonNull final BookRepository databaseRepository,
                              @NonNull final CsvBookRepository csvRepository) {
         this.databaseRepository = databaseRepository;
         this.csvRepository = csvRepository;

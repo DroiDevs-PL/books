@@ -9,16 +9,16 @@ import javax.inject.Inject;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.domain.BookId;
-import pl.droidevs.books.repository.database.DatabaseBookRepository;
+import pl.droidevs.books.repository.BookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 public final class BookViewModel extends RxViewModel {
 
-    private final DatabaseBookRepository bookRepository;
+    private final BookRepository bookRepository;
     private final MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
 
     @Inject
-    BookViewModel(@NonNull final DatabaseBookRepository bookRepository) {
+    BookViewModel(@NonNull final BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

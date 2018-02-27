@@ -369,7 +369,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        final BookViewModel viewModel = ViewModelProviders
+        BookViewModel viewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
 

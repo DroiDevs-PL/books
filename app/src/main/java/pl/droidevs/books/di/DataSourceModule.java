@@ -9,6 +9,9 @@ import dagger.Module;
 import dagger.Provides;
 import pl.droidevs.books.app.BookDataBase;
 import pl.droidevs.books.dao.BookDao;
+import pl.droidevs.books.reactive.Schedulers;
+import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 
 @Module(includes = AppModule.class)
 class DataSourceModule {
@@ -25,5 +28,11 @@ class DataSourceModule {
     @Provides
     BookDao bookDao(Context context) {
         return bookDataBase(context).bookDao();
+    }
+
+    @Singleton
+    @Provides
+    BookRepository bookRepository(BookDao bookDao, Schedulers schedulers) {
+        return new DatabaseBookRepository(bookDao, schedulers);
     }
 }
