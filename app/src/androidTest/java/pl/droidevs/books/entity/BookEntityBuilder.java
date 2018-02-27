@@ -1,5 +1,7 @@
 package pl.droidevs.books.entity;
 
+import pl.droidevs.books.dao.BookEntity;
+
 public final class BookEntityBuilder {
     private final BookEntity entity;
 

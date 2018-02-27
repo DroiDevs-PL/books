@@ -6,8 +6,8 @@ import android.arch.lifecycle.MutableLiveData;
 import javax.inject.Inject;
 
 import pl.droidevs.books.Resource;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 public final class RemoveBookViewModel extends RxViewModel {
@@ -21,7 +21,7 @@ public final class RemoveBookViewModel extends RxViewModel {
     }
 
     public LiveData<Resource<Void>> removeBook(Book book) {
-        add(bookRepository.remove(book)
+        add(bookRepository.delete(book)
                 .subscribe(
                         () -> removalResult.setValue(Resource.success()),
                         throwable -> removalResult.setValue(Resource.error(throwable))

@@ -12,11 +12,11 @@ import java.util.Collections;
 
 import io.reactivex.Flowable;
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.entity.BookEntity;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.dao.BookEntity;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.reactive.TestSchedulers;
-import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 
 import static java.lang.String.valueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,8 +24,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static pl.droidevs.books.domain.Book.Category.SPORT;
 import static pl.droidevs.books.entity.BookEntityBuilder.aBook;
-import static pl.droidevs.books.model.Book.Category.SPORT;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatabaseBookRepositoryTest {
@@ -63,12 +63,12 @@ public class DatabaseBookRepositoryTest {
     public void whenBookISaved_ItsIdIsBeingUpdated() {
         // Given
         when(bookDao.addBook(any(BookEntity.class))).thenReturn(1L);
-        final Book aBook = new Book("Kowal. Prawdziwa historia", "Wojciech Kowalczyk", SPORT);
+        final Book bookProposal = new Book("Kowal. Prawdziwa historia", "Wojciech Kowalczyk", SPORT);
 
         // When
-        objectUnderTest.save(aBook).blockingAwait();
+        final Book savedBook = objectUnderTest.save(bookProposal).blockingGet();
 
         // Then
-        assertThat(aBook.getId(), is(BookId.of(1L)));
+        assertThat(savedBook.getId(), is(BookId.of(1L)));
     }
 }

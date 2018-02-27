@@ -1,4 +1,4 @@
-package pl.droidevs.books.model;
+package pl.droidevs.books.domain;
 
 import android.support.annotation.NonNull;
 

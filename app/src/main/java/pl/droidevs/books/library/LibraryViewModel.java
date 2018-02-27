@@ -10,9 +10,9 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import pl.droidevs.books.Resource;
-import pl.droidevs.books.model.Book;
+import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.repository.BookFilter;
-import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 import static android.text.TextUtils.isEmpty;

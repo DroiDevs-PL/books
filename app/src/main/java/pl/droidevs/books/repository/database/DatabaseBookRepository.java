@@ -1,4 +1,4 @@
-package pl.droidevs.books.repository;
+package pl.droidevs.books.repository.database;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,14 +10,20 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.reactive.Schedulers;
+import pl.droidevs.books.repository.BookFilter;
+import pl.droidevs.books.repository.BookMapper;
+import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.collection.CollectionUtils;
 
+import static pl.droidevs.books.repository.BookMapper.getBookEntityIdFromBookId;
 import static pl.droidevs.books.repository.BookMapper.toEntity;
 
-public final class DatabaseBookRepository {
+public final class DatabaseBookRepository implements BookRepository {
     private final BookDao bookDao;
     private final Schedulers schedulers;
 
@@ -28,29 +34,39 @@ public final class DatabaseBookRepository {
         this.schedulers = schedulers;
     }
 
-    public Completable saveAll(Collection<Book> books) {
-        return Completable.fromAction(() -> {
-            for (Book book : books) {
-                bookDao.addBook(toEntity(book));
-            }
+    @Override
+    public Single<Book> save(Book book) {
+        return Single.fromCallable(() -> {
+            final long id = bookDao.addBook(toEntity(book));
+            book.setId(BookId.of(id));
+            return book;
         }).observeOn(schedulers.getObserver()).subscribeOn(schedulers.getSubscriber());
     }
 
-    public Completable save(Book book) {
-//        return Single.fromCallable(() -> {
-//            bookDao.addBook(toEntity(book));
-//            return book;
-//        });
+    public Single<Collection<Book>> saveAll(Collection<Book> books) {
+        return Single.fromCallable(() -> {
+            for (Book book : books) {
+                final long id = bookDao.addBook(toEntity(book));
+                book.setId(BookId.of(id));
+            }
 
-        return Completable.fromAction(() -> bookDao.addBook(toEntity(book)))
+            return books;
+        }).observeOn(schedulers.getObserver()).subscribeOn(schedulers.getSubscriber());
+    }
+
+    @Override
+    public Completable delete(Book book) {
+        return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)))
                 .subscribeOn(schedulers.getSubscriber())
                 .observeOn(schedulers.getObserver());
     }
 
-    public Completable remove(Book book) {
-        return Completable.fromAction(() -> bookDao.removeBook(toEntity(book)))
-                .subscribeOn(schedulers.getSubscriber())
-                .observeOn(schedulers.getObserver());
+    @Override
+    public Completable deleteAll(Collection<? extends Book> books) {
+        return Completable.fromAction(() -> {
+            final Collection<Long> ids = CollectionUtils.transform(books, book -> getBookEntityIdFromBookId(book.getId()));
+            bookDao.removeBooks(ids.toArray(new Long[ids.size()]));
+        }).subscribeOn(schedulers.getSubscriber()).observeOn(schedulers.getObserver());
     }
 
     public Flowable<Collection<Book>> fetchAll() {
@@ -61,6 +77,7 @@ public final class DatabaseBookRepository {
     }
 
     @NonNull
+    @Override
     public Flowable<Collection<Book>> fetchBy(@Nullable final BookFilter filter) {
         if (filter == null || filter.isEmpty()) {
             return fetchAll();
@@ -73,8 +90,9 @@ public final class DatabaseBookRepository {
     }
 
     @NonNull
-    public Maybe<Book> fetchBy(BookId bookId) {
-        long bookEntityId = BookMapper.getBookEntityIdFromBookId(bookId);
+    @Override
+    public Maybe<Book> fetchById(BookId bookId) {
+        long bookEntityId = getBookEntityIdFromBookId(bookId);
 
         return bookDao.getBookById(bookEntityId)
                 .map(BookMapper::toBook)

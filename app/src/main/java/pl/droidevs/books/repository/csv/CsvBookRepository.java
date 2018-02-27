@@ -16,11 +16,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
-import pl.droidevs.books.entity.BookEntity;
-import pl.droidevs.books.model.Book;
+import pl.droidevs.books.dao.BookEntity;
+import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.reactive.Schedulers;
 import pl.droidevs.books.repository.BookMapper;
 
@@ -31,7 +31,7 @@ public final class CsvBookRepository {
     private final Schedulers schedulers;
 
     @Inject
-    public CsvBookRepository(@NonNull final Schedulers schedulers) {
+    CsvBookRepository(@NonNull final Schedulers schedulers) {
         this.schedulers = schedulers;
     }
 
@@ -67,10 +67,12 @@ public final class CsvBookRepository {
         return books;
     }
 
-    public Completable saveAll(final Collection<Book> books) {
-        return Completable.fromAction(() -> {
+    public Single<Collection<Book>> saveAll(final Collection<Book> books) {
+        return Single.fromCallable(() -> {
             final File file = createFile();
             writeToFile(file, BookMapper.toEntities(books));
+
+            return books;
         })
                 .subscribeOn(schedulers.getSubscriber())
                 .observeOn(schedulers.getObserver());

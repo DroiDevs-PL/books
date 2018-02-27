@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.droidevs.books.entity.BookEntity;
+import pl.droidevs.books.dao.BookEntity;
 
 import static java.lang.reflect.Modifier.isStatic;
 

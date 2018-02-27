@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import pl.droidevs.books.entity.BookEntity;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.dao.BookEntity;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 
 public class BookMapper {
     private BookMapper() {
@@ -75,7 +75,7 @@ public class BookMapper {
         return entities;
     }
 
-    static long getBookEntityIdFromBookId(BookId bookId) {
+    public static long getBookEntityIdFromBookId(BookId bookId) {
         return Long.parseLong(bookId.getValue());
     }
 }

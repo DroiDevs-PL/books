@@ -7,9 +7,9 @@ import android.arch.lifecycle.MutableLiveData;
 import javax.inject.Inject;
 
 import pl.droidevs.books.Resource;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
-import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 import pl.droidevs.books.validators.BookInputValidator;
 
@@ -25,7 +25,7 @@ public final class SaveBookViewModel extends RxViewModel {
     private final DatabaseBookRepository bookRepository;
 
     private MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
-    private MutableLiveData<Resource<Void>> saveLiveData = new MutableLiveData<>();
+    private MutableLiveData<Resource<Book>> saveLiveData = new MutableLiveData<>();
 
     @Inject
     SaveBookViewModel(DatabaseBookRepository bookRepository) {
@@ -33,7 +33,7 @@ public final class SaveBookViewModel extends RxViewModel {
     }
 
     public LiveData<Resource<Book>> getBook() {
-        add(bookRepository.fetchBy(this.bookId).subscribe(
+        add(bookRepository.fetchById(bookId).subscribe(
                 book -> bookLiveData.setValue(Resource.success(book)),
                 throwable -> bookLiveData.setValue(Resource.error(throwable))
         ));
@@ -45,7 +45,7 @@ public final class SaveBookViewModel extends RxViewModel {
         this.bookId = bookId;
     }
 
-    public boolean isCoverUrlValid(String imageUrl) {
+    boolean isCoverUrlValid(String imageUrl) {
         return BookInputValidator.isCoverUrlValid(imageUrl);
     }
 
@@ -74,13 +74,18 @@ public final class SaveBookViewModel extends RxViewModel {
                 BookInputValidator.isTitleValid(title);
     }
 
-    LiveData<Resource<Void>> saveBook() {
+    LiveData<Resource<Book>> saveBook() {
         add(bookRepository.save(createBook())
-                .subscribe(() -> saveLiveData.setValue(Resource.success()),
+                .subscribe(
+                        book -> saveLiveData.setValue(Resource.success()),
                         throwable -> saveLiveData.setValue(Resource.error(throwable))
                 )
         );
 
+        return saveLiveData;
+    }
+
+    public LiveData<Resource<Book>> getSavedBook() {
         return saveLiveData;
     }
 

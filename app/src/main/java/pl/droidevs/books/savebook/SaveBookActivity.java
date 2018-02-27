@@ -31,8 +31,8 @@ import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.removebook.RemoveBookDialogFragment;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
 

@@ -38,8 +38,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.savebook.SaveBookActivity;
 
 import static pl.droidevs.books.Resource.Status.SUCCESS;
@@ -369,7 +369,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void setupViewModel() {
-        BookViewModel viewModel = ViewModelProviders
+        final BookViewModel viewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(BookViewModel.class);
 

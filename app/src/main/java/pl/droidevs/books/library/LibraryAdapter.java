@@ -19,8 +19,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.droidevs.books.R;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 
 import static com.bumptech.glide.Priority.HIGH;
 
@@ -59,13 +59,13 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
         notifyDataSetChanged();
     }
 
-    public void removeItem(int position, BookItemRemoveListener listener) {
+    void removeItem(int position, BookItemRemoveListener listener) {
         listener.onBookRemoved(this.books.get(position));
         this.books.remove(position);
         notifyItemRemoved(position);
     }
 
-    public void addItem(Book book, int position) {
+    void addItem(Book book, int position) {
         this.books.add(position, book);
         notifyItemInserted(position);
     }

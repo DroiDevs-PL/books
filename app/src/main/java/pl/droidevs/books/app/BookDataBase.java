@@ -4,7 +4,7 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
 import pl.droidevs.books.dao.BookDao;
-import pl.droidevs.books.entity.BookEntity;
+import pl.droidevs.books.dao.BookEntity;
 
 @Database(entities = {BookEntity.class}, version = 2)
 public abstract class BookDataBase extends RoomDatabase{

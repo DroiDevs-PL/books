@@ -7,9 +7,9 @@ import android.support.annotation.NonNull;
 import javax.inject.Inject;
 
 import pl.droidevs.books.Resource;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
-import pl.droidevs.books.repository.DatabaseBookRepository;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
+import pl.droidevs.books.repository.database.DatabaseBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 public final class BookViewModel extends RxViewModel {
@@ -23,7 +23,7 @@ public final class BookViewModel extends RxViewModel {
     }
 
     LiveData<Resource<Book>> getBook(BookId bookId) {
-        add(bookRepository.fetchBy(bookId)
+        add(bookRepository.fetchById(bookId)
                 .doOnSubscribe(it -> bookLiveData.setValue(Resource.loading()))
                 .subscribe(
                         book -> bookLiveData.setValue(Resource.success(book)),
