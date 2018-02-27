@@ -16,23 +16,38 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import pl.droidevs.books.dao.BookEntity;
 import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.reactive.Schedulers;
+import pl.droidevs.books.repository.BookFilter;
 import pl.droidevs.books.repository.BookMapper;
+import pl.droidevs.books.repository.BookRepository;
 
-public final class CsvBookRepository {
+public final class CsvBookRepository implements BookRepository {
     // TODO: There should be an external file path provider.
     private static final String FILE_NAME = "Books.csv";
 
     private final Schedulers schedulers;
 
     @Inject
-    CsvBookRepository(@NonNull final Schedulers schedulers) {
+    public CsvBookRepository(@NonNull final Schedulers schedulers) {
         this.schedulers = schedulers;
+    }
+
+    @Override
+    public Completable delete(Book entity) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public Completable deleteAll(Collection<? extends Book> entities) {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public Flowable<Collection<Book>> fetchAll() {
@@ -45,6 +60,16 @@ public final class CsvBookRepository {
         } catch (IOException e) {
             return Flowable.empty();
         }
+    }
+
+    @Override
+    public Maybe<Book> fetchById(BookId id) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @Override
+    public Single<Book> save(Book entity) {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     private File createDefault() throws IOException {
@@ -98,5 +123,10 @@ public final class CsvBookRepository {
                 csvBeanWriter.write(bookEntity, CsvHelper.getBookEntityCsvHeaders());
             }
         }
+    }
+
+    @Override
+    public Flowable<Collection<Book>> fetchBy(BookFilter filter) {
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 }

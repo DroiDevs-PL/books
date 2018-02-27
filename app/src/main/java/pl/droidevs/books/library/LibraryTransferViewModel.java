@@ -5,10 +5,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.repository.BookRepository;
-import pl.droidevs.books.repository.csv.CsvBookRepository;
 import pl.droidevs.books.ui.RxViewModel;
 
 public final class LibraryTransferViewModel extends RxViewModel {
@@ -16,11 +16,11 @@ public final class LibraryTransferViewModel extends RxViewModel {
     private final MutableLiveData<Resource<Void>> exportResult = new MutableLiveData<>();
     private final MutableLiveData<Resource<Void>> importResult = new MutableLiveData<>();
     private BookRepository databaseRepository;
-    private CsvBookRepository csvRepository;
+    private BookRepository csvRepository;
 
     @Inject
     LibraryTransferViewModel(@NonNull final BookRepository databaseRepository,
-                             @NonNull final CsvBookRepository csvRepository) {
+                             @Named("CSV") @NonNull final BookRepository csvRepository) {
         this.databaseRepository = databaseRepository;
         this.csvRepository = csvRepository;
     }
