@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,16 +41,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.exportimport.ExportFailedException;
-import pl.droidevs.books.exportimport.ExportImportViewModel;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.Resource;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
 import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.ui.SwipeCallback;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static pl.droidevs.books.Resource.Status.ERROR;
+import static pl.droidevs.books.Resource.Status.LOADING;
+import static pl.droidevs.books.Resource.Status.SUCCESS;
 import static pl.droidevs.books.library.BookActivity.BUNDLE_EXTRAS;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_AUTHOR_TRANSITION_NAME;
 import static pl.droidevs.books.library.BookActivity.EXTRAS_BOOK_ID;
@@ -71,6 +75,9 @@ public class LibraryActivity extends AppCompatActivity {
 
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
+
+    @BindView(R.id.tv_no_content)
+    TextView noBooks;
 
     @BindView(R.id.layout_progress)
     View progressBar;
@@ -214,31 +221,38 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void removeBook(Book book) {
-        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+        final RemoveBookViewModel removeBookViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(RemoveBookViewModel.class);
 
-        removeBookViewModel.wasAnError()
-                .observe(this, error ->
-                        Snackbar.make(floatingActionButton, error, Snackbar.LENGTH_LONG)
-                                .show());
-
-        removeBookViewModel.removeBook(book);
+        removeBookViewModel.removeBook(book)
+                .observe(this, resource -> {
+                            if (resource != null && resource.getStatus() == ERROR) {
+                                Snackbar.make(floatingActionButton, R.string.remove_book_error, Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                );
     }
-
 
     private void setupViewModel() {
         libraryViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(LibraryViewModel.class);
 
-        libraryViewModel.getBooks().observe(this, books -> {
-            hideProgress();
+        libraryViewModel.getBooks().observe(this, this::processResponse);
+    }
 
-            if (books != null) {
-                adapter.setItems(books);
-            }
-        });
+    private void processResponse(final Resource<Collection<Book>> resource) {
+        if (LOADING == resource.getStatus()) showProgress();
+        else hideProgress();
+
+        if (ERROR == resource.getStatus()) showErrorMessage(resource.getError());
+        else if (SUCCESS == resource.getStatus()) showBooks(resource.getData());
+    }
+
+    private void showProgress() {
+        progressBar.setVisibility(VISIBLE);
+        contentLayout.setVisibility(GONE);
     }
 
     private void hideProgress() {
@@ -246,9 +260,16 @@ public class LibraryActivity extends AppCompatActivity {
         contentLayout.setVisibility(VISIBLE);
     }
 
-    private void showProgress() {
-        progressBar.setVisibility(VISIBLE);
-        contentLayout.setVisibility(GONE);
+    private void showErrorMessage(final Throwable error) {
+        // You should map a throwable to error message here
+        displayMessage(R.string.error_fetching_failed);
+    }
+
+    private void showBooks(final Collection<Book> data) {
+        adapter.setItems(data);
+
+        noBooks.setText(libraryViewModel.isQuery() ? R.string.search_no_result : R.string.empty_library);
+        noBooks.setVisibility(data.isEmpty() ? VISIBLE : GONE);
     }
 
     @Override
@@ -317,16 +338,12 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void exportLibrary() {
-        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+        final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(ExportImportViewModel.class);
+                .get(LibraryTransferViewModel.class);
 
-        try {
-            exportImportViewModel.exportBooks();
-            displayMessage(R.string.message_export_successful);
-        } catch (ExportFailedException e) {
-            displayMessage(R.string.message_export_not_successful);
-        }
+        libraryTransferViewModel.exportBooks().observe(this, resource ->
+                handleBookTransfer(resource, R.string.message_export_successful, R.string.error_export_failed));
     }
 
     private void displayMessage(int messageResourceId) {
@@ -354,28 +371,20 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void importLibrary() {
-        final ExportImportViewModel exportImportViewModel = ViewModelProviders
+        final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
-                .get(ExportImportViewModel.class);
+                .get(LibraryTransferViewModel.class);
 
-        exportImportViewModel.wasImportSuccesfull().observe(this,
-                success -> {
-                    progressBar.setVisibility(GONE);
+        libraryTransferViewModel.importBooks().observe(this, resource ->
+                handleBookTransfer(resource, R.string.message_import_successful, R.string.error_import_failed));
+    }
 
-                    if (success) {
-                        displayMessage(R.string.message_import_successful);
-                    } else {
-                        displayMessage(R.string.message_import_not_successful);
-                    }
-                });
+    private void handleBookTransfer(final Resource<Void> resource, @StringRes int successMessageId, @StringRes int errorMessageId) {
+        if (LOADING == resource.getStatus()) showProgress();
+        else hideProgress();
 
-        try {
-            progressBar.setVisibility(VISIBLE);
-            exportImportViewModel.importBooks();
-        } catch (ExportFailedException e) {
-            progressBar.setVisibility(GONE);
-            displayMessage(R.string.message_import_not_successful);
-        }
+        if (SUCCESS == resource.getStatus()) displayMessage(successMessageId);
+        else if (ERROR == resource.getStatus()) displayMessage(errorMessageId);
     }
 
     private void requestReadStoragePermissions() {
@@ -395,7 +404,6 @@ public class LibraryActivity extends AppCompatActivity {
         }
 
         if (requestCode == REQUEST_PERMISSION_READ_FILE_CODE) {
-
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 importOptionSelected();
             } else {

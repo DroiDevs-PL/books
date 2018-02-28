@@ -8,7 +8,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import pl.droidevs.books.app.BookApplication;
+import pl.droidevs.books.reactive.Schedulers;
 
 /**
  * Module for application-wide dependencies.
@@ -25,5 +28,21 @@ public class AppModule {
     @Singleton
     SharedPreferences sharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @Singleton
+    Schedulers shedulers() {
+        return new Schedulers() {
+            @Override
+            public Scheduler getSubscriber() {
+                return io.reactivex.schedulers.Schedulers.newThread();
+            }
+
+            @Override
+            public Scheduler getObserver() {
+                return AndroidSchedulers.mainThread();
+            }
+        };
     }
 }

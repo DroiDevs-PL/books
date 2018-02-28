@@ -30,14 +30,12 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     }
 
     private Provider<? extends ViewModel> getCreatorFromCreatorSet(Class<?> modelClass) {
-
         for (Map.Entry<Class<? extends ViewModel>, Provider<ViewModel>> entry : creators.entrySet()) {
-
             if (modelClass.isAssignableFrom(entry.getKey())) {
                 return entry.getValue();
             }
         }
 
-        throw new IllegalArgumentException("unknown model class " + modelClass);
+        throw new IllegalArgumentException("Unknown model class " + modelClass);
     }
 }

@@ -13,16 +13,16 @@ public final class BookFilter {
     }
 
     @Nullable
-    String getTitle() {
+    public String getTitle() {
         return title;
     }
 
     @Nullable
-    String getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return TextUtils.isEmpty(title) && TextUtils.isEmpty(author);
     }
 

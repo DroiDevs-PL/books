@@ -3,23 +3,19 @@ package pl.droidevs.books.savebook;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 
 import javax.inject.Inject;
 
-import io.reactivex.CompletableObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.Resource;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.ui.RxViewModel;
 import pl.droidevs.books.validators.BookInputValidator;
 
-public class SaveBookViewModel extends ViewModel {
+public final class SaveBookViewModel extends RxViewModel {
 
     private BookId bookId;
-
     private String imageUrl;
     private String title;
     private String author;
@@ -28,30 +24,31 @@ public class SaveBookViewModel extends ViewModel {
 
     private final BookRepository bookRepository;
 
-    private MutableLiveData<Boolean> successWithSaving = new MutableLiveData<>();
+    private MutableLiveData<Resource<Book>> bookLiveData = new MutableLiveData<>();
 
     @Inject
-    public SaveBookViewModel(BookRepository bookRepository) {
+    SaveBookViewModel(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public LiveData<Book> getBook() {
-        return bookRepository.fetchBy(this.bookId);
-    }
+    public LiveData<Resource<Book>> getBook() {
+        add(bookRepository.fetchById(bookId).subscribe(
+                book -> bookLiveData.setValue(Resource.success(book)),
+                throwable -> bookLiveData.setValue(Resource.error(throwable))
+        ));
 
-    public LiveData<Boolean> wasSavingSuccessful() {
-        return successWithSaving;
+        return bookLiveData;
     }
 
     public void setBookId(BookId bookId) {
         this.bookId = bookId;
     }
 
-    public boolean isCoverUrlValid(String imageUrl) {
+    boolean isCoverUrlValid(String imageUrl) {
         return BookInputValidator.isCoverUrlValid(imageUrl);
     }
 
-    public void setImageUrl(String imageUrl) {
+    void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
@@ -63,7 +60,7 @@ public class SaveBookViewModel extends ViewModel {
         this.author = author;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -71,37 +68,24 @@ public class SaveBookViewModel extends ViewModel {
         this.category = category;
     }
 
-    public boolean isDataValid() {
+    boolean isDataValid() {
         return BookInputValidator.isAuthorValid(author) &&
                 BookInputValidator.isTitleValid(title);
     }
 
-    public void saveBook() {
-        this.bookRepository.save(createBook())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
+    LiveData<Resource<Book>> saveBook() {
+        add(bookRepository.save(createBook())
+                .subscribe(
+                        book -> bookLiveData.setValue(Resource.success()),
+                        throwable -> bookLiveData.setValue(Resource.error(throwable))
+                )
+        );
 
-                    @Override
-                    public void onSubscribe(Disposable d) {}
-
-                    @Override
-                    public void onComplete() {
-                        successWithSaving.postValue(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        successWithSaving.postValue(false);
-                    }
-                });
+        return bookLiveData;
     }
 
-    public Book createBook() {
-        Book book = new Book(bookId,
-                this.title,
-                this.author,
-                Book.Category.valueOf(this.category));
+    Book createBook() {
+        Book book = new Book(bookId, this.title, this.author, Book.Category.valueOf(this.category));
         book.setImageUrl(this.imageUrl);
         book.setDescription(this.description);
 

@@ -1,32 +1,34 @@
 package pl.droidevs.books.repository;
 
-import android.arch.core.util.Function;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
-import pl.droidevs.books.entity.BookEntity;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.dao.BookEntity;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 
-class BookMapper {
-
-    static final Function<List<BookEntity>, List<Book>> entitiesToBooksFunction =
-            input -> {
-                List<Book> books = new ArrayList<>(input.size());
-                for (BookEntity bookEntity : input) {
-                    books.add(BookMapper.toBook(bookEntity));
-                }
-
-                return books;
-            };
-
+public class BookMapper {
     private BookMapper() {
     }
 
-    static Book toBook(@Nullable final BookEntity entity) {
+    @NonNull
+    public static Collection<Book> toBooks(@Nullable final Collection<BookEntity> entities) {
+        if (entities == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<Book> books = new ArrayList<>(entities.size());
+        for (BookEntity entity : entities) books.add(toBook(entity));
+
+        return books;
+    }
+
+    @Nullable
+    public static Book toBook(@Nullable final BookEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -42,7 +44,11 @@ class BookMapper {
         return book;
     }
 
-    static BookEntity toEntity(@NonNull final Book book) {
+    public static BookEntity toEntity(@Nullable final Book book) {
+        if (book == null) {
+            return null;
+        }
+
         final BookEntity entity = new BookEntity();
         entity.setAuthor(book.getAuthor());
         entity.setCategory(book.getCategory().toString());
@@ -57,7 +63,19 @@ class BookMapper {
         return entity;
     }
 
-    static long getBookEntityIdFromBookId(BookId bookId) {
+    @NonNull
+    public static Collection<BookEntity> toEntities(@Nullable final Collection<Book> books) {
+        if (books == null) {
+            return Collections.emptyList();
+        }
+
+        final Collection<BookEntity> entities = new ArrayList<>(books.size());
+        for (Book book : books) entities.add(toEntity(book));
+
+        return entities;
+    }
+
+    public static long getBookEntityIdFromBookId(BookId bookId) {
         return Long.parseLong(bookId.getValue());
     }
 }
