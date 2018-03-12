@@ -30,8 +30,8 @@ public class LoginViewModel extends ViewModel {
 
     public void saveLogin(String login) {
         this.sharedPreferences
-                .edit()
-                .putString(SHARED_PREFERENCES_LOGIN_KEY, login)
-                .apply();
+            .edit()
+            .putString(SHARED_PREFERENCES_LOGIN_KEY, login)
+            .apply();
     }
 }

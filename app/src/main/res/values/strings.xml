@@ -2,8 +2,10 @@
     <string name="app_name">Books</string>
     <string name="label_thumbnail">Book thumbnail</string>
 
-    <string name="login_hint">Your login</string>
+    <string name="email_hint">Your email</string>
+    <string name="password_hint">Password</string>
     <string name="login_button">Login</string>
+    <string name="create_account_button">Create account</string>
 
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>

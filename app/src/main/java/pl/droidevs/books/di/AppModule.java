@@ -10,7 +10,9 @@ import dagger.Module;
 import dagger.Provides;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import pl.droidevs.books.R;
 import pl.droidevs.books.app.BookApplication;
+import pl.droidevs.books.firebase.auth.UserLogin;
 import pl.droidevs.books.reactive.Schedulers;
 
 /**
@@ -44,5 +46,11 @@ public class AppModule {
                 return AndroidSchedulers.mainThread();
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    UserLogin userLogin(Context context) {
+        return new UserLogin(context, context.getResources().getString(R.string.default_web_client_id));
     }
 }

@@ -16,19 +16,25 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.library.BookActivity;
+import pl.droidevs.books.firebase.auth.UserLogin;
 import pl.droidevs.books.library.LibraryActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    @BindView(R.id.login_edit_text)
+    @BindView(R.id.email_edit_text)
     EditText loginEditText;
 
     @BindView(R.id.login_button)
     Button loginButton;
 
+    @BindView(R.id.create_account_button)
+    Button createAccountButton;
+
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+
+    @Inject
+    UserLogin userLogin;
 
     private LoginViewModel loginViewModel;
 
@@ -51,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupViewModel() {
         this.loginViewModel = ViewModelProviders
-                .of(this, this.viewModelFactory)
-                .get(LoginViewModel.class);
+            .of(this, this.viewModelFactory)
+            .get(LoginViewModel.class);
     }
 
     private void showLibraryActivity() {
@@ -67,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         this.loginButton.setEnabled(shouldBeEnabled);
     }
 
-    @OnTextChanged(R.id.login_edit_text)
+    @OnTextChanged(R.id.email_edit_text)
     public void onInputChanged() {
         manageLoginButtonState();
     }
@@ -76,5 +82,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginButtonClicked() {
         this.loginViewModel.saveLogin(this.loginEditText.getText().toString());
         showLibraryActivity();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
