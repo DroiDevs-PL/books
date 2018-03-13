@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.email_edit_text)
     EditText loginEditText;
+
+    @BindView(R.id.password_edit_text)
+    EditText passwordEditText;
 
     @BindView(R.id.login_button)
     Button loginButton;
@@ -80,12 +84,19 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
-        this.loginViewModel.saveLogin(this.loginEditText.getText().toString());
-        showLibraryActivity();
+        userLogin.loginWithEmail(loginEditText.getText().toString(), passwordEditText.getText().toString());
+    }
+
+    @OnClick(R.id.create_account_button)
+    public void onCreateAccountButtonClicked() {
+        userLogin.createAccount(loginEditText.getText().toString(), passwordEditText.getText().toString()).subscribe(status ->
+            showLibraryActivity(), e ->
+            Toast.makeText(LoginActivity.this, "sam ting wong", Toast.LENGTH_SHORT).show());
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        userLogin.handleActivityResult(requestCode, resultCode, data);
     }
 }
