@@ -72,4 +72,7 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-all:1.3'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    // CircleImageView
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }
