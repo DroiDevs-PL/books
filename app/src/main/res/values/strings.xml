@@ -7,7 +7,7 @@
 
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
-    <string name="about">O aplikacji</string>
+    <string name="about">About</string>
 
     <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
     <string name="message_permission_denied_cant_import">We are not able to import library without permission.</string>
@@ -44,5 +44,15 @@
     <!--Searching book-->
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
+
+    <!-- About -->
+    <string name="about_project_description">Books is an android application that allow user to store information about books they owe or they\'ve read. It will allow to save basic book data like title, authors, category along with description or summary created by the user and personal rank. In the future it will allow users to share their libraries with friends and people nearby. They will be able to easily find and read reviews of book that would like to buy or read or even to borrow book from friends.</string>
+    <string name="about_project_title">About Project</string>
+    <string name="about_for_who_title">For who</string>
+    <string name="about_for_who_description">This application is for all of you that read a lot of books and want to easily store key thoughts about your readings. The idea of this application belongs to <b><a href="https://github.com/MichaelB-pl">@MichaelB-pl</a></b> whose wife loves to read.</string>
+    <string name="about_us_title">About us</string>
+    <string name="about_us_description">We are group of developers connected by <b>Google Developer Challenge Scholarship - Android Developer track</b>. We decided to work together to create great open-sourced app and learn from each other.</string>
+    <string name="about_our_team_title">Our team</string>
+    <string name="about_details">Details</string>
 
 </resources>

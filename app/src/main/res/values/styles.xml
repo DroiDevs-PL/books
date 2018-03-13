@@ -36,7 +36,7 @@
         <item name="backgroundTint">@color/colored_button</item>
     </style>
 
-    <style name="AccentColoredButton" parent="Base.Widget.AppCompat.Button.Colored"/>
+    <style name="AccentColoredButton" parent="Base.Widget.AppCompat.Button.Colored" />
 
     <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
         <item name="android:textSize">@dimen/expanded_toolbar_text_size</item>
@@ -44,6 +44,17 @@
 
     <style name="TransparentText" parent="@style/ExpandedAppBar">
         <item name="android:textColor">#00000000</item>
+    </style>
+
+
+    <style name="AboutTitleTextViewStyle" parent="AppTheme">
+        <item name="android:textColor">#000</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="AboutDescriptionTextViewStyle" parent="AppTheme">
+        <item name="android:textColor">#000</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_normal</item>
     </style>
 
 </resources>
