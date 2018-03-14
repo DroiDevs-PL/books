@@ -76,9 +76,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-//    Firebase login
+    // Firebase login
     implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.firebase:firebase-auth:11.8.0'
     implementation 'com.google.android.gms:play-services-auth:11.8.0'
+
+    // logging
+    implementation 'com.jakewharton.timber:timber:4.6.1'
 }
 apply plugin: 'com.google.gms.google-services'

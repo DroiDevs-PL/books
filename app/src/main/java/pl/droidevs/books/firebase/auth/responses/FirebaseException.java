@@ -8,25 +8,28 @@ public class FirebaseException {
     public static class WrongPasswordException extends Exception {
     }
 
-    public static class EmailAlreadyUsedException extends Throwable {
+    public static class EmailAlreadyUsedException extends Exception {
     }
 
-    public static class WeakPasswordException extends Throwable {
+    public static class WeakPasswordException extends Exception {
     }
 
-    public static class LoginFailedException extends Throwable {
+    public static class LoginFailedException extends Exception {
     }
 
-    public static class ResetPasswordException extends Throwable {
+    public static class ResetPasswordException extends Exception {
     }
 
-    public static class UserNotLoggedInException extends Throwable {
+    public static class UserNotLoggedInException extends Exception {
     }
 
-    public static class VerificationEmailSendingException extends Throwable {
+    public static class VerificationEmailSendingException extends Exception {
     }
 
-    public static class EmptyPhoneNumberException extends Throwable {
+    public static class EmptyPhoneNumberException extends Exception {
+    }
+
+    public static class InvalidUserException extends Exception {
     }
 
     public static class UnknownException extends Throwable {

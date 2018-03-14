@@ -49,4 +49,9 @@
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
     <string name="search_no_result">There are no books\nmatching your criteria.</string>
+    <string name="action_logout">logout</string>
+    <string name="skip">skip</string>
+    <string name="account_created_please_log_in">account created, please log in</string>
+    <string name="basic_error_text">There was an error</string>
+    <string name="logged_user_greeting">hello</string>
 </resources>

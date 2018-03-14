@@ -25,8 +25,10 @@ public class EmailProvider extends BaseProvider {
         return Single.create(emitter -> {
             String email = userCredentials.getEmail();
             String password = userCredentials.getPassword();
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 emitter.onError(new FirebaseException.EmptyEmailException());
+                return;
+            }
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task ->
                     loginTask(task, EmailAuthProvider.getCredential(email, password))
@@ -36,16 +38,17 @@ public class EmailProvider extends BaseProvider {
 
     public Single<Status> createAccount(String email, String password) {
         return Single.create(emitter -> {
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 emitter.onError(new FirebaseException.EmptyEmailException());
+                return;
+            }
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) emitter.onSuccess(Status.ACCOUNT_CREATED);
                 else {
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         handleCreateEmailAccountError(EmailAuthProvider.getCredential(email, password))
                             .subscribe(emitter::onSuccess, emitter::onError);
-                    }
-                    if (task.getException() instanceof FirebaseAuthWeakPasswordException) {
+                    } else if (task.getException() instanceof FirebaseAuthWeakPasswordException) {
                         emitter.onError(new FirebaseException.WeakPasswordException());
                     } else {
                         emitter.onError(new FirebaseException.UnknownException());

@@ -9,6 +9,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -29,15 +30,19 @@ abstract class BaseProvider {
         return Single.create(emitter -> {
             if (task.isSuccessful()) {
                 emitter.onSuccess(auth.getCurrentUser());
+                return;
             } else {
                 if (task.getException() instanceof FirebaseAuthUserCollisionException && newCredential != null) {
                     handleCreateEmailAccountError(newCredential)
                         .subscribe(
                             status -> emitter.onSuccess(auth.getCurrentUser()),
                             emitter::onError);
-                }
-                if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                     emitter.onError(new FirebaseException.WrongPasswordException());
+                } else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                    emitter.onError(new FirebaseException.InvalidUserException());
+                } else {
+                    emitter.onError(new FirebaseException.UnknownException());
                 }
             }
         });

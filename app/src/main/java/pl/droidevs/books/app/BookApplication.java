@@ -9,6 +9,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import pl.droidevs.books.di.DaggerAppComponent;
+import timber.log.Timber;
 
 public class BookApplication extends Application implements HasActivityInjector {
 
@@ -20,10 +21,15 @@ public class BookApplication extends Application implements HasActivityInjector 
         super.onCreate();
 
         DaggerAppComponent
-                .builder()
-                .application(this)
-                .build()
-                .inject(this);
+            .builder()
+            .application(this)
+            .build()
+            .inject(this);
+        initTimber();
+    }
+
+    private void initTimber() {
+        Timber.plant(new Timber.DebugTree());
     }
 
     @Override

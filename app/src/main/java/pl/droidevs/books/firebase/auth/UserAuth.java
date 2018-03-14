@@ -15,15 +15,15 @@ import pl.droidevs.books.firebase.auth.providers.EmailProvider;
 import pl.droidevs.books.firebase.auth.responses.FirebaseException;
 import pl.droidevs.books.firebase.auth.responses.Status;
 
-public class UserLogin implements IUserLogin {
+public class UserAuth implements IUserLogin {
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final EmailProvider emailProvider = new EmailProvider();
     private final AnonymousProvider anonymousProvider = new AnonymousProvider();
 
     @Inject
-    public UserLogin(Context context, String defaultWebClientId) {
-
+    public UserAuth(Context context, String defaultWebClientId) {
+        // context and defaultWebClientId are needed for Google and Facebook providers
     }
 
     @Override
