@@ -31,12 +31,13 @@ import pl.droidevs.books.savebook.SaveBookActivity;
 
 import static android.text.TextUtils.isEmpty;
 import static pl.droidevs.books.Resource.Status.SUCCESS;
+import static pl.droidevs.books.savebook.SaveBookActivity.EDIT_BOOK_REQUEST_CODE;
+import static pl.droidevs.books.savebook.SaveBookActivity.RESULT_BOOK_REMOVED;
 
 public class BookActivity extends AppCompatActivity {
     private static final String EXTRAS_BOOK_ID = "EXTRAS_BOOK_ID";
 
     private static final int BOOK_REQUEST = 711;
-    private static final int EDIT_BOOK_REQUEST_CODE = 205;
 
     private BookId bookId;
 
@@ -74,12 +75,6 @@ public class BookActivity extends AppCompatActivity {
         setupTransitionNames();
     }
 
-    private void setupTransitionNames() {
-        final TransitionNameProvider nameProvider = new TransitionNameProvider(bookId);
-        albumImageView.setTransitionName(nameProvider.getImageTransition());
-        authorTextView.setTransitionName(nameProvider.getAuthorTransition());
-    }
-
     private void setupActionBar() {
         setSupportActionBar(toolbar);
 
@@ -93,6 +88,12 @@ public class BookActivity extends AppCompatActivity {
         if (savedInstanceState != null)
             bookId = (BookId) savedInstanceState.getSerializable(EXTRAS_BOOK_ID);
         else bookId = (BookId) getIntent().getSerializableExtra(EXTRAS_BOOK_ID);
+    }
+
+    private void setupTransitionNames() {
+        final TransitionNameProvider nameProvider = new TransitionNameProvider(bookId);
+        albumImageView.setTransitionName(nameProvider.getImageTransition());
+        authorTextView.setTransitionName(nameProvider.getAuthorTransition());
     }
 
     @Override
@@ -111,11 +112,7 @@ public class BookActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.edit_book) {
-            Intent intent = new Intent(this, SaveBookActivity.class);
-            intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, getIntent().getSerializableExtra(EXTRAS_BOOK_ID));
-
-            startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE,
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+            SaveBookActivity.startForResult(this, bookId);
             return true;
         } else if (android.R.id.home == item.getItemId()) {
             onBackPressed();
@@ -129,7 +126,7 @@ public class BookActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == EDIT_BOOK_REQUEST_CODE && resultCode == SaveBookActivity.RESULT_BOOK_REMOVED) {
+        if (requestCode == EDIT_BOOK_REQUEST_CODE && resultCode == RESULT_BOOK_REMOVED) {
             finish();
         }
     }
@@ -188,7 +185,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     public static void startForResult(final Activity context, final BookId bookId, final ActivityOptionsCompat options) {
-        Intent intent = new Intent(context, BookActivity.class);
+        final Intent intent = new Intent(context, BookActivity.class);
         intent.putExtra(EXTRAS_BOOK_ID, bookId);
 
         ActivityCompat.startActivityForResult(context, intent, BOOK_REQUEST, options.toBundle());
