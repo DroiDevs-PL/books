@@ -11,7 +11,7 @@
         android:layout_height="1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@android:color/darker_gray"
+        android:background="#dadada"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -37,7 +37,8 @@
         app:layout_constraintStart_toEndOf="@+id/iv_avatar"
         app:layout_constraintTop_toTopOf="@+id/iv_avatar"
         tools:text="@tools:sample/full_names"
-        app:layout_constraintBottom_toTopOf="@+id/tv_nick"/>
+        app:layout_constraintBottom_toTopOf="@+id/tv_nick"
+        android:textColor="#000"/>
 
     <TextView
         android:id="@+id/tv_nick"

@@ -1,6 +1,7 @@
 package pl.droidevs.books.about;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,11 +25,17 @@ import pl.droidevs.books.R;
 
 public class OurTeamRVAdapter extends RecyclerView.Adapter<OurTeamRVAdapter.OurTeamRVAdapterViewHolder> {
     private final Context context;
+    private final teamClickListener teamClickListener;
 
     private final List<Contributor> team = Contributor.getTeam();
 
-    public OurTeamRVAdapter(Context context) {
+    public interface teamClickListener {
+        void onItemClick(int index);
+    }
+
+    public OurTeamRVAdapter(Context context, teamClickListener teamClickListener) {
         this.context = context;
+        this.teamClickListener = teamClickListener;
     }
 
     @Override
@@ -62,6 +69,8 @@ public class OurTeamRVAdapter extends RecyclerView.Adapter<OurTeamRVAdapter.OurT
             super(itemView);
 
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(view -> teamClickListener.onItemClick(getAdapterPosition()));
         }
 
         public void bind(@NonNull Contributor contributor) {

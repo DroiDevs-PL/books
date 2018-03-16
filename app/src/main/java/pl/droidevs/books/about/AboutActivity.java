@@ -1,8 +1,11 @@
 package pl.droidevs.books.about;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.util.List;
 
 import pl.droidevs.books.R;
 
@@ -33,5 +36,34 @@ public class AboutActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRAS_LAST_MAIN_POSITION, viewModel.lastMainPosition);
+    }
+
+    public void showContributorDetails(int index) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fl_about, ContributorFragment.newInstance(index), ContributorFragment.TAG)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        ContributorFragment myFragment = (ContributorFragment) getSupportFragmentManager().findFragmentByTag(ContributorFragment.TAG);
+        if (myFragment != null && myFragment.isVisible()) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for (Fragment fragment : fragments) {
+                if (fragment instanceof AboutFragment || fragment instanceof OurTeamFragment) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
+            }
+            getSupportFragmentManager().popBackStack();
+            /*getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fl_about, AboutVPFragment.newInstance(), AboutFragment.TAG)
+                    .commit();*/
+        } else {
+            super.onBackPressed();
+        }
+
     }
 }

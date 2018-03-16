@@ -75,4 +75,7 @@ dependencies {
 
     // CircleImageView
     compile 'de.hdodenhof:circleimageview:2.2.0'
+
+    // Sliding Activity
+    compile 'com.klinkerapps:sliding-activity:1.5.2'
 }

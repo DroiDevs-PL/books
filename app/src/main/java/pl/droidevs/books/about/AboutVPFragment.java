@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import pl.droidevs.books.R;
 
 public class AboutVPFragment extends Fragment {
+    public static final String TAG = AboutVPFragment.class.getSimpleName();
 
     @BindView(R.id.vp_about)
     ViewPager vpAbout;
