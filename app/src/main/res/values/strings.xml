@@ -54,4 +54,10 @@
     <string name="account_created_please_log_in">account created, please log in</string>
     <string name="basic_error_text">There was an error</string>
     <string name="logged_user_greeting">hello</string>
+    <string name="login_with_google">login with google</string>
+    <string name="or">or</string>
+    <string name="weak_password_error">weak password</string>
+    <string name="email_used_error">email already used</string>
+    <string name="wrong_password_error">wrong password</string>
+    <string name="invalid_user_error">invalid user</string>
 </resources>

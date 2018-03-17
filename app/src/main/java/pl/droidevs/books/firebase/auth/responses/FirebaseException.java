@@ -34,4 +34,7 @@ public class FirebaseException {
 
     public static class UnknownException extends Throwable {
     }
+
+    public static class DeveloperErrorException extends Throwable {
+    }
 }

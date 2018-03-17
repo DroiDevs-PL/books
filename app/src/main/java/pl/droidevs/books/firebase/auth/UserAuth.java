@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import io.reactivex.Single;
 import pl.droidevs.books.firebase.auth.providers.AnonymousProvider;
 import pl.droidevs.books.firebase.auth.providers.EmailProvider;
+import pl.droidevs.books.firebase.auth.providers.GoogleProvider;
 import pl.droidevs.books.firebase.auth.responses.FirebaseException;
 import pl.droidevs.books.firebase.auth.responses.Status;
 
@@ -20,25 +21,16 @@ public class UserAuth implements IUserLogin {
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final EmailProvider emailProvider = new EmailProvider();
     private final AnonymousProvider anonymousProvider = new AnonymousProvider();
+    private final GoogleProvider googleProvider = new GoogleProvider();
 
     @Inject
     public UserAuth(Context context, String defaultWebClientId) {
-        // context and defaultWebClientId are needed for Google and Facebook providers
+        googleProvider.init(context, defaultWebClientId);
     }
 
     @Override
     public Single<FirebaseUser> loginWithGoogle(Activity activity) {
-        return null;
-    }
-
-    @Override
-    public Single<FirebaseUser> loginWithFacebook(Activity activity) {
-        return null;
-    }
-
-    @Override
-    public Single<FirebaseUser> loginWithPhone(Activity activity, String phoneNumber) {
-        return null;
+        return googleProvider.login(activity);
     }
 
     @Override
@@ -73,6 +65,7 @@ public class UserAuth implements IUserLogin {
 
     @Override
     public void handleActivityResult(int requestCode, int resultCode, Intent data) {
+        googleProvider.handleLogin(data);
     }
 
     @Override

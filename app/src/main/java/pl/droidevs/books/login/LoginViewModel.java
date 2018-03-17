@@ -1,5 +1,6 @@
 package pl.droidevs.books.login;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 
@@ -52,5 +53,9 @@ public class LoginViewModel extends ViewModel {
 
     public Single<FirebaseUser> loginAnonymously() {
         return userAuth.loginAnonymously();
+    }
+
+    public  Single<FirebaseUser> loginWithGoogle(Activity activity) {
+        return userAuth.loginWithGoogle(activity);
     }
 }

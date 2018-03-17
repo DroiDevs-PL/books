@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 import io.reactivex.Single;
 import pl.droidevs.books.firebase.auth.responses.FirebaseException;
 import pl.droidevs.books.firebase.auth.responses.Status;
+import timber.log.Timber;
 
 abstract class BaseProvider {
 
@@ -68,12 +69,18 @@ abstract class BaseProvider {
         });
     }
 
-    protected void signIn(AuthCredential credential) {
+    Single<FirebaseUser> signIn(AuthCredential credential) {
         @Nullable FirebaseUser currentUser = auth.getCurrentUser();
-        if ((currentUser != null && (currentUser.isAnonymous()) || currentUser.getProviders().contains(credential.getProvider()))) {
-            auth.signInWithCredential(credential).addOnCompleteListener(task -> loginTask(task, credential));
-        } else {
-            currentUser.linkWithCredential(credential).addOnCompleteListener(task -> loginTask(task, credential));
-        }
+        Timber.d("current user: %s", currentUser);
+        return Single.create(emmiter -> {
+            if (currentUser == null) throw new FirebaseException.UserNotLoggedInException();
+            if (currentUser.isAnonymous() || currentUser.getProviders().contains(credential.getProvider())) {
+                auth.signInWithCredential(credential).addOnCompleteListener(task -> loginTask(task, credential)
+                    .subscribe(emmiter::onSuccess, emmiter::onError));
+            } else {
+                currentUser.linkWithCredential(credential).addOnCompleteListener(task -> loginTask(task, credential)
+                    .subscribe(emmiter::onSuccess, emmiter::onError));
+            }
+        });
     }
 }

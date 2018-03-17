@@ -10,12 +10,7 @@ import pl.droidevs.books.firebase.auth.responses.Status;
 
 public interface IUserLogin {
 
-    // TODO: 2018-03-12 maybe login methods should return obserbables?
     Single<FirebaseUser> loginWithGoogle(Activity activity);
-
-    Single<FirebaseUser> loginWithFacebook(Activity activity);
-
-    Single<FirebaseUser> loginWithPhone(Activity activity, String phoneNumber);
 
     Single<FirebaseUser> loginWithEmail(String email, String password);
 

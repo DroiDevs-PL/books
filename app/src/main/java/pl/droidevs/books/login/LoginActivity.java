@@ -20,6 +20,7 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
+import pl.droidevs.books.firebase.auth.responses.FirebaseException;
 import pl.droidevs.books.firebase.auth.responses.Status;
 import pl.droidevs.books.library.LibraryActivity;
 import timber.log.Timber;
@@ -27,7 +28,7 @@ import timber.log.Timber;
 public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.email_edit_text)
-    EditText loginEditText;
+    EditText emailEditText;
 
     @BindView(R.id.password_edit_text)
     EditText passwordEditText;
@@ -43,6 +44,9 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.create_account_button)
     Button createAccountButton;
+
+    @BindView(R.id.google_login)
+    Button googleLoginButton;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -74,13 +78,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLibraryActivity(FirebaseUser user) {
         hideProgressBar();
-        Toast.makeText(this, getString(R.string.logged_user_greeting) + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.logged_user_greeting) + " " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, LibraryActivity.class));
         finish();
     }
 
     private void manageLoginButtonState() {
-        String email = this.loginEditText.getText().toString();
+        String email = this.emailEditText.getText().toString();
         String password = this.passwordEditText.getText().toString();
         boolean shouldBeEnabled = this.loginViewModel.isEmailValid(email)
             && this.loginViewModel.isPasswordValid(password);
@@ -97,20 +101,30 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.login_button)
     public void onLoginButtonClicked() {
         showProgressBar();
-        this.loginViewModel.loginWithEmail(loginEditText.getText().toString(), passwordEditText.getText().toString())
+        this.loginViewModel.loginWithEmail(emailEditText.getText().toString(), passwordEditText.getText().toString())
             .subscribe(this::showLibraryActivity, this::handleError);
     }
 
     private void handleError(Throwable error) {
         hideProgressBar();
         Timber.e(error);
-        Toast.makeText(this, R.string.basic_error_text, Toast.LENGTH_SHORT).show();
+        if (error instanceof FirebaseException.WeakPasswordException) {
+            passwordEditText.setError(getString(R.string.weak_password_error));
+        } else if (error instanceof FirebaseException.EmailAlreadyUsedException) {
+            emailEditText.setError(getString(R.string.email_used_error));
+        } else if (error instanceof FirebaseException.WrongPasswordException) {
+            passwordEditText.setError(getString(R.string.wrong_password_error));
+        } else if (error instanceof FirebaseException.InvalidUserException) {
+            emailEditText.setError(getString(R.string.invalid_user_error));
+        } else {
+            Toast.makeText(this, R.string.basic_error_text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.create_account_button)
     public void onCreateAccountButtonClicked() {
         showProgressBar();
-        this.loginViewModel.createAccount(loginEditText.getText().toString(), passwordEditText.getText().toString())
+        this.loginViewModel.createAccount(emailEditText.getText().toString(), passwordEditText.getText().toString())
             .subscribe(this::handleCreatedUser, this::handleError);
     }
 
@@ -124,6 +138,12 @@ public class LoginActivity extends AppCompatActivity {
     public void loginAnonymously() {
         showProgressBar();
         loginViewModel.loginAnonymously().subscribe(this::showLibraryActivity, this::handleError);
+    }
+
+    @OnClick(R.id.google_login)
+    public void loginWithGoogle() {
+        showProgressBar();
+        loginViewModel.loginWithGoogle(this).subscribe(this::showLibraryActivity, this::handleError);
     }
 
     @Override
