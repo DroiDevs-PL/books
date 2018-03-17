@@ -55,4 +55,9 @@
     <string name="about_our_team_title">Our team</string>
     <string name="about_details">Details</string>
 
+    <string name="see_github_repositories">See GitHub repositories</string>
+    <string name="see_linkedin_profile">See LinkedIn profile</string>
+    <string name="see_other_android_apps">See other Android apps</string>
+    <string name="see_website">See website</string>
+
 </resources>
