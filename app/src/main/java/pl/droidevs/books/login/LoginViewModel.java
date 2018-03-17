@@ -1,37 +1,61 @@
 package pl.droidevs.books.login;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
-import android.content.SharedPreferences;
+import android.content.Intent;
+
+import com.google.firebase.auth.FirebaseUser;
 
 import javax.inject.Inject;
 
-import pl.droidevs.books.validators.LoginValidator;
+import io.reactivex.Single;
+import pl.droidevs.books.firebase.auth.UserAuth;
+import pl.droidevs.books.firebase.auth.responses.Status;
+import pl.droidevs.books.validators.EmailValidator;
+import pl.droidevs.books.validators.PasswordValidator;
 
 public class LoginViewModel extends ViewModel {
 
-    private static final String SHARED_PREFERENCES_LOGIN_KEY = "login";
-
-    SharedPreferences sharedPreferences;
+    @Inject
+    UserAuth userAuth;
 
     @Inject
-    public LoginViewModel(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public LoginViewModel() {
     }
 
-    //TODO in future should check if user is logged in
-    //TODO now is checking if user provided login
-    public boolean isLoggedIn() {
-        return this.sharedPreferences.getString(SHARED_PREFERENCES_LOGIN_KEY, null) != null;
+    public boolean isUserLogged() {
+        return userAuth.getUser() != null;
     }
 
-    public boolean isInputValid(String login) {
-        return LoginValidator.isLoginValid(login);
+    public FirebaseUser getUser() {
+        return userAuth.getUser();
     }
 
-    public void saveLogin(String login) {
-        this.sharedPreferences
-                .edit()
-                .putString(SHARED_PREFERENCES_LOGIN_KEY, login)
-                .apply();
+    public boolean isEmailValid(String email) {
+        return EmailValidator.isValid(email);
+    }
+
+    public boolean isPasswordValid(String password) {
+        return PasswordValidator.isValid(password);
+    }
+
+    public void handleActivityResult(int requestCode, int resultCode, Intent data) {
+        userAuth.handleActivityResult(requestCode, resultCode, data);
+    }
+
+    public Single<FirebaseUser> loginWithEmail(String email, String password) {
+        return userAuth.loginWithEmail(email, password);
+    }
+
+    public Single<Status> createAccount(String email, String password) {
+        return userAuth.createAccount(email, password);
+    }
+
+    public Single<FirebaseUser> loginAnonymously() {
+        return userAuth.loginAnonymously();
+    }
+
+    public  Single<FirebaseUser> loginWithGoogle(Activity activity) {
+        return userAuth.loginWithGoogle(activity);
     }
 }

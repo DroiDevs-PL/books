@@ -2,8 +2,10 @@
     <string name="app_name">Books</string>
     <string name="label_thumbnail">Book thumbnail</string>
 
-    <string name="login_hint">Your login</string>
+    <string name="email_hint">Your email</string>
+    <string name="password_hint">Password</string>
     <string name="login_button">Login</string>
+    <string name="create_account_button">Create account</string>
 
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
@@ -47,4 +49,15 @@
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
     <string name="search_no_result">There are no books\nmatching your criteria.</string>
+    <string name="action_logout">logout</string>
+    <string name="skip">skip</string>
+    <string name="account_created_please_log_in">account created, please log in</string>
+    <string name="basic_error_text">There was an error</string>
+    <string name="logged_user_greeting">hello</string>
+    <string name="login_with_google">login with google</string>
+    <string name="or">or</string>
+    <string name="weak_password_error">weak password</string>
+    <string name="email_used_error">email already used</string>
+    <string name="wrong_password_error">wrong password</string>
+    <string name="invalid_user_error">invalid user</string>
 </resources>

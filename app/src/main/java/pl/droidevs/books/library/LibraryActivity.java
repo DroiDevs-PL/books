@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,8 @@ import pl.droidevs.books.R;
 import pl.droidevs.books.Resource;
 import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.domain.BookId;
+import pl.droidevs.books.firebase.auth.UserAuth;
+import pl.droidevs.books.login.LoginActivity;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
 import pl.droidevs.books.savebook.SaveBookActivity;
 import pl.droidevs.books.ui.SwipeCallback;
@@ -67,27 +70,21 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_SAVE_FILE_CODE = 501;
     private static final int REQUEST_PERMISSION_READ_FILE_CODE = 502;
     private static final int BOOK_REQUEST = 711;
-
-    private SearchView searchView;
-
     @BindView(R.id.layout_library_content)
     View contentLayout;
-
     @BindView(R.id.layout_books)
     RecyclerView recyclerView;
-
     @BindView(R.id.tv_no_content)
     TextView noBooks;
-
     @BindView(R.id.layout_progress)
     View progressBar;
-
     @BindView(R.id.button_add_book)
     FloatingActionButton floatingActionButton;
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
+    @Inject
+    UserAuth userAuth;
+    private SearchView searchView;
     private LibraryAdapter adapter;
     private LibraryViewModel libraryViewModel;
 
@@ -104,7 +101,7 @@ public class LibraryActivity extends AppCompatActivity {
         setupViewModel();
 
         floatingActionButton.setOnClickListener(
-                view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
+            view -> startActivity(new Intent(this, SaveBookActivity.class), createSaveActivityOptions().toBundle()));
 
         showProgress();
     }
@@ -148,9 +145,9 @@ public class LibraryActivity extends AppCompatActivity {
     private void setupAdapter() {
         adapter = new LibraryAdapter();
         adapter.setItemClickListener((view, bookId, index) -> ActivityCompat.startActivityForResult(this,
-                createBookIntent(view, index, bookId),
-                BOOK_REQUEST,
-                createBookActivityOptions(view).toBundle()));
+            createBookIntent(view, index, bookId),
+            BOOK_REQUEST,
+            createBookActivityOptions(view).toBundle()));
     }
 
     private Intent createBookIntent(View view, int index, BookId bookId) {
@@ -178,10 +175,10 @@ public class LibraryActivity extends AppCompatActivity {
 
     private ActivityOptionsCompat createBookActivityOptions(View view) {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this,
-                new Pair<>(view.findViewById(R.id.iv_book), view.findViewById(R.id.iv_book).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_title), view.findViewById(R.id.tv_book_title).getTransitionName()),
-                new Pair<>(view.findViewById(R.id.tv_book_author), view.findViewById(R.id.tv_book_author).getTransitionName())
+            this,
+            new Pair<>(view.findViewById(R.id.iv_book), view.findViewById(R.id.iv_book).getTransitionName()),
+            new Pair<>(view.findViewById(R.id.tv_book_title), view.findViewById(R.id.tv_book_title).getTransitionName()),
+            new Pair<>(view.findViewById(R.id.tv_book_author), view.findViewById(R.id.tv_book_author).getTransitionName())
         );
     }
 
@@ -199,7 +196,7 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public void onSwiped(int position) {
                 adapter.removeItem(position,
-                        book -> showRemoveBookSnackbar(book, position));
+                    book -> showRemoveBookSnackbar(book, position));
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeCallback);
@@ -208,36 +205,36 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void showRemoveBookSnackbar(@NonNull Book book, int position) {
         Snackbar.make(floatingActionButton, R.string.removing_book_snackbar, Snackbar.LENGTH_LONG)
-                .setAction(R.string.undo, v -> adapter.addItem(book, position))
-                .addCallback(
-                        new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                            @Override
-                            public void onDismissed(Snackbar transientBottomBar, int event) {
-                                super.onDismissed(transientBottomBar, event);
-                                removeBook(book);
-                            }
-                        })
-                .show();
+            .setAction(R.string.undo, v -> adapter.addItem(book, position))
+            .addCallback(
+                new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+                        removeBook(book);
+                    }
+                })
+            .show();
     }
 
     private void removeBook(Book book) {
         final RemoveBookViewModel removeBookViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(RemoveBookViewModel.class);
+            .of(this, viewModelFactory)
+            .get(RemoveBookViewModel.class);
 
         removeBookViewModel.removeBook(book)
-                .observe(this, resource -> {
-                            if (resource != null && resource.getStatus() == ERROR) {
-                                Snackbar.make(floatingActionButton, R.string.remove_book_error, Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-                );
+            .observe(this, resource -> {
+                    if (resource != null && resource.getStatus() == ERROR) {
+                        Snackbar.make(floatingActionButton, R.string.remove_book_error, Snackbar.LENGTH_LONG).show();
+                    }
+                }
+            );
     }
 
     private void setupViewModel() {
         libraryViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(LibraryViewModel.class);
+            .of(this, viewModelFactory)
+            .get(LibraryViewModel.class);
 
         libraryViewModel.getBooks().observe(this, this::processResponse);
     }
@@ -320,8 +317,18 @@ public class LibraryActivity extends AppCompatActivity {
 
             return true;
         }
+        if (item.getItemId() == R.id.logout) {
+            logoutUser();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logoutUser() {
+        userAuth.logout();
+        Toast.makeText(this, "user logged out", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
     private void exportOptionSelected() {
@@ -334,27 +341,27 @@ public class LibraryActivity extends AppCompatActivity {
 
     private boolean hasWriteStoragePermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
+            == PackageManager.PERMISSION_GRANTED;
     }
 
     private void exportLibrary() {
         final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(LibraryTransferViewModel.class);
+            .of(this, viewModelFactory)
+            .get(LibraryTransferViewModel.class);
 
         libraryTransferViewModel.exportBooks().observe(this, resource ->
-                handleBookTransfer(resource, R.string.message_export_successful, R.string.error_export_failed));
+            handleBookTransfer(resource, R.string.message_export_successful, R.string.error_export_failed));
     }
 
     private void displayMessage(int messageResourceId) {
         Snackbar.make(contentLayout, messageResourceId, Snackbar.LENGTH_SHORT)
-                .show();
+            .show();
     }
 
     private void requestWriteStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                REQUEST_PERMISSION_SAVE_FILE_CODE);
+            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            REQUEST_PERMISSION_SAVE_FILE_CODE);
     }
 
     void importOptionSelected() {
@@ -367,16 +374,16 @@ public class LibraryActivity extends AppCompatActivity {
 
     private boolean hasReadStoragePermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
+            == PackageManager.PERMISSION_GRANTED;
     }
 
     private void importLibrary() {
         final LibraryTransferViewModel libraryTransferViewModel = ViewModelProviders
-                .of(this, viewModelFactory)
-                .get(LibraryTransferViewModel.class);
+            .of(this, viewModelFactory)
+            .get(LibraryTransferViewModel.class);
 
         libraryTransferViewModel.importBooks().observe(this, resource ->
-                handleBookTransfer(resource, R.string.message_import_successful, R.string.error_import_failed));
+            handleBookTransfer(resource, R.string.message_import_successful, R.string.error_import_failed));
     }
 
     private void handleBookTransfer(final Resource<Void> resource, @StringRes int successMessageId, @StringRes int errorMessageId) {
@@ -389,8 +396,8 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void requestReadStoragePermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                REQUEST_PERMISSION_READ_FILE_CODE);
+            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            REQUEST_PERMISSION_READ_FILE_CODE);
     }
 
     @Override

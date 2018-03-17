@@ -1,0 +1,5 @@
+package pl.droidevs.books.firebase.auth.responses;
+
+public enum Status {
+    USER_LOGGED, ACCOUNT_CREATED, USER_LOGGED_OUT, RESET_PASSWORD_EMAIL_SEND, VERIFICATION_EMAIL_SEND, VERIFICATION_CODE_SEND
+}
