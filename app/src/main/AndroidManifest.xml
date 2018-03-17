@@ -26,10 +26,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".library.LibraryActivity" />
+        <activity
+            android:name=".library.LibraryActivity"
+            android:launchMode="singleTop" />
 
         <activity
             android:name=".library.BookActivity"
+            android:parentActivityName=".library.LibraryActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity

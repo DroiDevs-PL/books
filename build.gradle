@@ -2,7 +2,7 @@
 
 project.ext {
     daggerVersion = "2.11"
-    supportVersion = "27.0.2"
+    supportVersion = "27.1.0"
     glideVersion = "4.4.0"
 }
 
