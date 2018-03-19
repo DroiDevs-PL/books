@@ -46,7 +46,7 @@ public class AboutVPAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return context.getString(R.string.about_details);
+                return context.getString(R.string.about);
             case 1:
                 return context.getString(R.string.about_our_team_title);
         }
