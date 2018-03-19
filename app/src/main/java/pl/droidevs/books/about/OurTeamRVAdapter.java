@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,7 +31,7 @@ public class OurTeamRVAdapter extends RecyclerView.Adapter<OurTeamRVAdapter.OurT
     private final List<Contributor> team = Contributor.getTeam();
 
     public interface teamClickListener {
-        void onItemClick(int index);
+        void onItemClick(ImageView imageView, int index);
     }
 
     public OurTeamRVAdapter(Context context, teamClickListener teamClickListener) {
@@ -70,12 +71,13 @@ public class OurTeamRVAdapter extends RecyclerView.Adapter<OurTeamRVAdapter.OurT
 
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(view -> teamClickListener.onItemClick(getAdapterPosition()));
+            itemView.setOnClickListener(view -> teamClickListener.onItemClick(ivAvatar, getAdapterPosition()));
         }
 
         public void bind(@NonNull Contributor contributor) {
             tvName.setText(contributor.getName());
             tvNick.setText(contributor.getNick());
+            ivAvatar.setTransitionName(context.getResources().getString(R.string.iv_avatar_transition_name) + "_" + getAdapterPosition());
 
             Glide.with(context).load(contributor.getResourceImage()).into(ivAvatar);
         }

@@ -60,4 +60,8 @@
     <string name="see_other_android_apps">See other Android apps</string>
     <string name="see_website">See website</string>
 
+    <!-- Transitions -->
+    <string name="iv_avatar_transition_name">iv_avatar</string>
+    <string name="cl_card_transition_name">cl_card</string>
+
 </resources>

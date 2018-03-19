@@ -1,11 +1,16 @@
 package pl.droidevs.books.about;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.transition.Transition;
+import android.support.transition.TransitionInflater;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.SharedElementCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +34,11 @@ import pl.droidevs.books.R;
 public class ContributorFragment extends Fragment {
     public static final String TAG = ContributorFragment.class.getSimpleName();
 
-    private static final String CONTRIBUTOR_INDEX = "CONTRIBUTOR_INDEX";
+    private AboutViewModel viewModel;
+
+
+    @BindView(R.id.cl_card)
+    ConstraintLayout clCard;
 
     @BindView(R.id.iv_avatar)
     ImageView ivAvatar;
@@ -61,11 +73,8 @@ public class ContributorFragment extends Fragment {
     @BindView(R.id.ll_www)
     LinearLayout llWww;
 
-    public static ContributorFragment newInstance(int contributorIndex) {
+    public static ContributorFragment newInstance() {
         ContributorFragment fragment = new ContributorFragment();
-        Bundle args = new Bundle();
-        args.putInt(CONTRIBUTOR_INDEX, contributorIndex);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -74,40 +83,30 @@ public class ContributorFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contributor, container, false);
         ButterKnife.bind(this, view);
+        viewModel = ViewModelProviders.of(getActivity()).get(AboutViewModel.class);
 
-        Bundle args = getArguments();
-        if (args != null) {
-            int contributorIndex = args.getInt(CONTRIBUTOR_INDEX);
-            Contributor contributor = Contributor.getTeam().get(contributorIndex);
-            setData(contributor);
+        viewModel.getSelectedContributorIndex().observe(this, index -> {
+            Contributor contributor = Contributor.getTeam().get(index);
+            setData(contributor, index);
+        });
+
+        if (savedInstanceState == null) {
+            postponeEnterTransition();
         }
 
         return view;
     }
 
-    /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_contributor);
-        ButterKnife.bind(this);
-    }*/
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        llGitHub.postDelayed(() -> startPostponedEnterTransition(), 100);
+    }
 
-   /* @Override
-    public void init(Bundle savedInstanceState) {
-        setTitle("Activity Title");
-
-        setPrimaryColors(
-                getResources().getColor(R.color.colorPrimary),
-                getResources().getColor(R.color.colorPrimaryDark)
-        );
-
-        setContentView(R.layout.fragment_contributor);
-        ButterKnife.bind(this);
-    }*/
-
-    private void setData(Contributor contributor) {
+    private void setData(Contributor contributor, int index) {
         tvName.setText(contributor.getName());
         tvNick.setText(contributor.getNick());
+        ivAvatar.setTransitionName(getContext().getResources().getString(R.string.iv_avatar_transition_name) + "_" + index);
 
         llGitHub.setOnClickListener(view -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(contributor.getGithubUrl()));

@@ -1,5 +1,7 @@
 package pl.droidevs.books.about;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 /**
@@ -7,5 +9,20 @@ import android.arch.lifecycle.ViewModel;
  */
 
 public class AboutViewModel extends ViewModel {
-    public int lastMainPosition = 0;
+    private MutableLiveData<Integer> selectedContributorIndex;
+
+    public LiveData<Integer> getSelectedContributorIndex() {
+        if (selectedContributorIndex == null) {
+            selectedContributorIndex = new MutableLiveData<>();
+            selectedContributorIndex.setValue(0);
+        }
+        return selectedContributorIndex;
+    }
+
+    public void selectContributor(int index) {
+        if (selectedContributorIndex == null) {
+            selectedContributorIndex = new MutableLiveData<>();
+        }
+        selectedContributorIndex.postValue(index);
+    }
 }

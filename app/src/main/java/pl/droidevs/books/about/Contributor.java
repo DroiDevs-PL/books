@@ -23,9 +23,9 @@ public class Contributor {
 
 
     private Contributor(String name, String nick, int resourceImage, String githubUrl,
-                       @Nullable String linkedInUrl, @Nullable String googlePlayStoreUrl, @Nullable String websiteUrl) {
+                        @Nullable String linkedInUrl, @Nullable String googlePlayStoreUrl, @Nullable String websiteUrl) {
         this.name = name;
-        this.nick = nick;
+        this.nick = "@" + nick;
         this.resourceImage = resourceImage;
         this.githubUrl = githubUrl;
         this.linkedInUrl = linkedInUrl;
