@@ -1,11 +1,15 @@
 package pl.droidevs.books.savebook;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.view.Menu;
@@ -42,8 +46,9 @@ import static pl.droidevs.books.Resource.Status.SUCCESS;
 
 public class SaveBookActivity extends AppCompatActivity implements RemoveBookDialogFragment.OnRemoveListener {
 
-    public static final String BOOK_ID_EXTRA = "book id";
+    private static final String BOOK_ID_EXTRA = "book id";
     public static final int RESULT_BOOK_REMOVED = 302;
+    public static final int EDIT_BOOK_REQUEST_CODE = 205;
 
     @BindView(R.id.addBookConstraintLayout)
     ConstraintLayout container;
@@ -127,13 +132,13 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     private void setupForEdit() {
         saveBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
         saveBookViewModel.getBook().observe(this, resource -> {
-            if (resource != null) {
-                if (resource.getStatus() == SUCCESS) {
-                    showBook(resource.getData());
-                } else if (resource.getStatus() == ERROR) {
-                    Snackbar.make(container, R.string.no_book, Snackbar.LENGTH_SHORT).show();
-                    finish();
-                }
+            if (resource == null) return;
+
+            if (resource.getStatus() == SUCCESS) {
+                showBook(resource.getData());
+            } else if (resource.getStatus() == ERROR) {
+                Snackbar.make(container, R.string.no_book, Snackbar.LENGTH_SHORT).show();
+                finish();
             }
         });
 
@@ -199,12 +204,12 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         if (saveBookViewModel.isDataValid()) {
             saveBookViewModel.saveBook()
                     .observe(this, resource -> {
-                        if (resource != null) {
-                            if (resource.getStatus() == SUCCESS) {
-                                finish();
-                            } else if (resource.getStatus() == ERROR) {
-                                displaySnackBar(R.string.saving_book_error);
-                            }
+                        if (resource == null) return;
+
+                        if (resource.getStatus() == SUCCESS) {
+                            finish();
+                        } else if (resource.getStatus() == ERROR) {
+                            displaySnackBar(R.string.saving_book_error);
                         }
                     });
         }
@@ -233,5 +238,13 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
         setResult(RESULT_BOOK_REMOVED);
         finish();
+    }
+
+    public static void startForResult(@NonNull final Activity context, @NonNull final BookId bookId) {
+        Intent intent = new Intent(context, SaveBookActivity.class);
+        intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, bookId);
+
+        context.startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(context).toBundle());
     }
 }

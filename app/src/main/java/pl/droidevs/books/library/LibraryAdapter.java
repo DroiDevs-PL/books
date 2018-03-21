@@ -19,6 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.droidevs.books.R;
+import pl.droidevs.books.animation.TransitionNameProvider;
 import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.domain.BookId;
 
@@ -37,12 +38,8 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
     }
 
     @Override
-    public void onBindViewHolder(BookViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         holder.bind(books.get(position));
-
-        holder.ivBook.setTransitionName("image_" + position);
-        holder.tvBookTitle.setTransitionName("title_" + position);
-        holder.tvBookAuthor.setTransitionName("author_" + position);
     }
 
     @Override
@@ -72,7 +69,7 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
     @FunctionalInterface
     public interface BookItemClickListener {
-        void onBookClicked(@NonNull View view, @NonNull BookId bookId, @NonNull Integer index);
+        void onBookClicked(@NonNull BookId bookId, @NonNull View view);
     }
 
     @FunctionalInterface
@@ -84,10 +81,13 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
 
         @BindView(R.id.tv_book_title)
         TextView tvBookTitle;
+
         @BindView(R.id.tv_book_author)
         TextView tvBookAuthor;
+
         @BindView(R.id.iv_book)
         ImageView ivBook;
+
         @Nullable
         private BookId bookId;
 
@@ -97,17 +97,31 @@ final class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.BookViewH
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(view -> {
                 if (onClickListener != null && bookId != null) {
-                    onClickListener.onBookClicked(itemView, bookId, getAdapterPosition());
+                    onClickListener.onBookClicked(bookId, itemView);
                 }
             });
         }
 
         void bind(@NonNull Book book) {
             bookId = book.getId();
+            setupTransitionNames();
+            bindHeaders(book);
+            loadCover(book);
+        }
 
+        private void setupTransitionNames() {
+            TransitionNameProvider nameProvider = new TransitionNameProvider(bookId);
+            ivBook.setTransitionName(nameProvider.getImageTransition());
+            tvBookTitle.setTransitionName(nameProvider.getTitleTransition());
+            tvBookAuthor.setTransitionName(nameProvider.getAuthorTransition());
+        }
+
+        private void bindHeaders(@NonNull Book book) {
             tvBookTitle.setText(book.getTitle());
             tvBookAuthor.setText(book.getAuthor());
+        }
 
+        private void loadCover(@NonNull Book book) {
             Glide.with(ivBook.getContext())
                     .load(book.getImageUrl())
                     .apply(new RequestOptions()

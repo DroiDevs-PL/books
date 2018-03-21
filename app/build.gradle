@@ -31,6 +31,8 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$project.supportVersion"
     implementation "com.android.support:recyclerview-v7:$project.supportVersion"
     implementation "com.android.support:design:$project.supportVersion"
+    implementation "com.android.support:support-v4:$project.supportVersion"
+    implementation "com.android.support:palette-v7:$project.supportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
 
     // Dagger core
@@ -63,10 +65,6 @@ dependencies {
     //RxJava
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.7'
-
-    //Collapsing toolbar
-    compile 'net.opacapp:multiline-collapsingtoolbar:1.6.0'
-    compile "com.android.support:palette-v7:$project.supportVersion"
 
     // TEST dependencies
     testImplementation 'junit:junit:4.12'
