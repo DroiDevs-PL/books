@@ -73,15 +73,15 @@ public class Contributor {
                 R.drawable.contributor_nani,
                 "https://github.com/nani92",
                 null,
-                null,
+                "https://play.google.com/store/apps/dev?id=8034018404241334903",
                 null));
 
         team.add(new Contributor("Karol Lisiewicz",
                 "klisiewicz",
                 R.drawable.contributor_klisiewicz,
                 "https://github.com/klisiewicz",
-                null,
-                null,
+                "http://www.linkedin.com/in/karol-lisiewicz",
+                "https://play.google.com/store/apps/developer?id=Karol+Lisiewicz",
                 null));
 
         team.add(new Contributor("Michał Bachta",
