@@ -1,13 +1,13 @@
-package pl.droidevs.books.entity;
+package pl.droidevs.books.dao;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import static pl.droidevs.books.entity.BookEntity.TABLE_NAME;
+import static pl.droidevs.books.dao.BookEntity.TABLE_NAME;
 
 @Entity(tableName = TABLE_NAME)
 public class BookEntity {
-    public static final String TABLE_NAME = "books";
+    static final String TABLE_NAME = "books";
 
     @PrimaryKey(autoGenerate = true)
     private long id;

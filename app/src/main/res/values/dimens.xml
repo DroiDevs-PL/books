@@ -10,15 +10,12 @@
     <dimen name="toolbar_item_size">56dp</dimen>
 
     <dimen name="spacing_normal">16dp</dimen>
-    <dimen name="spacing_small">10dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
 
     <dimen name="list_thumbnail_size">48dp</dimen>
     <dimen name="list_item_size">56dp</dimen>
 
     <dimen name="input_text_size">24sp</dimen>
 
-    <dimen name="vote_star_size">24dp</dimen>
-    <dimen name="vote_star_margin">6dp</dimen>
-    <dimen name="author_label_text_size">24sp</dimen>
     <dimen name="collapsing_app_bar_layout_height">350dp</dimen>
 </resources>

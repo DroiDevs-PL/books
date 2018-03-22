@@ -15,26 +15,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar.Colored"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".library.LibraryActivity" />
+
+        <activity
+            android:name=".library.LibraryActivity"
+            android:launchMode="singleTop" />
+
         <activity
             android:name=".library.BookActivity"
+            android:parentActivityName=".library.LibraryActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".savebook.SaveBookActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".about.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-    </application>
 
+    </application>
 </manifest>

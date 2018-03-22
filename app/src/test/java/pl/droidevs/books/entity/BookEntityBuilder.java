@@ -21,6 +21,11 @@ public final class BookEntityBuilder {
         return this;
     }
 
+    public BookEntityBuilder belongsTo(final String category) {
+        entity.setCategory(category);
+        return this;
+    }
+
     public BookEntity build() {
         return entity;
     }

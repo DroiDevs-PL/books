@@ -1,4 +1,4 @@
-package pl.droidevs.books.model;
+package pl.droidevs.books.domain;
 
 import android.support.annotation.NonNull;
 
@@ -28,6 +28,11 @@ public final class BookId implements Serializable {
     @Override
     public int hashCode() {
         return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 
     public static BookId of(@NonNull final String value) {

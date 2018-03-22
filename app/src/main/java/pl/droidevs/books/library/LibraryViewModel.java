@@ -2,32 +2,39 @@ package pl.droidevs.books.library;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
-import pl.droidevs.books.model.Book;
+import pl.droidevs.books.Resource;
+import pl.droidevs.books.domain.Book;
 import pl.droidevs.books.repository.BookFilter;
 import pl.droidevs.books.repository.BookRepository;
+import pl.droidevs.books.ui.RxViewModel;
 
-public final class LibraryViewModel extends ViewModel {
+import static android.text.TextUtils.isEmpty;
+
+public final class LibraryViewModel extends RxViewModel {
     private final MutableLiveData<String> filterInput = new MutableLiveData<>();
-    private final LiveData<List<Book>> books;
+    private final MutableLiveData<Resource<Collection<Book>>> books = new MutableLiveData<>();
+    private final BookRepository bookRepository;
 
     @Inject
-    LibraryViewModel(@NonNull BookRepository bookRepository) {
-        books = Transformations.switchMap(filterInput, filter ->
-                bookRepository.fetchBy(BookFilter.withTitleAndAuthor(filter, filter)));
-        filterInput.setValue(null);
+    LibraryViewModel(@NonNull final BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     void setQuery(@Nullable final String query) {
         filterInput.setValue(query);
+        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+                .subscribe(
+                        result -> books.setValue(Resource.success(result)),
+                        throwable -> books.setValue(Resource.error(throwable))
+                )
+        );
     }
 
     void clearQuery() {
@@ -39,8 +46,22 @@ public final class LibraryViewModel extends ViewModel {
         return filterInput.getValue();
     }
 
+    boolean isQuery() {
+        return !isEmpty(getQuery());
+    }
+
     @NonNull
-    public LiveData<List<Book>> getBooks() {
+    public LiveData<Resource<Collection<Book>>> getBooks() {
+        final String query = filterInput.getValue();
+
+        add(bookRepository.fetchBy(BookFilter.withTitleAndAuthor(query, query))
+                .doOnSubscribe(it -> books.setValue(Resource.loading()))
+                .subscribe(
+                        result -> books.setValue(Resource.success(result)),
+                        throwable -> books.setValue(Resource.error(throwable))
+                )
+        );
+
         return books;
     }
 }

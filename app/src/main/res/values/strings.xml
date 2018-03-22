@@ -9,13 +9,15 @@
     <string name="action_import">Import</string>
     <string name="about">About</string>
 
+    <string name="error_fetching_failed">Couldn\'t load books from library. Please swipe to t</string>
     <string name="message_permission_denied_cant_export">We are not able to export your library without permission.</string>
     <string name="message_permission_denied_cant_import">We are not able to import library without permission.</string>
     <string name="message_export_successful">Your library were exported successfully.</string>
-    <string name="message_export_not_successful">Due to an error we weren\'t able to export your library.</string>
+    <string name="error_export_failed">Due to an error we weren\'t able to export your library.</string>
+    <string name="empty_library">Your library is empty:(\nWhy don\'t you add a book?</string>
 
     <string name="message_import_successful">Library were imported successfully.</string>
-    <string name="message_import_not_successful">Due to an error we weren\'t able to import library.</string>
+    <string name="error_import_failed">Due to an error we weren\'t able to import library.</string>
     <string name="book_delete_snackbar">Sure you want to delete?</string>
 
     <string name="undo">Undo</string>
@@ -26,7 +28,7 @@
     <string name="book_author_hint">Author</string>
     <string name="book_category_hint">Category</string>
     <string name="book_description_hint">Description</string>
-    <string name="add_book">Add book</string>
+    <string name="book_add">Save</string>
     <string name="saving_book_error">We were not able to save your book.</string>
     <string name="saving_book_validation_error">Provided data are not valid.</string>
 
@@ -34,17 +36,18 @@
     <string name="remove_book_error">We encountered problem with removing book.</string>
     <string name="remove_book">Remove book</string>
     <string name="removing_book">Removing book</string>
-    <string name="removing_book_snackbar">Sure you want to delete?</string>
+    <string name="removing_book_snackbar">The book has been removed.</string>
     <string name="removing_book_dialog_frag">Are you sure you want to remove this book from your library?</string>
     <string name="delete">Delete</string>
 
     <!--Editing book-->
     <string name="edit_book">Edit book</string>
+    <string name="no_book">The book was not found.</string>
 
     <!--Searching book-->
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
-
+    <string name="search_no_result">There are no books\nmatching your criteria.</string>
     <!-- About -->
     <string name="about_project_description">Books is an android application that allow user to store information about books they owe or they\'ve read. It will allow to save basic book data like title, authors, category along with description or summary created by the user and personal rank. In the future it will allow users to share their libraries with friends and people nearby. They will be able to easily find and read reviews of book that would like to buy or read or even to borrow book from friends.</string>
     <string name="about_project_title">About Project</string>
@@ -63,5 +66,4 @@
     <!-- Transitions -->
     <string name="iv_avatar_transition_name">iv_avatar</string>
     <string name="cl_card_transition_name">cl_card</string>
-
 </resources>

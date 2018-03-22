@@ -1,17 +1,17 @@
 package pl.droidevs.books.savebook;
 
-import android.arch.lifecycle.Observer;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -35,17 +35,20 @@ import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import dagger.android.AndroidInjection;
 import pl.droidevs.books.R;
-import pl.droidevs.books.model.Book;
-import pl.droidevs.books.model.BookId;
+import pl.droidevs.books.domain.Book;
+import pl.droidevs.books.domain.BookId;
 import pl.droidevs.books.removebook.RemoveBookDialogFragment;
 import pl.droidevs.books.removebook.RemoveBookViewModel;
 
 import static com.bumptech.glide.Priority.HIGH;
+import static pl.droidevs.books.Resource.Status.ERROR;
+import static pl.droidevs.books.Resource.Status.SUCCESS;
 
 public class SaveBookActivity extends AppCompatActivity implements RemoveBookDialogFragment.OnRemoveListener {
 
-    public static final String BOOK_ID_EXTRA = "book id";
+    private static final String BOOK_ID_EXTRA = "book id";
     public static final int RESULT_BOOK_REMOVED = 302;
+    public static final int EDIT_BOOK_REQUEST_CODE = 205;
 
     @BindView(R.id.addBookConstraintLayout)
     ConstraintLayout container;
@@ -74,13 +77,13 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    SaveBookViewModel saveBookViewModel;
+    private SaveBookViewModel saveBookViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_book);
-        
+
         getWindow().setEnterTransition(new Fade().setDuration(getResources().getInteger(R.integer.animation_base_duration)));
 
         AndroidInjection.inject(this);
@@ -91,7 +94,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     }
 
     private void setupSpinner() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, getCategoryNames());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCategoryNames());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         categorySpinner.setAdapter(adapter);
@@ -101,26 +104,17 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         Book.Category[] categories = Book.Category.values();
         List<String> categoryNames = new ArrayList<>();
 
-        for (int i = 0; i < categories.length; i++) {
-            categoryNames.add(categories[i].toString());
+        for (Book.Category category : categories) {
+            categoryNames.add(category.toString());
         }
 
         return categoryNames;
     }
 
     private void setupViewModel() {
-        this.saveBookViewModel = ViewModelProviders
+        saveBookViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(SaveBookViewModel.class);
-
-        saveBookViewModel.wasSavingSuccessful()
-                .observe(this, wasSavingSuccessful -> {
-                    if (wasSavingSuccessful) {
-                        finish();
-                    } else {
-                        displaySnackBar(R.string.saving_book_error);
-                    }
-                });
 
         if (shouldDisplayEdit()) {
             setupForEdit();
@@ -137,45 +131,38 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     private void setupForEdit() {
         saveBookViewModel.setBookId((BookId) getIntent().getSerializableExtra(BOOK_ID_EXTRA));
-        saveBookViewModel.getBook().observe(this, bookObserver);
+        saveBookViewModel.getBook().observe(this, resource -> {
+            if (resource == null) return;
+
+            if (resource.getStatus() == SUCCESS) {
+                showBook(resource.getData());
+            } else if (resource.getStatus() == ERROR) {
+                Snackbar.make(container, R.string.no_book, Snackbar.LENGTH_SHORT).show();
+                finish();
+            }
+        });
 
         saveButton.setText(R.string.edit_book);
     }
 
-    private Observer<Book> bookObserver = book -> {
-
+    private void showBook(@Nullable final Book book) {
         if (book == null) {
             return;
         }
 
-        this.titleEditText.setText(book.getTitle());
-        this.authorEditText.setText(book.getAuthor());
-        this.coverUrlEditText.setText(book.getImageUrl());
-        this.descriptionEditText.setText(book.getDescription());
-        this.categorySpinner.setSelection(getPositionInCategories(book.getCategory().toString()));
+        titleEditText.setText(book.getTitle());
+        authorEditText.setText(book.getAuthor());
+        coverUrlEditText.setText(book.getImageUrl());
+        descriptionEditText.setText(book.getDescription());
+        categorySpinner.setSelection(book.getCategory().ordinal());
 
         setDataToViewModel();
-    };
-
-    private int getPositionInCategories(String category) {
-        List<String> categories = getCategoryNames();
-
-        for (int i = 0; i < categories.size(); i++) {
-
-            if (categories.get(i).equals(category)) {
-                return i;
-            }
-        }
-
-        return 0;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         if (shouldDisplayEdit()) {
-            getMenuInflater().inflate(R.menu.edit_book_menu, menu);
+            getMenuInflater().inflate(R.menu.book_save_menu, menu);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -183,7 +170,6 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.remove_book_item) {
             RemoveBookDialogFragment removeBookDialogFragment = new RemoveBookDialogFragment();
             removeBookDialogFragment.show(getSupportFragmentManager(), "");
@@ -196,7 +182,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     void onCoverUrlChanged() {
         String imageUrl = coverUrlEditText.getText().toString();
 
-        if (this.saveBookViewModel.isCoverUrlValid(imageUrl)) {
+        if (saveBookViewModel.isCoverUrlValid(imageUrl)) {
             loadCoverImage(imageUrl);
             saveBookViewModel.setImageUrl(imageUrl);
         }
@@ -215,8 +201,17 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     void onSaveButtonClicked() {
         setDataToViewModel();
 
-        if (this.saveBookViewModel.isDataValid()) {
-            this.saveBookViewModel.saveBook();
+        if (saveBookViewModel.isDataValid()) {
+            saveBookViewModel.saveBook()
+                    .observe(this, resource -> {
+                        if (resource == null) return;
+
+                        if (resource.getStatus() == SUCCESS) {
+                            finish();
+                        } else if (resource.getStatus() == ERROR) {
+                            displaySnackBar(R.string.saving_book_error);
+                        }
+                    });
         }
     }
 
@@ -228,20 +223,28 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     }
 
     void setDataToViewModel() {
-        this.saveBookViewModel.setTitle(this.titleEditText.getText().toString());
-        this.saveBookViewModel.setAuthor(this.authorEditText.getText().toString());
-        this.saveBookViewModel.setDescription(this.descriptionEditText.getText().toString());
-        this.saveBookViewModel.setCategory(this.categorySpinner.getSelectedItem().toString());
+        saveBookViewModel.setTitle(titleEditText.getText().toString());
+        saveBookViewModel.setAuthor(authorEditText.getText().toString());
+        saveBookViewModel.setDescription(descriptionEditText.getText().toString());
+        saveBookViewModel.setCategory(categorySpinner.getSelectedItem().toString());
     }
 
     @Override
     public void removeChosen() {
-        RemoveBookViewModel removeBookViewModel = ViewModelProviders
+        final RemoveBookViewModel removeBookViewModel = ViewModelProviders
                 .of(this, viewModelFactory)
                 .get(RemoveBookViewModel.class);
         removeBookViewModel.removeBook(saveBookViewModel.createBook());
 
         setResult(RESULT_BOOK_REMOVED);
         finish();
+    }
+
+    public static void startForResult(@NonNull final Activity context, @NonNull final BookId bookId) {
+        Intent intent = new Intent(context, SaveBookActivity.class);
+        intent.putExtra(SaveBookActivity.BOOK_ID_EXTRA, bookId);
+
+        context.startActivityForResult(intent, EDIT_BOOK_REQUEST_CODE,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(context).toBundle());
     }
 }

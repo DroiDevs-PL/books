@@ -1,10 +1,10 @@
-package pl.droidevs.books.model;
+package pl.droidevs.books.domain;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public final class Book {
-    private final BookId id;
+    private BookId id;
     private final String title;
     private final String author;
     private final Category category;
@@ -25,6 +25,10 @@ public final class Book {
     @Nullable
     public BookId getId() {
         return id;
+    }
+
+    public void setId(final BookId id) {
+        this.id = id;
     }
 
     @NonNull
@@ -61,7 +65,7 @@ public final class Book {
     }
 
     public enum Category {
-        BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, FANTASY, HEALTH, HISTORY, HORROR, ENTERTAINEMENT,
+        BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, FANTASY, HEALTH, HISTORY, HORROR, ENTERTAINMENT,
         MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, TRAVEL
     }
 }
