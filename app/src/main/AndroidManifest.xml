@@ -38,6 +38,9 @@
         <activity
             android:name=".savebook.SaveBookActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".about.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 </manifest>

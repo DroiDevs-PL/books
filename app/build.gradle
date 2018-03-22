@@ -73,4 +73,10 @@ dependencies {
     androidTestImplementation "android.arch.core:core-testing:1.1.0"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    // CircleImageView
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+
+    // Sliding Activity
+    compile 'com.klinkerapps:sliding-activity:1.5.2'
 }
