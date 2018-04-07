@@ -20,6 +20,15 @@ public final class BookEntityBuilder {
         entity.setAuthor(author);
         return this;
     }
+    public BookEntityBuilder withYear(String year) {
+        entity.setYear(year);
+        return this;
+    }
+
+    public BookEntityBuilder withPublisher(String publisher) {
+        entity.setPublisher(publisher);
+        return this;
+    }
 
     public BookEntity build() {
         return entity;

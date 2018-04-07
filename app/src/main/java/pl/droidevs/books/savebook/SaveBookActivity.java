@@ -231,7 +231,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
         return true;
     }
-    
+
     void setDataToViewModel() {
         saveBookViewModel.setTitle(titleEditText.getText().toString());
         saveBookViewModel.setAuthor(authorEditText.getText().toString());
