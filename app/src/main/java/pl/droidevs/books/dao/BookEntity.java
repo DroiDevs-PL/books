@@ -47,7 +47,7 @@ public class BookEntity {
         return publisher;
     }
 
-    public void setPublisher(String year) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
