@@ -8,6 +8,7 @@ public final class Book {
     private final String title;
     private final String author;
     private final Category category;
+    private String year;
     private String description;
     private String imageUrl;
 
@@ -56,6 +57,15 @@ public final class Book {
     }
 
     @Nullable
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(@Nullable String year) {
+        this.year = year;
+    }
+
+    @Nullable
     public String getImageUrl() {
         return imageUrl;
     }
@@ -66,6 +76,6 @@ public final class Book {
 
     public enum Category {
         BIOGRAPHY, BUSINESS, KIDS, COMPUTERS, COOKING, FANTASY, HEALTH, HISTORY, HORROR, ENTERTAINMENT,
-        MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, TRAVEL
+        MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, TRAVEL, THEATRE, POETRY, CINEMA, PHILOSOPHY, PHYCHOLOGY, COMICS
     }
 }

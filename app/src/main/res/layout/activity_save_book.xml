@@ -67,6 +67,19 @@
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
             app:layout_constraintTop_toBottomOf="@+id/titleEditText"/>
 
+        <EditText
+            android:id="@+id/yearEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:background="@android:color/transparent"
+            android:hint="Year"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+            app:layout_constraintTop_toBottomOf="@+id/authorEditText"/>
+
         <Spinner
             android:id="@+id/categorySpinner"
             android:layout_width="0dp"
@@ -74,7 +87,7 @@
             android:layout_marginTop="@dimen/spacing_normal"
             app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-            app:layout_constraintTop_toBottomOf="@+id/authorEditText"/>
+            app:layout_constraintTop_toBottomOf="@+id/yearEditText"/>
 
         <EditText
             android:id="@+id/descriptionEditText"

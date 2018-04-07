@@ -50,6 +50,9 @@ public class BookActivity extends AppCompatActivity {
     @BindView(R.id.author_tv)
     TextView authorTextView;
 
+    @BindView(R.id.year_tv)
+    TextView yearTextView;
+
     @BindView(R.id.category_tv)
     TextView categoryTextView;
 
