@@ -9,6 +9,7 @@ public final class Book {
     private final String author;
     private final Category category;
     private String year;
+    private String publisher;
     private String description;
     private String imageUrl;
 
@@ -57,12 +58,19 @@ public final class Book {
     }
 
     @Nullable
-    public String getYear() {
-        return year;
-    }
+    public String getYear() { return year; }
 
     public void setYear(@Nullable String year) {
         this.year = year;
+    }
+
+    @Nullable
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(@Nullable String publisher) {
+        this.publisher = publisher;
     }
 
     @Nullable

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -67,6 +68,12 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     @BindView(R.id.authorEditText)
     EditText authorEditText;
+
+    @BindView(R.id.yearEditText)
+    EditText yearEditText;
+
+    @BindView(R.id.publisherEditText)
+    EditText publisherEditText;
 
     @BindView(R.id.descriptionEditText)
     EditText descriptionEditText;
@@ -152,6 +159,8 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
         titleEditText.setText(book.getTitle());
         authorEditText.setText(book.getAuthor());
+        yearEditText.setText(book.getYear());
+        publisherEditText.setText(book.getPublisher());
         coverUrlEditText.setText(book.getImageUrl());
         descriptionEditText.setText(book.getDescription());
         categorySpinner.setSelection(book.getCategory().ordinal());

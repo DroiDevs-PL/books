@@ -75,8 +75,14 @@
                 android:id="@+id/year_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:text="Year" />
+                android:text="Year"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/publisher_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Publisher" />
 
             <TextView
                 android:id="@+id/description_tv"

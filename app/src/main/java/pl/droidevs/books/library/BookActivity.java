@@ -53,6 +53,9 @@ public class BookActivity extends AppCompatActivity {
     @BindView(R.id.year_tv)
     TextView yearTextView;
 
+    @BindView(R.id.publisher_tv)
+    TextView publisherTextView;
+
     @BindView(R.id.category_tv)
     TextView categoryTextView;
 
@@ -167,6 +170,8 @@ public class BookActivity extends AppCompatActivity {
         if (book == null) return;
 
         authorTextView.setText(book.getAuthor());
+        yearTextView.setText(book.getYear());
+        publisherTextView.setText(book.getPublisher());
         categoryTextView.setText(book.getCategory().toString());
         descriptionTextView.setText(book.getDescription());
 

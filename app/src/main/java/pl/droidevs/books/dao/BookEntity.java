@@ -14,6 +14,7 @@ public class BookEntity {
     private String title;
     private String author;
     private String year;
+    private String publisher;
     private String description;
     private String category;
     private String imageUrl;
@@ -40,6 +41,14 @@ public class BookEntity {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String year) {
+        this.publisher = publisher;
     }
 
     public String getAuthor() {
