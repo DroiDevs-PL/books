@@ -197,6 +197,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
         }
     }
 
+
     void loadCoverImage(String imageUrl) {
         Glide.with(this)
                 .load(imageUrl)
@@ -230,10 +231,12 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
         return true;
     }
-
+    
     void setDataToViewModel() {
         saveBookViewModel.setTitle(titleEditText.getText().toString());
         saveBookViewModel.setAuthor(authorEditText.getText().toString());
+        saveBookViewModel.setYear(yearEditText.getText().toString());
+        saveBookViewModel.setPublisher(publisherEditText.getText().toString());
         saveBookViewModel.setDescription(descriptionEditText.getText().toString());
         saveBookViewModel.setCategory(categorySpinner.getSelectedItem().toString());
     }

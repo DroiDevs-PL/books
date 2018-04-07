@@ -80,7 +80,9 @@ public final class SaveBookViewModel extends RxViewModel {
 
     boolean isDataValid() {
         return BookInputValidator.isAuthorValid(author) &&
-                BookInputValidator.isTitleValid(title);
+                BookInputValidator.isTitleValid(title) &&
+                BookInputValidator.isYearValid(year);
+
     }
 
     LiveData<Resource<Book>> saveBook() {
