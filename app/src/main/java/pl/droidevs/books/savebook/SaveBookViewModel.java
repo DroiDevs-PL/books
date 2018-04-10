@@ -21,6 +21,7 @@ public final class SaveBookViewModel extends RxViewModel {
     private String author;
     private String year;
     private String publisher;
+    private float rating;
     private String description;
     private String category;
 
@@ -66,6 +67,10 @@ public final class SaveBookViewModel extends RxViewModel {
         this.publisher = publisher;
     }
 
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -102,6 +107,7 @@ public final class SaveBookViewModel extends RxViewModel {
         book.setDescription(this.description);
         book.setYear(this.year);
         book.setPublisher(this.publisher);
+        book.setRating(this.rating);
 
 
         return book;

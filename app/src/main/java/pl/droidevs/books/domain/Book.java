@@ -10,6 +10,7 @@ public final class Book {
     private final Category category;
     private String year;
     private String publisher;
+    private float rating;
     private String description;
     private String imageUrl;
 
@@ -71,6 +72,15 @@ public final class Book {
 
     public void setPublisher(@Nullable String publisher) {
         this.publisher = publisher;
+    }
+
+    @Nullable
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(@Nullable float rating) {
+        this.rating = rating;
     }
 
     @Nullable

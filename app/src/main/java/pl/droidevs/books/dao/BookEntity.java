@@ -18,6 +18,8 @@ public class BookEntity {
     private String description;
     private String category;
     private String imageUrl;
+    private float rating;
+
 
     public long getId() {
         return id;
@@ -49,6 +51,12 @@ public class BookEntity {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public float getRating() { return rating;}
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public String getAuthor() {

@@ -113,6 +113,15 @@
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
             app:layout_constraintTop_toBottomOf="@+id/categorySpinner" />
 
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionEditText"/>
+
         <Button
             android:id="@+id/saveButton"
             style="@style/AccentColoredButton"
@@ -124,7 +133,7 @@
             app:layout_constraintLeft_toLeftOf="@id/guidelineLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineRight"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-            app:layout_constraintTop_toBottomOf="@id/descriptionEditText" />
+            app:layout_constraintTop_toBottomOf="@id/ratingBar" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guidelineLeft"
