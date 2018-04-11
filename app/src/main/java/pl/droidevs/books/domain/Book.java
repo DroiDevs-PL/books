@@ -74,12 +74,12 @@ public final class Book {
         this.publisher = publisher;
     }
 
-    @Nullable
+    @NonNull
     public float getRating() {
         return rating;
     }
 
-    public void setRating(@Nullable float rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
