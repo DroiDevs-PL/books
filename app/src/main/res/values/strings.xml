@@ -27,6 +27,8 @@
     <string name="book_author_hint">Author</string>
     <string name="book_category_hint">Category</string>
     <string name="book_description_hint">Description</string>
+    <string name="publisher">Publisher</string>
+    <string name="year">Year</string>
     <string name="book_add">Save</string>
     <string name="saving_book_error">We were not able to save your book.</string>
     <string name="saving_book_validation_error">Provided data are not valid.</string>
@@ -47,4 +49,5 @@
     <string name="search_hint">Search books</string>
     <string name="search_action">Search</string>
     <string name="search_no_result">There are no books\nmatching your criteria.</string>
+
 </resources>
