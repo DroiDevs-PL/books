@@ -75,13 +75,15 @@
                 android:id="@+id/year_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true" />
+                android:textAllCaps="true"
+                tools:text="Year" />
 
             <TextView
                 android:id="@+id/publisher_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true" />
+                android:textAllCaps="true"
+                tools:text="Publisher" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
