@@ -40,6 +40,9 @@ public class BookMapper {
                 Book.Category.valueOf(entity.getCategory()));
         book.setDescription(entity.getDescription());
         book.setImageUrl(entity.getImageUrl());
+        book.setYear(entity.getYear());
+        book.setRating(entity.getRating());
+        book.setPublisher(entity.getPublisher());
 
         return book;
     }
@@ -55,6 +58,9 @@ public class BookMapper {
         entity.setDescription(book.getDescription());
         entity.setTitle(book.getTitle());
         entity.setImageUrl(book.getImageUrl());
+        entity.setYear(book.getYear());
+        entity.setPublisher(book.getPublisher());
+        entity.setRating(book.getRating());
 
         if (book.getId() != null) {
             entity.setId(getBookEntityIdFromBookId(book.getId()));

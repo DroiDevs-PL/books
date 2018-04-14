@@ -19,6 +19,9 @@ public final class SaveBookViewModel extends RxViewModel {
     private String imageUrl;
     private String title;
     private String author;
+    private String year;
+    private String publisher;
+    private float rating;
     private String description;
     private String category;
 
@@ -56,6 +59,18 @@ public final class SaveBookViewModel extends RxViewModel {
         this.title = title;
     }
 
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -70,7 +85,9 @@ public final class SaveBookViewModel extends RxViewModel {
 
     boolean isDataValid() {
         return BookInputValidator.isAuthorValid(author) &&
-                BookInputValidator.isTitleValid(title);
+                BookInputValidator.isTitleValid(title) &&
+                BookInputValidator.isYearValid(year);
+
     }
 
     LiveData<Resource<Book>> saveBook() {
@@ -88,6 +105,10 @@ public final class SaveBookViewModel extends RxViewModel {
         Book book = new Book(bookId, this.title, this.author, Book.Category.valueOf(this.category));
         book.setImageUrl(this.imageUrl);
         book.setDescription(this.description);
+        book.setYear(this.year);
+        book.setPublisher(this.publisher);
+        book.setRating(this.rating);
+
 
         return book;
     }

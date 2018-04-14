@@ -18,7 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -67,6 +69,15 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
     @BindView(R.id.authorEditText)
     EditText authorEditText;
+
+    @BindView(R.id.yearEditText)
+    EditText yearEditText;
+
+    @BindView(R.id.publisherEditText)
+    EditText publisherEditText;
+
+    @BindView(R.id.ratingBar)
+    RatingBar ratingBar;
 
     @BindView(R.id.descriptionEditText)
     EditText descriptionEditText;
@@ -152,6 +163,9 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
 
         titleEditText.setText(book.getTitle());
         authorEditText.setText(book.getAuthor());
+        yearEditText.setText(book.getYear());
+        publisherEditText.setText(book.getPublisher());
+        ratingBar.setRating(book.getRating());
         coverUrlEditText.setText(book.getImageUrl());
         descriptionEditText.setText(book.getDescription());
         categorySpinner.setSelection(book.getCategory().ordinal());
@@ -187,6 +201,7 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
             saveBookViewModel.setImageUrl(imageUrl);
         }
     }
+
 
     void loadCoverImage(String imageUrl) {
         Glide.with(this)
@@ -225,6 +240,9 @@ public class SaveBookActivity extends AppCompatActivity implements RemoveBookDia
     void setDataToViewModel() {
         saveBookViewModel.setTitle(titleEditText.getText().toString());
         saveBookViewModel.setAuthor(authorEditText.getText().toString());
+        saveBookViewModel.setYear(yearEditText.getText().toString());
+        saveBookViewModel.setPublisher(publisherEditText.getText().toString());
+        saveBookViewModel.setRating(ratingBar.getRating());
         saveBookViewModel.setDescription(descriptionEditText.getText().toString());
         saveBookViewModel.setCategory(categorySpinner.getSelectedItem().toString());
     }

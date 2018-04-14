@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -49,6 +50,15 @@ public class BookActivity extends AppCompatActivity {
 
     @BindView(R.id.author_tv)
     TextView authorTextView;
+
+    @BindView(R.id.year_tv)
+    TextView yearTextView;
+
+    @BindView(R.id.publisher_tv)
+    TextView publisherTextView;
+
+    @BindView(R.id.ratingBar)
+    RatingBar ratingBar;
 
     @BindView(R.id.category_tv)
     TextView categoryTextView;
@@ -164,7 +174,10 @@ public class BookActivity extends AppCompatActivity {
         if (book == null) return;
 
         authorTextView.setText(book.getAuthor());
+        yearTextView.setText(book.getYear());
+        publisherTextView.setText(book.getPublisher());
         categoryTextView.setText(book.getCategory().toString());
+        ratingBar.setRating(book.getRating());
         descriptionTextView.setText(book.getDescription());
 
         loadCover(book.getImageUrl());

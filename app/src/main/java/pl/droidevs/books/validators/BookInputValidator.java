@@ -10,9 +10,14 @@ public class BookInputValidator {
 
     private static final int TITLE_MIN_LENGTH = 3;
     private static final int AUTHOR_MIN_LENGTH = 3;
+    private static final int YEAR_MAX_LENGTH = 4;
 
     public static boolean isCoverUrlValid(String imageUrl) {
         return Patterns.WEB_URL.matcher(imageUrl).matches();
+    }
+
+    public static boolean isYearValid(String year) {
+        return year.length() <= YEAR_MAX_LENGTH;
     }
 
     public static boolean isTitleValid(String title) {

@@ -13,9 +13,13 @@ public class BookEntity {
     private long id;
     private String title;
     private String author;
+    private String year;
+    private String publisher;
     private String description;
     private String category;
     private String imageUrl;
+    private float rating;
+
 
     public long getId() {
         return id;
@@ -31,6 +35,28 @@ public class BookEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public float getRating() { return rating;}
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
     public String getAuthor() {
